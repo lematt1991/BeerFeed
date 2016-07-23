@@ -1,12 +1,37 @@
 {
-  "name": "openshift-cartridge-nodejs-template",
-  "version": "1.0.1",
-  "description": "Custom Node.js cartridge for OpenShift - sample application",
-  "private": true,
+  "name": "untappd-feed-filter",
+  "version": "1.0.0",
+  "description": "",
   "main": "start.js",
   "scripts": {
-    "start": "node --use_strict start.js"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node start.js"
   },
-  "author": "Ionut-Cristian Florescu <ionut.florescu@gmail.com>",
-  "license": "ISC"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ml9951/UntappdFeedFilter.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ml9951/UntappdFeedFilter/issues"
+  },
+  "homepage": "https://github.com/ml9951/UntappdFeedFilter#readme",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "cors": "^2.7.1",
+    "dotenv": "^2.0.0",
+    "express": "^4.14.0",
+    "fs": "0.0.2",
+    "node-schedule": "^1.1.1",
+    "node-untappd": "^0.4.1",
+    "parse-database-url": "^0.3.0",
+    "parse-db-url": "0.0.0",
+    "pg": "^6.0.1",
+    "request": "^2.72.0",
+    "request-promise": "^3.0.0",
+    "sleep": "^3.0.1",
+    "url": "^0.11.0",
+    "util": "^0.10.3"
+  }
 }
