@@ -83,7 +83,7 @@ function startProc(args){
             }else{
               lastID = checkins[0].checkin_id;
             }
-            console.log('Going to sleep for ' + (waitTime/1000) + ' seconds')
+            console.log(username + 'Going to sleep for ' + (waitTime/1000) + ' seconds')
             setTimeoutObj(setTimeout(iter, waitTime));
           }).catch(function(err){
             console.log('about to parse err: ' + err)

@@ -20,7 +20,7 @@ cluster.on('disconnect', function(worker) {
 });
 
 if (cluster.isMaster) {
-  const workerCount = process.env.NODE_CLUSTER_WORKERS || 3;
+  const workerCount = 2; //process.env.NODE_CLUSTER_WORKERS || 3;
   for (var i = 0; i < workerCount; i++) {
     cluster.fork();
   }
