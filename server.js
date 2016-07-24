@@ -29,6 +29,8 @@ var procs = [];
 
 var redirectURL = 'https://untappd-feed-filter.herokuapp.com/AuthRedirect'
 
+app.use(express.static('static/src'));
+
 app.get('/health', function(req, res){
   res.send({})
 })
