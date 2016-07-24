@@ -15,7 +15,7 @@ export default class Feed extends Component{
 		super()
 		this.state = {rows : [], lastID : 0};
 		this._fetchData();
-		setInterval(this._fetchData.bind(this), 3000)
+		setInterval(this._fetchData.bind(this), 5000)
 	}
 
 	_renderRow(row){
@@ -52,9 +52,6 @@ export default class Feed extends Component{
 	}
 
 	render(){
-		if (navigator.geolocation) {
-	        navigator.geolocation.getCurrentPosition(this._showPosition);
-	    }
 		return(
 			<div class="container-fluid">
 				<div class="row">
