@@ -1,26 +1,34 @@
 import React, {Component} from 'react';
 const util = require('util');
-
+import {Link} from 'react-router';
 
 export default class Feed extends Component{
 	_fetchData(){
 		$.get('http://beerfeed-ml9951.rhcloud.com/Feed?user=rochester_feed').then(
-			function(data){
+			(data) => 
 				this.setState({rows : data.checkins, lastID : data.lastID})
-			}.bind(this)
 		)
+	}
+
+	componentDidMount() {
+    this.loadInterval = setInterval(this._fetchData, 5000);
+	}
+
+	componentWillUnmount () {
+    this.loadInterval && clearInterval(this.loadInterval);
+    this.loadInterval = false;
 	}
 
 	constructor(){
 		super()
 		this.state = {rows : [], lastID : 0};
 		this._fetchData();
-		setInterval(this._fetchData.bind(this), 5000)
 	}
 
 	_renderRow(row){
 		var date = new Date(row.created)
 		var url = util.format('https://www.google.com/maps/preview?z=14&q=loc:%d+%d',row.lat,row.lon);
+
 		return(
 			<tr data-status="pagado" key={row.checkin_id}>
 				<td>
@@ -38,7 +46,7 @@ export default class Feed extends Component{
 								Score: {row.rating}
 							</h4>
 							<h4>	
-								Found at: <a href={url}>{row.venue}</a>
+								Found at: <a onClick={() => this.props.history.pushState({pos : [row.lat, row.lon], venue : row.venue}, 'map')}>{row.venue}</a>
 							</h4>
 						</div>
 					</div>
@@ -64,7 +72,7 @@ export default class Feed extends Component{
 										<table class="table table-filter">
 											<tbody>
 												{
-													this.state.rows.map(this._renderRow)
+													this.state.rows.map(this._renderRow.bind(this))
 												}
 											</tbody>
 										</table>

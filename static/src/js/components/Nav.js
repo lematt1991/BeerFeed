@@ -1,4 +1,5 @@
 import React from "react";
+import {Link} from 'react-router';
 
 export default class Nav extends React.Component {
 
@@ -18,6 +19,10 @@ export default class Nav extends React.Component {
     console.log(event)
   }
 
+  _toMapView(){
+    console.log(this.props)
+  }
+
   render() {
     return (
       <nav class="navbar navbar-default">
@@ -34,7 +39,8 @@ export default class Nav extends React.Component {
                   }
                 </ul>
               </li>
-
+              <li><Link to="/">List View</Link></li>
+              <li><Link to="map">Map View</Link></li>
             </ul>
           </div>
         </div>

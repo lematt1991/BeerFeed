@@ -16,7 +16,21 @@ module.exports = {
           presets: ['react', 'es2015', 'stage-0'],
           plugins: ['react-html-attrs', 'transform-class-properties', 'transform-decorators-legacy'],
         }
+      },
+      {
+        test: /\.json$/,
+        loader: 'json-loader'
+      },
+      {
+        test: /\.js$/,
+        include: path.resolve(__dirname, 'node_modules/webworkify/index.js'),
+        loader: 'worker'
+      },
+      {
+        test: /mapbox-gl.+\.js$/,
+        loader: 'transform/cacheable?brfs'
       }
+
     ]
   },
   output: {

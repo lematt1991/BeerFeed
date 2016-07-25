@@ -1,5 +1,4 @@
 import React from "react";
-
 import Nav from "./Nav";
 import Feed from "./Feed";
 import Footer from "./Footer";
@@ -20,7 +19,7 @@ export default class Layout extends React.Component {
     return (
       <div>
         <Nav/>
-        <Feed/>
+        {this.props.children}
         <Footer/>
       </div>
     );
