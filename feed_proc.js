@@ -35,11 +35,14 @@ function startProc(args){
             date.getMonth()+1, date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds());
         if(beer.rating_score >= 4.0){
           console.log('Inserting beer %s: %s', checkin.brewery.brewery_name, checkin.beer.beer_name)
-          var q = util.format('INSERT INTO beers VALUES (%d, $$%s$$, $$%s$$, $$%s$$, $$%s$$, %d, %d, %d, $$%s$$, $$%s$$);',
+          
+          var q = util.format('INSERT INTO beers (checkin_id, name, brewery, venue, created, rating, lat, lon, username, pic)' + 
+                              ' SELECT %d, $$%s$$, $$%s$$, $$%s$$, $$%s$$, %d, %d, %d, $$%s$$, $$%s$$ WHERE NOT ' + 
+                              'EXISTS(SELECT 1 FROM beers WHERE checkin_id = %d)',
                               checkin.checkin_id, checkin.beer.beer_name, checkin.brewery.brewery_name,
                               checkin.venue.venue_name, formattedDate, beer.rating_score, 
                               checkin.venue.location.lat, checkin.venue.location.lng, username, 
-                              checkin.beer.beer_label);
+                              checkin.beer.beer_label, checkin.checkin_id);
           console.log(q);
           db.query(q).then(function(){
             console.log('inserted')
@@ -52,7 +55,6 @@ function startProc(args){
       }
     ).catch(function(err){
       console.log(err);
-      setTimeoutObj(setTimeout(iter, waitTime)); //probably maxed out API
     })
   }
 
