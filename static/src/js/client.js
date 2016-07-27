@@ -6,7 +6,6 @@ import Layout from "./components/Layout";
 import BeerMap from "./components/Map";
 import Feed from "./components/Feed";
 const app = document.getElementById('app');
-//ReactDOM.render(<Layout/>, app);
 
 ReactDOM.render(
 	<Router history={hashHistory}>

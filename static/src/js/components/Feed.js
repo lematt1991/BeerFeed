@@ -1,39 +1,65 @@
 import React, {Component} from 'react';
 const util = require('util');
 import {Link} from 'react-router';
+import feedStore from '../stores/FeedStore';
+import settingsStore from '../stores/SettingsStore';
 
 export default class Feed extends Component{
 	_fetchData(){
-		$.get('http://beerfeed-ml9951.rhcloud.com/Feed?user=rochester_feed').then(
-			(data) => 
-				this.setState({rows : data.checkins, lastID : data.lastID})
+		var user = this.state.currentFeed;
+		$.get('http://beerfeed-ml9951.rhcloud.com/Feed?user=' + user).then(
+			(data) => this.setState({
+				rows : data.checkins, 
+				lastID : data.lastID,
+				currentFeed : this.state.currentFeed,
+				feeds : this.state.feeds
+			})
 		)
 	}
 
-	componentDidMount() {
-    this.loadInterval = setInterval(this._fetchData, 5000);
+	updateFeed(){
+      	this.setState({
+      		rows : this.state.rows,
+      		lastID : this.state.lastID,
+      		currentFeed : settingsStore.getCurrentFeed(),
+      		feeds : this.state.feeds,
+      	})
+      	this._fetchData();
+  	}
+
+	componentWillMount() {
+    	this.loadInterval = setInterval(this._fetchData.bind(this), 5000);
+    	var feeds = settingsStore.getFeeds()
+	    settingsStore.on('change', this.updateFeed);
 	}
 
 	componentWillUnmount () {
-    this.loadInterval && clearInterval(this.loadInterval);
-    this.loadInterval = false;
+	    this.loadInterval && clearInterval(this.loadInterval);
+	    this.loadInterval = false;
+	    settingsStore.removeListener('change', this.updateFeed)
 	}
 
 	constructor(){
 		super()
-		this.state = {rows : [], lastID : 0};
+		this.updateFeed = this.updateFeed.bind(this)
+		var feeds = settingsStore.getFeeds();
+		this.state = {
+			rows : [], 
+			lastID : 0, 
+			currentFeed : settingsStore.getCurrentFeed(),
+			feeds : feeds
+		};
 		this._fetchData();
 	}
 
 	_renderRow(row){
 		var date = new Date(row.created)
 		var url = util.format('https://www.google.com/maps/preview?z=14&q=loc:%d+%d',row.lat,row.lon);
-
 		return(
 			<tr data-status="pagado" key={row.checkin_id}>
 				<td>
 					<div class="media">
-						<img style={{'margin-top' : '12px'}} src={row.pic} width="100" height="100" class="pull-left media-photo beer-image"/>
+						<img style={{marginTop : '12px'}} src={row.pic} width="100" height="100" class="pull-left media-photo beer-image"/>
 						<div class="media-body">
 							<span class="media-meta pull-right">{date.toDateString()}</span>
 							<h4 class="title">
@@ -60,12 +86,13 @@ export default class Feed extends Component{
 	}
 
 	render(){
+		var locName = this.state.feeds[this.state.currentFeed].name
 		return(
 			<div class="container-fluid">
 				<div class="row">
 					<section class="content">
 						<div class="col-md-8 col-md-offset-2">
-							<h1 class="text-center">Beer Feed</h1>
+							<h1 class="text-center">Beer Feed for {locName}</h1>
 							<div class="panel panel-default">
 								<div class="panel-body">
 									<div class="table-container">

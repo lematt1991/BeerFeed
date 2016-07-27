@@ -6,6 +6,13 @@ module.exports = {
   context: path.join(__dirname, "src"),
   devtool: debug ? "inline-sourcemap" : null,
   entry: "./js/client.js",
+  resolve: {
+    extensions: ['', '.js'],
+    alias: {
+      webworkify: 'webworkify-webpack',
+      'mapbox-gl': path.resolve('./node_modules/mapbox-gl/dist/mapbox-gl.js')
+    }
+  },
   module: {
     loaders: [
       {
@@ -28,10 +35,16 @@ module.exports = {
       },
       {
         test: /mapbox-gl.+\.js$/,
+        include: path.resolve('node_modules/mapbox-gl-shaders/index.js'),
         loader: 'transform/cacheable?brfs'
       }
 
-    ]
+    ],
+    postLoaders: [{
+      include: /node_modules\/mapbox-gl-shaders/,
+      loader: 'transform',
+      query: 'brfs'
+    }]    
   },
   output: {
     path: __dirname + "/src/",

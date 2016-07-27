@@ -1,29 +1,46 @@
 import React from "react";
 import {Link} from 'react-router';
+import settingsStore from '../stores/SettingsStore';
+import * as SettingsActions from '../actions/SettingsActions';
 
 export default class Nav extends React.Component {
 
   constructor(){
     super();
-    var defaultLoc = <li class="active" onClick={this._changeLoc}> <a href="#"> Rochester, NY</a></li>;
-    this.state = {
-      currentLocation : defaultLoc,
-      locations : [
-        defaultLoc,
-        <li onClick={this._changeLoc}> <a href="#"> New York, NY (Coming soon...)</a></li>
-      ]
-    };
+    this.state = {feeds : settingsStore.getFeeds(), currentFeed : settingsStore.getCurrentFeed()};
   }
 
   _changeLoc(event){
-    console.log(event)
+    SettingsActions.changeFeed(event.target.id);
   }
 
-  _toMapView(){
-    console.log(this.props)
+  updateFeed(){
+    this.setState({feeds : this.state.feeds, currentFeed : settingsStore.getCurrentFeed()})
   }
+
+  componentWillMount(){
+    settingsStore.on('change', this.updateFeed.bind(this));
+  }
+
+
 
   render() {
+    var locations = [];
+    for(var feed in this.state.feeds){
+      if(feed === this.state.currentFeed){
+        locations.push(
+          <li key={feed} class="active" onClick={this._changeLoc.bind(this)}>
+            <a href="#" id={feed}>{this.state.feeds[feed].name}</a>
+          </li>
+        )
+      }else{
+        locations.push(
+          <li key={feed} onClick={this._changeLoc.bind(this)}>
+            <a href="#" id={feed}>{this.state.feeds[feed].name}</a>
+          </li>
+        )
+      }
+    }
     return (
       <nav class="navbar navbar-default">
         <div class="container-fluid">
@@ -34,9 +51,7 @@ export default class Nav extends React.Component {
                   Choose Location <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
-                  {
-                    this.state.locations   
-                  }
+                  {locations}
                 </ul>
               </li>
               <li><Link to="/">List View</Link></li>
