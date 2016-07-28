@@ -27,6 +27,10 @@ function startProc(args){
   }
 
   function processCheckin(checkin){
+    if(checkin.venue.contact.venue_url === ""){//probably a private residence
+      console.log('Skipping due to no url')
+      return;
+    }
     getBeer(checkin.beer.bid).then(
       function(beer_data){
         beer = JSON.parse(beer_data).response.beer;
@@ -66,10 +70,7 @@ function startProc(args){
       function(result){
         var row = result.rows[0];
         getFeed({'lat' : row.lat, 'lng' : row.lon, 'min_id' : lastID}).then(
-          function(data) {
-            
-            //+data.headers['x-ratelimit-remaining']
-            
+          function(data) {            
             data = JSON.parse(data);
             var checkins = data.response.checkins.items;
             console.log('\n' + checkins.length + ' checkins found')
@@ -88,12 +89,12 @@ function startProc(args){
             console.log(username + 'Going to sleep for ' + (waitTime/1000) + ' seconds')
             setTimeoutObj(setTimeout(iter, waitTime));
           }).catch(function(err){
-            console.log('about to parse err: ' + err)
+            console.log(err)
             var errResponse = JSON.parse(err.error);
-            console.log('done parsing err')
             if(errResponse.meta.error_type = 'invalid-limit'){
               console.log('Access %s token exhausted, recycling...', tokens[0])
               tokens.push(tokens.shift());
+              waitTime = waitTime * 2;
               setTimeoutObj(setTimeout(iter, waitTime));
             }else{
               console.log(err)
@@ -102,7 +103,6 @@ function startProc(args){
         }
     ).catch(function(err){
         console.log(err)
-        setTimeoutObj(setTimeout(iter, waitTime));
     })
   }
   
