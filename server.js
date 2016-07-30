@@ -28,7 +28,7 @@ db.connect();
 var procs = [];
 
 //var redirectURL = 'https://untappd-feed-filter.herokuapp.com/AuthRedirect'
-var redirectURL = 'http://localhost:8082/AuthRedirect'
+var redirectURL = 'http://beerfeed-ml9951.rhcloud.com/AuthRedirect'
 
 app.use(express.static('static/src'));
 
