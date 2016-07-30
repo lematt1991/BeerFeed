@@ -27,7 +27,8 @@ db.connect();
 
 var procs = [];
 
-var redirectURL = 'https://untappd-feed-filter.herokuapp.com/AuthRedirect'
+//var redirectURL = 'https://untappd-feed-filter.herokuapp.com/AuthRedirect'
+var redirectURL = 'http://localhost:8082/AuthRedirect'
 
 app.use(express.static('static/src'));
 
@@ -38,44 +39,44 @@ app.get('/health', function(req, res){
 app.get('/Auth', function(req, res){
     var url = util.format('https://untappd.com/oauth/authenticate/?client_id=%s&client_secret=%s&response_type=code&redirect_url=%s',
                           clientID, clientSecret, redirectURL);
+    console.log('redirecting to ' + url)
     res.redirect(url);
 });
 
 app.get('/AuthRedirect', function(req, res){
   var url = util.format('https://untappd.com/oauth/authorize/?client_id=%s&client_secret=%s&response_type=code&redirect_url=%s&code=%s',
                         clientID, clientSecret, redirectURL, req.query.code);
-
+  console.log('requesting ' + url)
   request(url, function(err, response, body){
     if(!err){
       token = JSON.parse(body).response.access_token;
       if(token === undefined){
         console.log(body);
+        return;
       }
+      console.log('token = ' + token)
   	  untappd.setAccessToken(token);
   	  untappd.userInfo(function(err, data){
         if(err){
           console.log(err);
         }
         
+        console.log(data)
+
         if(data.meta.error_type === 'invalid_limit'){
           res.send('Access limit exceeded for API key')
           return
         }
         
     	  var username = data.response.user.user_name;
-
-    	  if(!procs[username]){//This user doesn't have a process running yet
-          procs[username] = {}
-          feedProc.startProc({
-            username : username,
-            access_token : token,
-            setTimeoutObj : function(obj){procs[username] = obj;}
-          });
-    	  }
         
-    	  db.query('INSERT INTO users VALUES (\'' + username + '\', \'' + 
-    		         token + '\', NULL, NULL, false);', function(err, result){
-          res.json('{}')
+        console.log('inserting ' + username)
+
+        var q = util.format('INSERT INTO users (id, access_token, lat, lon, general_purpose, last_id)' + 
+                            ' SELECT $$%s$$, $$%s$$, 0.0, 0.0, true, 0 WHERE NOT ' + 
+                            'EXISTS(SELECT 1 FROM users WHERE id=$$%s$$);', username, token, username)
+    	  db.query(q, function(err, result){
+          res.redirect('http://beerfeed-ml9951.rhcloud.com')
     		});
   	  });
     }else{
@@ -85,13 +86,13 @@ app.get('/AuthRedirect', function(req, res){
 });
 
 //Post location coordinates, should also contain a username
-app.post('/Loc', function(req, res){
-  var lat = req.body.lat;
-  var lon = req.body.lon;
-  var username = req.body.username;
+app.get('/Loc', function(req, res){
+  var lat = req.query.lat;
+  var lon = req.query.lon;
+  var username = req.query.username;
 
   var query = 'UPDATE users SET lat=' + lat + ', lon=' + lon + ' WHERE id=\'' + username + '\' RETURNING *;'
-    
+  console.log(query)
   db.query(query, function(err, result){
   	if(result.rowCount === 0){
       console.log('User not found in database');
@@ -164,8 +165,6 @@ app.get('/Start/:user', function(req, resp){
 });
 
 
-
-
 function dropOldEntries(){
   db.query('DELETE FROM beers WHERE created < NOW() - INTERVAL \'2 days\';')
 }
@@ -180,7 +179,7 @@ process.on('exit', function() {
     console.log('About to close');
 });
 
-port = process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 8081;
+port = process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 8082;
 ip = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
 
 

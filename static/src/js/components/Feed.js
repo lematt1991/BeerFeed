@@ -3,27 +3,24 @@ const util = require('util');
 import {Link} from 'react-router';
 import feedStore from '../stores/FeedStore';
 import settingsStore from '../stores/SettingsStore';
+var _ = require('underscore')
+import {Button} from 'react-bootstrap';
 
 export default class Feed extends Component{
 	_fetchData(){
 		var user = this.state.currentFeed;
 		$.get('http://beerfeed-ml9951.rhcloud.com/Feed?user=' + user).then(
-			(data) => this.setState({
-				rows : data.checkins, 
-				lastID : data.lastID,
-				currentFeed : this.state.currentFeed,
-				feeds : this.state.feeds
-			})
+			(data) => this.setState(_.extend({}, this.state, {
+				rows:data.checkins,
+				lastID : data.lastID
+			}))
 		)
 	}
 
 	updateFeed(){
-      	this.setState({
-      		rows : this.state.rows,
-      		lastID : this.state.lastID,
-      		currentFeed : settingsStore.getCurrentFeed(),
-      		feeds : this.state.feeds,
-      	})
+		this.setState(_.extend({}, this.state, {
+			currentFeed : settingsStore.getCurrentFeed()
+		}))
       	this._fetchData();
   	}
 
@@ -47,7 +44,8 @@ export default class Feed extends Component{
 			rows : [], 
 			lastID : 0, 
 			currentFeed : settingsStore.getCurrentFeed(),
-			feeds : feeds
+			feeds : feeds,
+			numRows : 40
 		};
 		this._fetchData();
 	}
@@ -72,7 +70,7 @@ export default class Feed extends Component{
 								Score: {row.rating}
 							</h4>
 							<h4>	
-								Found at: <a onClick={() => this.props.history.pushState({pos : [row.lat, row.lon], venue : row.venue}, 'map')}>{row.venue}</a>
+								Found at: <a onClick={() => this.props.history.pushState({pos : {lat:row.lat, lng:row.lon}, venue : row.venue}, 'map')}>{row.venue}</a>
 							</h4>
 						</div>
 					</div>
@@ -83,6 +81,13 @@ export default class Feed extends Component{
 
 	_showPosition(pos){
 		console.log(pos)
+	}
+
+	_showMore(event){
+		event.target.blur()
+		this.setState(_.extend({}, this.state, {
+			numRows : this.state.numRows + 40,
+		}))
 	}
 
 	render(){
@@ -99,10 +104,18 @@ export default class Feed extends Component{
 										<table class="table table-filter">
 											<tbody>
 												{
-													this.state.rows.map(this._renderRow.bind(this))
+													this.state.rows.slice(0, this.state.numRows).map(this._renderRow.bind(this))
 												}
+												
 											</tbody>
+
 										</table>
+										<div class="col-md-12 center-block">
+										    <Button onClick={this._showMore.bind(this)} 
+										    		class="btn btn-primary center-block">
+										       	Show More
+										    </Button>
+										</div>
 									</div>
 								</div>
 							</div>
