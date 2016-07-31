@@ -10,18 +10,26 @@ export default class Feed extends Component{
 	_fetchData(){
 		var user = this.state.currentFeed;
 		$.get('http://beerfeed-ml9951.rhcloud.com/Feed?user=' + user).then(
-			(data) => this.setState(_.extend({}, this.state, {
-				rows:data.checkins,
-				lastID : data.lastID
-			}))
+			(data) => {
+				this.setState(_.extend({}, this.state, {
+					rows:data.checkins,
+					lastID : data.lastID
+				}));
+			}
 		)
 	}
 
 	updateFeed(){
-		this.setState(_.extend({}, this.state, {
-			currentFeed : settingsStore.getCurrentFeed()
-		}))
-      	this._fetchData();
+		var currentFeed = settingsStore.getCurrentFeed()
+		$.get('http://beerfeed-ml9951.rhcloud.com/Feed?user=' + currentFeed).then(
+			(data) => {
+				this.setState(_.extend({}, this.state, {
+					rows:data.checkins,
+					lastID : data.lastID,
+					currentFeed : currentFeed,
+				}));
+			}
+		)
   	}
 
 	componentWillMount() {
@@ -47,6 +55,7 @@ export default class Feed extends Component{
 			feeds : feeds,
 			numRows : 40
 		};
+
 		this._fetchData();
 	}
 
@@ -90,6 +99,19 @@ export default class Feed extends Component{
 		}))
 	}
 
+	_genMoreButton(){
+		if(this.state.numRows < this.state.rows.length){
+			return(
+				<div class="col-md-12 center-block">
+				    <Button onClick={this._showMore.bind(this)} 
+				    		class="btn btn-primary center-block">
+				       	Show More
+				    </Button>
+				</div>
+			)
+		}
+	}
+
 	render(){
 		var locName = this.state.feeds[this.state.currentFeed].name
 		return(
@@ -106,16 +128,10 @@ export default class Feed extends Component{
 												{
 													this.state.rows.slice(0, this.state.numRows).map(this._renderRow.bind(this))
 												}
-												
 											</tbody>
 
 										</table>
-										<div class="col-md-12 center-block">
-										    <Button onClick={this._showMore.bind(this)} 
-										    		class="btn btn-primary center-block">
-										       	Show More
-										    </Button>
-										</div>
+										{this._genMoreButton()}
 									</div>
 								</div>
 							</div>
