@@ -94,7 +94,6 @@ function startProc(args){
             if(errResponse.meta.error_type = 'invalid-limit'){
               console.log('Access %s token exhausted, recycling...', tokens[0])
               tokens.push(tokens.shift());
-              waitTime = waitTime * 2;
               setTimeoutObj(setTimeout(iter, waitTime));
             }else{
               console.log(err)
