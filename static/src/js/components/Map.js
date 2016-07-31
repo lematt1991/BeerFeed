@@ -35,10 +35,23 @@ export default class BeerMap extends Component{
 	}
 
 	changeFeed(){
-		this.setState(_.extend({}, this.state, {
-			currentPopup : undefined,
-			currentFeed : settingsStore.getCurrentFeed()
-		}))
+		var currentFeed = settingsStore.getCurrentFeed()
+		var feeds = this.state.feeds;
+		$.get('http://beerfeed-ml9951.rhcloud.com/Beers/' + currentFeed).then(
+			(data) => {
+				console.log('changing feed to ' + currentFeed)
+				this.setState(_.extend({}, this.state, {
+					rows : data.venues,
+					lastID : data.lastID,
+					currentPopup : undefined,
+					currentFeed : currentFeed,
+					position : {
+						lat : feeds[currentFeed].coordinates[0],	
+					   	lng : feeds[currentFeed].coordinates[1]
+					},
+				}))
+			}
+		)
 	}
 
 	componentWillMount(){
@@ -108,7 +121,7 @@ export default class BeerMap extends Component{
 		        googleMapElement={
 			        <GoogleMap
 			            defaultZoom={15}
-			            defaultCenter={this.state.position}
+			            center={this.state.position}
 			        >
 			        {
 			        	this.state.rows.map((row) => {
