@@ -45,6 +45,7 @@ export default class BeerMap extends Component{
 					lastID : data.lastID,
 					currentPopup : undefined,
 					currentFeed : currentFeed,
+					changeLoc : true,
 					position : {
 						lat : feeds[currentFeed].coordinates[0],	
 					   	lng : feeds[currentFeed].coordinates[1]
@@ -90,6 +91,7 @@ export default class BeerMap extends Component{
 			position : initPos, 
 			currentFeed : currentFeed,
 			feeds : feeds,
+			changeLoc : true,
 			currentPopup : state ? state.venue : undefined
 		};
 		this._fetchData();
@@ -97,17 +99,21 @@ export default class BeerMap extends Component{
 
 	_handleClick(e){
 		e = e === this.state.currentPopup ? undefined : e
-		this.setState(_.extend({}, this.state, {currentPopup : e}))
+		this.setState(_.extend({}, this.state, {currentPopup : e, changeLoc : false}))
 	}
 
 	_onClose(){
 		this.setState(_.extend({}, this.state, {
-			currentPopup : undefined
+			changeLoc : false,
+			currentPopup : undefined,
 		}))
 	}
 
+
 	render(){
 		const cover = {position: 'absolute', left: 0, right: 0, top: 50, bottom: 0};
+		const mapProps = 
+			this.state.changeLoc ? {defaultZoom : 15, center : this.state.position} : {defaultZoom : 15}
 		return(
 			<div>
 			<GoogleMapLoader
@@ -119,10 +125,7 @@ export default class BeerMap extends Component{
 		        key={'AIzaSyAYlCzVosumU9Eo_SdRwfZ-bkjSmJzghpA'}
 		        query={{key : 'AIzaSyAYlCzVosumU9Eo_SdRwfZ-bkjSmJzghpA'}}
 		        googleMapElement={
-			        <GoogleMap
-			            defaultZoom={15}
-			            center={this.state.position}
-			        >
+			        <GoogleMap {...mapProps}>
 			        {
 			        	this.state.rows.map((row) => {
 			        		return(
