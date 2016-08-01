@@ -4,7 +4,7 @@ import {Link} from 'react-router';
 import feedStore from '../stores/FeedStore';
 import settingsStore from '../stores/SettingsStore';
 var _ = require('underscore')
-import {Button} from 'react-bootstrap';
+import {Button, Alert} from 'react-bootstrap';
 
 export default class Feed extends Component{
 	_fetchData(){
@@ -44,8 +44,8 @@ export default class Feed extends Component{
 	    settingsStore.removeListener('change', this.updateFeed)
 	}
 
-	constructor(){
-		super()
+	constructor(props){
+		super(props)
 		this.updateFeed = this.updateFeed.bind(this)
 		var feeds = settingsStore.getFeeds();
 		this.state = {
@@ -53,6 +53,7 @@ export default class Feed extends Component{
 			lastID : 0, 
 			currentFeed : settingsStore.getCurrentFeed(),
 			feeds : feeds,
+			showAlert : props.location.query.thanks === 'true',
 			numRows : 40
 		};
 
@@ -112,13 +113,25 @@ export default class Feed extends Component{
 		}
 	}
 
+	_mkAlert(){
+		if(this.state.showAlert){
+			return(
+				<Alert bsStyle="warning" onDismiss={() => this.setState(_.extend({}, this.state, {showAlert : false}))}>
+		    		<strong>Thanks for linking your Untappd account!</strong>
+				</Alert>
+			)
+		}	
+	}
+
 	render(){
 		var locName = this.state.feeds[this.state.currentFeed].name
 		return(
 			<div class="container-fluid">
 				<div class="row">
+					
 					<section class="content">
 						<div class="col-md-8 col-md-offset-2">
+							{this._mkAlert()}
 							<h1 class="text-center">Beer Feed for {locName}</h1>
 							<div class="panel panel-default">
 								<div class="panel-body">
