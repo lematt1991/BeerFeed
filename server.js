@@ -76,7 +76,7 @@ app.get('/AuthRedirect', function(req, res){
                             ' SELECT $$%s$$, $$%s$$, 0.0, 0.0, true, 0 WHERE NOT ' + 
                             'EXISTS(SELECT 1 FROM users WHERE id=$$%s$$);', username, token, username)
     	  db.query(q, function(err, result){
-          res.redirect('http://beerfeed-ml9951.rhcloud.com')
+          res.redirect('http://beerfeed-ml9951.rhcloud.com/#/feed?thanks=true')
     		});
   	  });
     }else{
