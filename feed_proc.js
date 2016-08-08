@@ -18,6 +18,7 @@ function startProc(args){
   function getFeed(args){
     url = util.format('https://api.untappd.com/v4/thepub/local?access_token=%s&lat=%d&lng=%d&min_id=%d',
                       tokens[0], args.lat, args.lng, args.min_id);
+    console.log(url)
     return request(url);
   }
 
@@ -33,7 +34,13 @@ function startProc(args){
     }
     getBeer(checkin.beer.bid).then(
       function(beer_data){
-        beer = JSON.parse(beer_data).response.beer;
+        var beer = undefined;
+        try{
+          beer = JSON.parse(beer_data).response.beer;
+        }catch(e){
+          console.log('JSON.parse error! ' + beer_data)
+          return;
+        }
         var date = new Date(checkin.created_at);
         var formattedDate = util.format('%d-%d-%d %d:%d:%d', date.getFullYear(), 
             date.getMonth()+1, date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds());
@@ -47,9 +54,7 @@ function startProc(args){
                               checkin.venue.venue_name, formattedDate, beer.rating_score, 
                               checkin.venue.location.lat, checkin.venue.location.lng, username, 
                               checkin.beer.beer_label, checkin.checkin_id);
-          console.log(q);
           db.query(q).then(function(){
-            console.log('inserted')
           }).catch(function(err){
             console.log(err)
           }); 
@@ -65,44 +70,54 @@ function startProc(args){
   function iter(){
     //Query the users table each iteration in case location changes
     var query = 'SELECT * FROM users WHERE id=\'' + username + '\';';
-    
-    db.query(query).then(
-      function(result){
-        var row = result.rows[0];
-        getFeed({'lat' : row.lat, 'lng' : row.lon, 'min_id' : lastID}).then(
-          function(data) {            
-            data = JSON.parse(data);
-            var checkins = data.response.checkins.items;
-            console.log('\n' + checkins.length + ' checkins found')
-            
-            for(var i = 0; i < checkins.length; i++){
-              processCheckin(checkins[i]);
-            }
-            if(checkins.length > 12 && lastID != 0){
-              waitTime = waitTime / 2;
-              lastID = checkins[0].checkin_id;
-            }else if(checkins.length == 0){
-              waitTime = waitTime * 2;
-            }else{
-              lastID = checkins[0].checkin_id;
-            }
-            console.log(username + 'Going to sleep for ' + (waitTime/1000) + ' seconds')
-            setTimeoutObj(setTimeout(iter, waitTime));
-          }).catch(function(err){
-            console.log(err)
-            var errResponse = JSON.parse(err.error);
-            if(errResponse.meta.error_type = 'invalid-limit'){
-              console.log('Access %s token exhausted, recycling...', tokens[0])
-              tokens.push(tokens.shift());
+    try{
+      db.query(query).then(
+        function(result){
+          var row = result.rows[0];
+          getFeed({'lat' : row.lat, 'lng' : row.lon, 'min_id' : lastID}).then(
+            function(feedData) {    
+              var data = undefined; 
+              try{       
+                data = JSON.parse(feedData);
+              }catch(e){
+                console.log(data)
+                console.log('Error parsing JSON (iter)! ' + data)
+                setTimeoutObj(setTimeout(iter, waitTime));//try again
+              }
+              var checkins = data.response.checkins.items;
+              console.log('\n' + checkins.length + ' checkins found')
+              
+              for(var i = 0; i < checkins.length; i++){
+                processCheckin(checkins[i]);
+              }
+              if(checkins.length > 12 && lastID != 0){
+                waitTime = waitTime / 2;
+                lastID = checkins[0].checkin_id;
+              }else if(checkins.length == 0){
+                waitTime = waitTime * 2;
+              }else{
+                lastID = checkins[0].checkin_id;
+              }
+              console.log(username + 'Going to sleep for ' + (waitTime/1000) + ' seconds')
               setTimeoutObj(setTimeout(iter, waitTime));
-            }else{
-              console.log(err)
-            }
-          });
-        }
-    ).catch(function(err){
-        console.log(err)
-    })
+            }).catch(function(err){
+              var errResponse = JSON.parse(err.error);
+              if(errResponse.meta.error_type = 'invalid-limit'){
+                console.log('Access %s token exhausted, recycling...', tokens[0])
+                tokens.push(tokens.shift());
+                setTimeoutObj(setTimeout(iter, waitTime));
+              }else{
+                console.log(err)
+              }
+            });
+          }
+      ).catch(function(err){
+          console.log(err)
+      })
+    }catch(e){
+      console.log(e)
+      setTimeoutObj(setTimeout(iter, waitTime))//try again...
+    }
   }
   
   function getWorkerTokens(){

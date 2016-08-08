@@ -20,8 +20,6 @@ var app = express();
 
 app.use(cors());
 
-console.log(process.env.OPENSHIFT_POSTGRESQL_DB_URL)
-
 var db = new pg.Client(process.env.OPENSHIFT_POSTGRESQL_DB_URL);
 db.connect();
 
