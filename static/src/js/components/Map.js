@@ -4,7 +4,6 @@ var L = require('leaflet');
 var util = require('util')
 import settingsStore from '../stores/SettingsStore';
 import {GoogleMapLoader, GoogleMap, Marker, InfoWindow} from "react-google-maps";
-import MapMarker from './Marker';
 var _ = require('underscore')
 import {Button} from 'react-bootstrap';
 

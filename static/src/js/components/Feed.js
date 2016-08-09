@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 const util = require('util');
 import {Link} from 'react-router';
-import feedStore from '../stores/FeedStore';
 import settingsStore from '../stores/SettingsStore';
 var _ = require('underscore')
 import {Button, Alert} from 'react-bootstrap';
