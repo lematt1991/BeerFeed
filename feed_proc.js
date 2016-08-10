@@ -101,7 +101,13 @@ function startProc(args){
               console.log(username + 'Going to sleep for ' + (waitTime/1000) + ' seconds')
               setTimeoutObj(setTimeout(iter, waitTime));
             }).catch(function(err){
-              var errResponse = JSON.parse(err.error);
+              var errResponse = undefined;
+              try{
+                errResponse = JSON.parse(err.error);
+              }catch(e){
+                console.log(e)
+                setTimeoutObj(setTimeout(iter, waitTime))//try again
+              }
               if(errResponse.meta.error_type = 'invalid-limit'){
                 console.log('Access %s token exhausted, recycling...', tokens[0])
                 tokens.push(tokens.shift());
