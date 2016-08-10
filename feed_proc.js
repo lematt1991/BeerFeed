@@ -106,15 +106,15 @@ function startProc(args){
                 errResponse = JSON.parse(err.error);
               }catch(e){
                 console.log(e)
-                setTimeoutObj(setTimeout(iter, waitTime))//try again
               }
               if(errResponse.meta.error_type = 'invalid-limit'){
                 console.log('Access %s token exhausted, recycling...', tokens[0])
                 tokens.push(tokens.shift());
-                setTimeoutObj(setTimeout(iter, waitTime));
               }else{
                 console.log(err)
               }
+              setTimeoutObj(setTimeout(iter, waitTime))//try again
+
             });
           }
       ).catch(function(err){
