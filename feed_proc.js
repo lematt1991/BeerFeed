@@ -109,7 +109,7 @@ function startProc(args){
                 console.log(err)
                 console.log(e)
               }
-              if(errResponse && errResponse.meta.error_type = 'invalid-limit'){
+              if(errResponse && errResponse.meta.error_type == 'invalid-limit'){
                 console.log('Access %s token exhausted, recycling...', tokens[0])
                 tokens.push(tokens.shift());
               }else{
