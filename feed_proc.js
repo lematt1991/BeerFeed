@@ -105,9 +105,11 @@ function startProc(args){
               try{
                 errResponse = JSON.parse(err.error);
               }catch(e){
+                console.log('Caught exception when parsing JSON error message')
+                console.log(err)
                 console.log(e)
               }
-              if(errResponse.meta.error_type = 'invalid-limit'){
+              if(errResponse && errResponse.meta.error_type = 'invalid-limit'){
                 console.log('Access %s token exhausted, recycling...', tokens[0])
                 tokens.push(tokens.shift());
               }else{
