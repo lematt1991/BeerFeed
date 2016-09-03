@@ -92,23 +92,13 @@ function startProc(args){
               }
               if(checkins.length > 12 && lastID != 0){
                 waitTime = waitTime / 2;
-                lastID = checkins[0].checkin_id;
               }else if(checkins.length == 0 && waitTime < 1800){// don't wait longer than 30 minutes
                 waitTime = waitTime * 2;
-              }else{
-                lastID = checkins[0].checkin_id;
               }
+              lastID = checkins.length > 0 ? checkins[0].checkin_id : lastID;
               console.log(username + 'Going to sleep for ' + (waitTime/1000) + ' seconds')
               setTimeoutObj(setTimeout(iter, waitTime));
             }).catch(function(err){
-    /*          var errResponse = undefined;
-              try{
-                errResponse = JSON.parse(err.error);
-              }catch(e){
-                console.log('Caught exception when parsing JSON error message')
-                console.log(err)
-                console.log(e)
-              }*/
               console.log(err)
               console.log('Access %s token exhausted, recycling...', tokens[0])
               tokens.push(tokens.shift());
