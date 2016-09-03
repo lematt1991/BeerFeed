@@ -93,7 +93,7 @@ function startProc(args){
               if(checkins.length > 12 && lastID != 0){
                 waitTime = waitTime / 2;
                 lastID = checkins[0].checkin_id;
-              }else if(checkins.length == 0){
+              }else if(checkins.length == 0 && waitTime < 1800){// don't wait longer than 30 minutes
                 waitTime = waitTime * 2;
               }else{
                 lastID = checkins[0].checkin_id;
