@@ -109,6 +109,7 @@ function startProc(args){
                 console.log(err)
                 console.log(e)
               }*/
+              console.log(err)
               console.log('Access %s token exhausted, recycling...', tokens[0])
               tokens.push(tokens.shift());
               setTimeoutObj(setTimeout(iter, waitTime))//try again
