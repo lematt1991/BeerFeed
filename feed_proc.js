@@ -90,9 +90,11 @@ function startProc(args){
               for(var i = 0; i < checkins.length; i++){
                 processCheckin(checkins[i]);
               }
+              console.log('len = ' + checkins.length)
+              console.log('waitTime = ' + waitTime)
               if(checkins.length > 12 && lastID != 0){
                 waitTime = waitTime / 2;
-              }else if(checkins.length == 0 && waitTime < 1800){// don't wait longer than 30 minutes
+              }else if(checkins.length == 0 && waitTime < 1800000){// don't wait longer than 30 minutes
                 waitTime = waitTime * 2;
               }
               lastID = checkins.length > 0 ? checkins[0].checkin_id : lastID;
