@@ -26,7 +26,7 @@ export default class Nav extends React.Component {
 
   render() {    
     return (
-      <BS.Navbar>
+      <BS.Navbar style={{zIndex : 3}}>
         <BS.Navbar.Header>
           <BS.Navbar.Toggle/>
         </BS.Navbar.Header>
