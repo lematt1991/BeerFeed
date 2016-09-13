@@ -20,7 +20,7 @@ export default class BeerMap extends Component{
 		)
 	}
 
-	_getLocation(){
+	_getLocation = () => {
 		if (navigator.geolocation) {
 	        navigator.geolocation.getCurrentPosition((position) => {
 	        	this.setState(_.extend({}, this.state, {
@@ -38,7 +38,6 @@ export default class BeerMap extends Component{
 		var feeds = this.state.feeds;
 		$.get('http://beerfeed-ml9951.rhcloud.com/Beers/' + currentFeed).then(
 			(data) => {
-				console.log('changing feed to ' + currentFeed)
 				this.setState(_.extend({}, this.state, {
 					rows : data.venues,
 					lastID : data.lastID,
@@ -108,6 +107,9 @@ export default class BeerMap extends Component{
 		}))
 	}
 
+	gotoMyLoc = () => {
+		console.log('going to my location')
+	}
 
 	render(){
 		const cover = {position: 'absolute', left: 0, right: 0, top: 50, bottom: 0};
@@ -159,18 +161,36 @@ export default class BeerMap extends Component{
 			        }
 		           
 		          	</GoogleMap>
-		        }
-		      />
+		        }/>
+		      	{/*<div style={styles.locButton} onClick={this._getLocation}>My Location</div>*/}
+
 		      </div>
 		);
 	}
 }
 
-
 const styles = {
 	locButton : {
 		position : 'absolute',
-		top : 50,
-		left : 0,
+		top : 60,
+		left : 1150,
+		fontFamily : 'Roboto,Arial,sans-serif',
+		fontSize : '14px',
+		lineHeight : '25px',
+		color : 'rgb(25, 25, 25)',
+
+		backgroundColor : '#fff',
+		border : '2px solid #fff',
+		borderRadius : '3px',
+		boxShadow : '0 2px 6px rgba(0,0,0,.3)',
+		cursor : 'pointer',
+		marginBottom : '22px',
+		textAlign : 'center',
 	}
 }
+
+
+
+
+
+

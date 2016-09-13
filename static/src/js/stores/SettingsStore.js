@@ -18,7 +18,6 @@ class SettingsStore extends EventEmitter{
 		var storedLoc = cookie.load('beerFeedLocation')
 		this.whichFeed = storedLoc ? storedLoc : 'rochester_feed';
 		if(!storedLoc){
-			console.log('Didn\'t find cookie')
 			cookie.save('beerFeedLocation', this.whichFeed)
 		}
 	}

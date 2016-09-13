@@ -61,7 +61,6 @@ export default class Feed extends Component{
 
 	_renderRow(row){
 		var date = new Date(row.created)
-		var url = util.format('https://www.google.com/maps/preview?z=14&q=loc:%d+%d',row.lat,row.lon);
 		return(
 			<tr data-status="pagado" key={row.checkin_id}>
 				<td>
