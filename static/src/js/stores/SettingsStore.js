@@ -22,6 +22,10 @@ class SettingsStore extends EventEmitter{
 		}
 	}
 
+	getCurrentLoc(){
+		return this.feeds[this.whichFeed].coordinates;
+	}
+
 	setFeed(feed){
 		this.whichFeed = feed;
 		cookie.save('beerFeedLocation', feed)

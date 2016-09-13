@@ -1,11 +1,9 @@
 import React, {Component} from 'react';
-import { Map, TileLayer,  Popup} from 'react-leaflet';
-var L = require('leaflet');
-var util = require('util')
 import settingsStore from '../stores/SettingsStore';
+import locationStore from '../stores/LocationStore'
 import {GoogleMapLoader, GoogleMap, Marker, InfoWindow} from "react-google-maps";
+
 var _ = require('underscore')
-import {Button} from 'react-bootstrap';
 
 export default class BeerMap extends Component{
 
@@ -18,19 +16,6 @@ export default class BeerMap extends Component{
 				}))
 			}
 		)
-	}
-
-	_getLocation = () => {
-		if (navigator.geolocation) {
-	        navigator.geolocation.getCurrentPosition((position) => {
-	        	this.setState(_.extend({}, this.state, {
-	        		position : {
-	        			lat : position.coords.latitude,
-	        			lng : position.coords.longitude
-	        		}
-	        	}))
-	        });
-	    }
 	}
 
 	changeFeed(){
@@ -107,7 +92,10 @@ export default class BeerMap extends Component{
 		}))
 	}
 
-	gotoMyLoc = () => {
+	gotoMyLoc = (event) => {
+		locationStore.getLocationPromise().then((loc) => {
+			this.setState(_.extend({}, this.state, {position : loc}))
+		})
 		console.log('going to my location')
 	}
 
@@ -159,11 +147,11 @@ export default class BeerMap extends Component{
 			        		)
 			        	})
 			        }
-		           
+		            <div style={styles.locButton} onClick={this.gotoMyLoc}>
+		            	My Location
+		            </div>
 		          	</GoogleMap>
 		        }/>
-		      	{/*<div style={styles.locButton} onClick={this._getLocation}>My Location</div>*/}
-
 		      </div>
 		);
 	}
@@ -172,13 +160,13 @@ export default class BeerMap extends Component{
 const styles = {
 	locButton : {
 		position : 'absolute',
-		top : 60,
-		left : 1150,
+		top : 10,
+		right : '2%',
 		fontFamily : 'Roboto,Arial,sans-serif',
 		fontSize : '14px',
 		lineHeight : '25px',
 		color : 'rgb(25, 25, 25)',
-
+		zIndex : 2,
 		backgroundColor : '#fff',
 		border : '2px solid #fff',
 		borderRadius : '3px',
