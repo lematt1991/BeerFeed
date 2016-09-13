@@ -8,7 +8,7 @@ import {Button, Alert} from 'react-bootstrap';
 export default class Feed extends Component{
 	_fetchData(){
 		var user = this.state.currentFeed;
-		$.get('http://beerfeed-ml9951.rhcloud.com/Feed?user=' + user).then(
+		$.get('https://beerfeed-ml9951.rhcloud.com/Feed?user=' + user).then(
 			(data) => {
 				this.setState(_.extend({}, this.state, {
 					rows:data.checkins,
@@ -20,7 +20,7 @@ export default class Feed extends Component{
 
 	updateFeed(){
 		var currentFeed = settingsStore.getCurrentFeed()
-		$.get('http://beerfeed-ml9951.rhcloud.com/Feed?user=' + currentFeed).then(
+		$.get('https://beerfeed-ml9951.rhcloud.com/Feed?user=' + currentFeed).then(
 			(data) => {
 				this.setState(_.extend({}, this.state, {
 					rows:data.checkins,

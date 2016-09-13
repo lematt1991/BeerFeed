@@ -8,7 +8,7 @@ var _ = require('underscore')
 export default class BeerMap extends Component{
 
 	_fetchData(){
-		$.get('http://beerfeed-ml9951.rhcloud.com/Beers/' + this.state.currentFeed).then(
+		$.get('https://beerfeed-ml9951.rhcloud.com/Beers/' + this.state.currentFeed).then(
 			(data) => {
 				this.setState(_.extend({}, this.state, {
 					rows : data.venues,
@@ -21,7 +21,7 @@ export default class BeerMap extends Component{
 	changeFeed(){
 		var currentFeed = settingsStore.getCurrentFeed()
 		var feeds = this.state.feeds;
-		$.get('http://beerfeed-ml9951.rhcloud.com/Beers/' + currentFeed).then(
+		$.get('https://beerfeed-ml9951.rhcloud.com/Beers/' + currentFeed).then(
 			(data) => {
 				this.setState(_.extend({}, this.state, {
 					rows : data.venues,
