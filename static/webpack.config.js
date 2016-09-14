@@ -5,9 +5,9 @@ var path = require('path');
 module.exports = {
   context: path.join(__dirname, "src"),
   devtool: debug ? "inline-sourcemap" : null,
-  entry: "./js/client.js",
+  entry: "./js/client.jsx",
   resolve: {
-    extensions: ['', '.js'],
+    extensions: ['', '.js', '.jsx'],
     alias: {
       webworkify: 'webworkify-webpack',
       'mapbox-gl': path.resolve('./node_modules/mapbox-gl/dist/mapbox-gl.js')
@@ -29,16 +29,10 @@ module.exports = {
         loader: 'json-loader'
       },
       {
-        test: /\.js$/,
+        test: /\.jsx?$/,
         include: path.resolve(__dirname, 'node_modules/webworkify/index.js'),
         loader: 'worker'
-      },
-      {
-        test: /mapbox-gl.+\.js$/,
-        include: path.resolve('node_modules/mapbox-gl-shaders/index.js'),
-        loader: 'transform/cacheable?brfs'
       }
-
     ],
     postLoaders: [{
       include: /node_modules\/mapbox-gl-shaders/,
