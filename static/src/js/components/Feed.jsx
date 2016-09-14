@@ -2,61 +2,43 @@ import React, {Component} from 'react';
 const util = require('util');
 import {Link} from 'react-router';
 import settingsStore from '../stores/SettingsStore';
+import dataStore from '../stores/DataStore';
 var _ = require('underscore')
 import {Button, Alert} from 'react-bootstrap';
 
 export default class Feed extends Component{
-	_fetchData(){
-		var user = this.state.currentFeed;
-		$.get('https://beerfeed-ml9951.rhcloud.com/Feed?user=' + user).then(
-			(data) => {
-				this.setState(_.extend({}, this.state, {
-					rows:data.checkins,
-					lastID : data.lastID
-				}));
-			}
-		)
-	}
+	updateFeed = () => {
+		this.setState(_.extend({}, this.state, {
+			currentFeed : settingsStore.getCurrentFeed()
+		}))
+  	}
 
-	updateFeed(){
-		var currentFeed = settingsStore.getCurrentFeed()
-		$.get('https://beerfeed-ml9951.rhcloud.com/Feed?user=' + currentFeed).then(
-			(data) => {
-				this.setState(_.extend({}, this.state, {
-					rows:data.checkins,
-					lastID : data.lastID,
-					currentFeed : currentFeed,
-				}));
-			}
-		)
+  	updateData = () => {
+  		this.setState(_.extend({}, this.state, {
+  			rows : dataStore.getFeedData()
+  		}))
   	}
 
 	componentWillMount() {
-    	this.loadInterval = setInterval(this._fetchData.bind(this), 5000);
-    	var feeds = settingsStore.getFeeds()
 	    settingsStore.on('change', this.updateFeed);
+	    dataStore.on('new-data', this.updateData);
 	}
 
 	componentWillUnmount () {
-	    this.loadInterval && clearInterval(this.loadInterval);
-	    this.loadInterval = false;
 	    settingsStore.removeListener('change', this.updateFeed)
+	    dataStore.removeListener('new-data', this.updateData)
 	}
 
 	constructor(props){
 		super(props)
-		this.updateFeed = this.updateFeed.bind(this)
 		var feeds = settingsStore.getFeeds();
 		this.state = {
-			rows : [], 
-			lastID : 0, 
+			rows : dataStore.getFeedData(), 
 			currentFeed : settingsStore.getCurrentFeed(),
 			feeds : feeds,
 			showAlert : props.location.query.thanks === 'true',
 			numRows : 40
 		};
-
-		this._fetchData();
 	}
 
 	_renderRow(row){
@@ -85,10 +67,6 @@ export default class Feed extends Component{
 				</td>
 			</tr>
 		);
-	}
-
-	_showPosition(pos){
-		console.log(pos)
 	}
 
 	_showMore(event){

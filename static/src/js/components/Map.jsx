@@ -116,8 +116,7 @@ export default class BeerMap extends Component{
 		        googleMapElement={
 			        <GoogleMap {...mapProps}>
 			        {
-			        	this.state.rows.map((row) => {
-			        		return(
+			        	this.state.rows.map((row) => 
 			        		<Marker
 			        			key={row.venue}
 			        			visible={true}
@@ -127,25 +126,19 @@ export default class BeerMap extends Component{
 			        			}}
 			        			onClick={() => this._handleClick(row.venue)}
 			        		>
-			        		{(() => {
-			        			if(this.state.currentPopup === row.venue){
-			        				console.log('Rendering popup')
-			        				return(
-					        			<InfoWindow onCloseclick={this._onClose.bind(this)}>
-					        				<div>
-					        				<b>{row.venue}</b>
-					        				{
-					        					this._genInfoWindow(row.beers)
-					        				}
-					        				</div>
-					        			</InfoWindow>
-			        				)
-			        			}})()
+			        		{this.state.currentPopup === row.venue ?
+			        			<InfoWindow onCloseclick={this._onClose.bind(this)}>
+			        				<div>
+			        				<b>{row.venue}</b>
+			        				{
+			        					this._genInfoWindow(row.beers)
+			        				}
+			        				</div>
+			        			</InfoWindow> : 
+			        			null
 			        		}
-
 			        		</Marker>
-			        		)
-			        	})
+			        	)
 			        }
 		            <div style={styles.locButton} onClick={this.gotoMyLoc}>
 		            	My Location
