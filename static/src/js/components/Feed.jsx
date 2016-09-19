@@ -1,12 +1,11 @@
 import React, {Component} from 'react';
-const util = require('util');
-import {Link} from 'react-router';
 import settingsStore from '../stores/SettingsStore';
 import searchStore from '../stores/SearchStore';
 import dataStore from '../stores/DataStore';
-var _ = require('underscore')
 import {Button, Alert} from 'react-bootstrap';
 import SearchInput, {createFilter} from 'react-search-input'
+
+var _ = require('underscore')
 
 const KEYS_TO_FILTERS = ['brewery', 'name', 'venue']
 

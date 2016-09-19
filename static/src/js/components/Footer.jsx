@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import {Link} from 'react-router';
 import {Row} from 'react-bootstrap';
 
 export default class Footer extends Component{
@@ -19,9 +18,4 @@ export default class Footer extends Component{
 		);
 	}
 
-}
-
-const styles={
-	link : {
-	}
 }

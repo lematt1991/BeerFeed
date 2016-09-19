@@ -1,5 +1,4 @@
 import React from "react";
-import {Link} from 'react-router';
 import settingsStore from '../stores/SettingsStore';
 import searchStore from '../stores/SearchStore';
 import * as SearchActions from '../actions/SearchActions';
@@ -31,6 +30,7 @@ export default class Nav extends React.Component {
   }
 
   render() {    
+    console.log(searchStore.getSearchTerm())
     return (
       <BS.Navbar style={{zIndex : 3}}>
         <BS.Navbar.Header>
