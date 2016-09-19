@@ -2,9 +2,13 @@ import React, {Component} from 'react';
 const util = require('util');
 import {Link} from 'react-router';
 import settingsStore from '../stores/SettingsStore';
+import searchStore from '../stores/SearchStore';
 import dataStore from '../stores/DataStore';
 var _ = require('underscore')
 import {Button, Alert} from 'react-bootstrap';
+import SearchInput, {createFilter} from 'react-search-input'
+
+const KEYS_TO_FILTERS = ['brewery', 'name', 'venue']
 
 export default class Feed extends Component{
 	updateFeed = () => {
@@ -19,14 +23,22 @@ export default class Feed extends Component{
   		}))
   	}
 
+  	updateSearchTerm = () => {
+  		this.setState(_.extend({}, this.state, {
+  			searchTerm : searchStore.getSearchTerm(),
+  		}))
+  	}
+
 	componentWillMount() {
 	    settingsStore.on('change', this.updateFeed);
 	    dataStore.on('new-data', this.updateData);
+	    searchStore.on('change', this.updateSearchTerm);
 	}
 
 	componentWillUnmount () {
 	    settingsStore.removeListener('change', this.updateFeed)
 	    dataStore.removeListener('new-data', this.updateData)
+	    searchStore.removeListener('change', this.updateSearchTerm)
 	}
 
 	constructor(props){
@@ -37,7 +49,8 @@ export default class Feed extends Component{
 			currentFeed : settingsStore.getCurrentFeed(),
 			feeds : feeds,
 			showAlert : props.location.query.thanks === 'true',
-			numRows : 40
+			numRows : 40,
+			searchTerm : searchStore.getSearchTerm()
 		};
 	}
 
@@ -76,19 +89,6 @@ export default class Feed extends Component{
 		}))
 	}
 
-	_genMoreButton(){
-		if(this.state.numRows < this.state.rows.length){
-			return(
-				<div class="col-md-12 center-block">
-				    <Button onClick={this._showMore.bind(this)} 
-				    		class="btn btn-primary center-block">
-				       	Show More
-				    </Button>
-				</div>
-			)
-		}
-	}
-
 	_mkAlert(){
 		if(this.state.showAlert){
 			return(
@@ -101,6 +101,7 @@ export default class Feed extends Component{
 
 	render(){
 		var locName = this.state.feeds[this.state.currentFeed].name
+		var items = this.state.rows.filter(createFilter(this.state.searchTerm, KEYS_TO_FILTERS))
 		return(
 			<div class="container-fluid">
 				<div class="row">
@@ -115,12 +116,20 @@ export default class Feed extends Component{
 										<table class="table table-filter">
 											<tbody>
 												{
-													this.state.rows.slice(0, this.state.numRows).map(this._renderRow.bind(this))
+													items.slice(0, this.state.numRows).map(this._renderRow.bind(this))
 												}
 											</tbody>
 
 										</table>
-										{this._genMoreButton()}
+										{
+											this.state.numRows < items.length ? 
+											<div class="col-md-12 center-block">
+											    <Button onClick={this._showMore.bind(this)} 
+											    		class="btn btn-primary center-block">
+											       	Show More
+											    </Button>
+											</div> : null
+										}
 									</div>
 								</div>
 							</div>

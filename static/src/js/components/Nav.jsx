@@ -1,6 +1,8 @@
 import React from "react";
 import {Link} from 'react-router';
 import settingsStore from '../stores/SettingsStore';
+import searchStore from '../stores/SearchStore';
+import * as SearchActions from '../actions/SearchActions';
 import * as SettingsActions from '../actions/SettingsActions';
 import * as BS from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
@@ -22,6 +24,10 @@ export default class Nav extends React.Component {
 
   componentWillMount(){
     settingsStore.on('change', this.updateFeed.bind(this));
+  }
+
+  updateSearch = (e) => {
+    SearchActions.changeSearchTerm(e.target.value)
   }
 
   render() {    
@@ -62,6 +68,16 @@ export default class Nav extends React.Component {
               </BS.NavItem>
             </LinkContainer>
           </BS.Nav>
+          {
+            this.props.location.pathname === '/feed' ? 
+              <BS.Navbar.Form>
+                <BS.FormControl
+                  type="text"
+                  placeholder="Filter"
+                  onChange={this.updateSearch}
+                />
+              </BS.Navbar.Form> : null
+          }
         </BS.Navbar.Collapse>
       </BS.Navbar>
     );
