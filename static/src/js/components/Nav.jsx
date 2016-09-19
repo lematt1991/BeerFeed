@@ -6,23 +6,38 @@ import * as SettingsActions from '../actions/SettingsActions';
 import * as BS from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
+var _ = require('underscore')
+
 export default class Nav extends React.Component {
 
   constructor(){
     super();
-    this.state = {feeds : settingsStore.getFeeds(), currentFeed : settingsStore.getCurrentFeed()};
+    this.state = {
+      feeds : settingsStore.getFeeds(), 
+      currentFeed : settingsStore.getCurrentFeed(),
+      searchTerm : ''
+    };
   }
 
   _changeLoc(event){
     SettingsActions.changeFeed(event.target.id);
   }
 
-  updateFeed(){
-    this.setState({feeds : this.state.feeds, currentFeed : settingsStore.getCurrentFeed()})
+  updateFeed = () => {
+    this.setState(_.extend({}, this.state, {
+      feeds : settingsStore.getCurrentFeed()
+    }))
+  }
+
+  updateSearchTerm = () => {
+    this.setState(_.extend({}, this.state, {
+      searchTerm : searchStore.getSearchTerm(),
+    }))
   }
 
   componentWillMount(){
-    settingsStore.on('change', this.updateFeed.bind(this));
+    settingsStore.on('change', this.updateFeed);
+    searchStore.on('change', this.updateSearchTerm)
   }
 
   updateSearch = (e) => {
@@ -30,7 +45,6 @@ export default class Nav extends React.Component {
   }
 
   render() {    
-    console.log(searchStore.getSearchTerm())
     return (
       <BS.Navbar style={{zIndex : 3}}>
         <BS.Navbar.Header>
@@ -73,6 +87,7 @@ export default class Nav extends React.Component {
               <BS.Navbar.Form>
                 <BS.FormControl
                   type="text"
+                  value={this.state.searchTerm}
                   placeholder="Filter"
                   onChange={this.updateSearch}
                 />
