@@ -19,13 +19,13 @@ export default class Nav extends React.Component {
     };
   }
 
-  _changeLoc(event){
+  _changeLoc = (event) => {
     SettingsActions.changeFeed(event.target.id);
   }
 
   updateFeed = () => {
     this.setState(_.extend({}, this.state, {
-      feeds : settingsStore.getCurrentFeed()
+      currentFeed : settingsStore.getCurrentFeed()
     }))
   }
 
@@ -45,6 +45,7 @@ export default class Nav extends React.Component {
   }
 
   render() {    
+    console.log(this.state.feeds)
     return (
       <BS.Navbar style={{zIndex : 3}}>
         <BS.Navbar.Header>
@@ -58,7 +59,7 @@ export default class Nav extends React.Component {
                   <BS.MenuItem 
                                 id={feed} 
                                 key={feed} 
-                                onClick={this._changeLoc.bind(this)} 
+                                onClick={this._changeLoc} 
                                 active={feed == this.state.currentFeed}
                   >
                     {this.state.feeds[feed].name}
