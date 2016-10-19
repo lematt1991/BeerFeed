@@ -15,7 +15,7 @@ class SettingsStore extends EventEmitter{
 				name : 'New York, NY'
 			},
 			worker1234 : {
-				coordinates : [44.965818, -93.192129],
+				coordinates : [44.975715, -93.263540],
 				name : 'Minneapolis, MN'
 			}
 		}
