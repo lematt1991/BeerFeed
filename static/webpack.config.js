@@ -32,7 +32,8 @@ module.exports = {
         test: /\.jsx?$/,
         include: path.resolve(__dirname, 'node_modules/webworkify/index.js'),
         loader: 'worker'
-      }
+      },
+      { test: /\.css$/, loader: 'style!css' },
     ],
     postLoaders: [{
       include: /node_modules\/mapbox-gl-shaders/,
