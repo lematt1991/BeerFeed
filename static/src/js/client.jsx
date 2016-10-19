@@ -7,6 +7,9 @@ import BeerMap from "./components/Map";
 import Feed from "./components/Feed";
 import LinkAccount from './components/LinkAccount';
 import About from './components/About';
+import Stats from './components/Stats';
+
+
 const app = document.getElementById('app');
 
 ReactDOM.render(
@@ -17,6 +20,7 @@ ReactDOM.render(
 			<Route path="feed" component={Feed}/>
 			<Route path="linkAccount" component={LinkAccount}/>
 			<Route path="about" component={About}/>
+			<Route path="stats" component={Stats}/>
 		</Route>
 	</Router>,
 	app

@@ -45,7 +45,6 @@ export default class Nav extends React.Component {
   }
 
   render() {    
-    console.log(this.state.feeds)
     return (
       <BS.Navbar style={{zIndex : 3}}>
         <BS.Navbar.Header>
@@ -80,6 +79,11 @@ export default class Nav extends React.Component {
             <LinkContainer to="about">
               <BS.NavItem eventKey={3}>
                 About
+              </BS.NavItem>
+            </LinkContainer>
+            <LinkContainer to="stats">
+              <BS.NavItem eventKey={4}>
+                Stats
               </BS.NavItem>
             </LinkContainer>
           </BS.Nav>
