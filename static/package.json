@@ -13,7 +13,6 @@
     "babel-preset-react": "^6.3.13",
     "babel-preset-stage-0": "^6.3.13",
     "brfs": "^1.4.3",
-    "fixed-data-table": "^0.6.3",
     "flux": "^2.1.1",
     "history": "^1.13.1",
     "immutable": "^3.8.1",
