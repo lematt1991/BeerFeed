@@ -74,7 +74,19 @@ export default class Stats extends React.Component{
 				    {
 				    	this.state.venues.map((obj, i) => 
 				    		<tr key={i}>
-				    			<td>{i}</td>
+				    			<td>{i+1}</td>
+								<td>
+									<a 
+										onClick={() => {
+											this.props.history.pushState({
+												pos : {lat : obj.checkins[0].lat, lng : obj.checkins[0].lon},
+												venue : obj.venue
+											}, 'map')
+										}}
+									>
+										{obj.venue}
+									</a>
+								</td>
 				    			<td>{obj.venue}</td>
 				    			<td>{obj.checkins.length}</td>
 				    		</tr>
