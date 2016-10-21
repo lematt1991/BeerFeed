@@ -13,11 +13,14 @@ class SettingsStore extends EventEmitter{
 			nyc_feed : {
 				coordinates : [40.789, -73.9479], 
 				name : 'New York, NY'
+			},
+			worker1234 : {
+				coordinates : [44.975715, -93.263540],
+				name : 'Minneapolis, MN'
 			}
 		}
 		var storedLoc = cookie.load('beerFeedLocation')
 		this.whichFeed = storedLoc ? storedLoc : 'nyc_feed';
-		console.log('whichFeed = ' + this.whichFeed)
 		if(this.feeds[this.whichFeed] === undefined){
 			console.log('Error, cookie feed error')
 			this.whichFeed = 'nyc_feed';
