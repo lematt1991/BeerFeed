@@ -87,7 +87,6 @@ export default class Stats extends React.Component{
 										{obj.venue}
 									</a>
 								</td>
-				    			<td>{obj.venue}</td>
 				    			<td>{obj.checkins.length}</td>
 				    		</tr>
 				    	)
