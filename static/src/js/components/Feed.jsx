@@ -55,6 +55,7 @@ export default class Feed extends Component{
 
 	_renderRow(row){
 		var date = new Date(row.created)
+		var beerLink = `https://untappd.com/b/${row.beer_slug}/${row.bid}`
 		return(
 			<tr data-status="pagado" key={row.checkin_id}>
 				<td>
@@ -66,7 +67,7 @@ export default class Feed extends Component{
 								Brewery: {row.brewery}
 							</h4>
 							<h4>
-								Beer: {row.name}
+								Beer: <a target="_blank" href={beerLink}>{row.name}</a>
 							</h4>
 							<h4>
 								Score: {row.rating}
