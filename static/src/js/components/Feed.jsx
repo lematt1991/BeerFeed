@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import settingsStore from '../stores/SettingsStore';
 import searchStore from '../stores/SearchStore';
 import dataStore from '../stores/DataStore';
-import {Button, Alert} from 'react-bootstrap';
+import {Button, Alert, SafeAnchor} from 'react-bootstrap';
 import SearchInput, {createFilter} from 'react-search-input'
 
 var _ = require('underscore')
@@ -72,7 +72,7 @@ export default class Feed extends Component{
 								Score: {row.rating}
 							</h4>
 							<h4>	
-								Found at: <a onClick={() => this.props.history.pushState({pos : {lat:row.lat, lng:row.lon}, venue : row.venue}, 'map')}>{row.venue}</a>
+								Found at: <SafeAnchor onClick={() => this.props.history.pushState({pos : {lat:row.lat, lng:row.lon}, venue : row.venue}, 'map')}>{row.venue}</SafeAnchor>
 							</h4>
 						</div>
 					</div>

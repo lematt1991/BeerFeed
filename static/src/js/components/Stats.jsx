@@ -1,7 +1,9 @@
 import React from 'react';
 import DataStore from '../stores/DataStore';
 import * as _ from 'lodash';
+import {SafeAnchor} from 'react-bootstrap';
 import {Table} from 'react-bootstrap';
+import * as SearchActions from '../actions/SearchActions';
 
 export default class Stats extends React.Component{
 
@@ -102,7 +104,7 @@ export default class Stats extends React.Component{
 						    		<tr key={i} style={{display : 'inline-table', width : '100%', textAlign : 'left'}}>
 						    			<td class="col-xs-2">{i+1}</td>
 										<td class="col-xs-2">
-											<a 
+											<SafeAnchor
 												onClick={() => {
 													this.props.history.pushState({
 														pos : {lat : obj.checkins[0].lat, lng : obj.checkins[0].lon},
@@ -111,7 +113,7 @@ export default class Stats extends React.Component{
 												}}
 											>
 												{obj.venue}
-											</a>
+											</SafeAnchor>
 										</td>
 						    			<td class="col-xs-2">{obj.checkins.length}</td>
 						    		</tr>
@@ -144,7 +146,14 @@ export default class Stats extends React.Component{
 					    		<tr key={i} style={{display : 'inline-table', width : '100%', textAlign : 'left'}}>
 					    			<td class="col-xs-2">{i+1}</td>
 									<td class="col-xs-2">			
-										{obj.brewery}
+										<SafeAnchor
+											onClick={() => {
+												SearchActions.changeSearchTerm(obj.brewery)
+												this.props.history.push('feed')
+											}}
+										>
+											{obj.brewery}
+										</SafeAnchor>
 									</td>
 					    			<td class="col-xs-2">{obj.checkins.length}</td>
 					    		</tr>
