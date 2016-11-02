@@ -44,13 +44,13 @@ export default class QA extends Component{
 				</Row>
 
 				<Row>	
-					<h1>When will Beer Feed be avaiable in my area?</h1>
+					<h1>When will Beer Feed be available in my area?</h1>
 				</Row>
 
 				<Row>
 					<Col md={8}>
 						<h4>
-							Curently, there are some limitations regarding the amount of data
+							Currently, there are some limitations regarding the amount of data
 							that can be requested from Untappd.  As the user base of Beer Feed
 							grows, the coverage will grow with it.  Click the "Help Improve Beer Feed"
 							button above to find out more. 
