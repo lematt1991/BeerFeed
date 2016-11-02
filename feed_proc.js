@@ -46,15 +46,17 @@ function startProc(args){
             if(beer.rating_score >= 4.0){
                 console.log('Inserting beer %s: %s', checkin.brewery.brewery_name, checkin.beer.beer_name)
 
-                var q = util.format('INSERT INTO beers (checkin_id, name, brewery, venue, created, rating, lat, lon, username, pic, bid, beer_slug, brewery_id, brewery_slug, venue_id, venue_slug)' + 
-                                    ' SELECT %d, $$%s$$, $$%s$$, $$%s$$, $$%s$$, %d, %d, %d, $$%s$$, $$%s$$, %d, $$%s$$, %d, $$%s$$, %d, $$%s$$ WHERE NOT ' + 
+                var q = util.format('INSERT INTO beers (checkin_id, name, brewery, venue, created, rating, lat, lon, username, pic, bid, beer_slug, brewery_id, brewery_slug, venue_id, venue_slug, geom)' + 
+                                    ' SELECT %d, $$%s$$, $$%s$$, $$%s$$, $$%s$$, %d, %d, %d, $$%s$$, $$%s$$, %d, $$%s$$, %d, $$%s$$, %d, $$%s$$, %s WHERE NOT ' + 
                                     'EXISTS(SELECT 1 FROM beers WHERE checkin_id = %d)',
                                     checkin.checkin_id, checkin.beer.beer_name, checkin.brewery.brewery_name,
                                     checkin.venue.venue_name, formattedDate, beer.rating_score, 
                                     checkin.venue.location.lat, checkin.venue.location.lng, username, 
                                     checkin.beer.beer_label, checkin.beer.bid, checkin.beer.beer_slug,
                                     checkin.brewery.brewery_id, checkin.brewery.brewery_slug, 
-                                    checkin.venue.venue_id, checkin.venue.venue_slug, checkin.checkin_id);
+                                    checkin.venue.venue_id, checkin.venue.venue_slug, 
+                                    `ST_GeomFromText('POINT(${checkin.venue.location.lng} ${checkin.venue.location.lat})', 4326)`,
+                                    checkin.checkin_id);
                 console.log(q)
                 db.query(q).then(function(){}).catch(function(err){
                     console.log(err)
