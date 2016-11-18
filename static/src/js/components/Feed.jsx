@@ -116,7 +116,7 @@ export default class Feed extends Component{
 								Score: {row.rating}
 							</h4>
 							<h4>	
-								Found at: <SafeAnchor onClick={() => this.props.history.pushState({pos : {lat:row.lat, lng:row.lon}, venue : row.venue}, 'map')}>{row.venue}</SafeAnchor>
+								Found at: <SafeAnchor onClick={() => this.props.history.pushState({pos : {lat:row.lat, lng:row.lon}, venue : row.venue}, 'map/' + row.venue)}>{row.venue}</SafeAnchor>
 							</h4>
 						</div>
 					</div>

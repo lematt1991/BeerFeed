@@ -58,13 +58,17 @@ export default class BeerMap extends Component{
 		var initPos = state ? state.pos : 
 					  {lat : feeds[currentFeed].coordinates[0],	
 					   lng : feeds[currentFeed].coordinates[1]};
+		var popup = props.location.pathname.match(/map\/.*/)
+		if(popup){
+			popup = popup[0].substr(4)
+		}
 		this.state = {
 			rows : DataStore.getMapData(), 
 			position : initPos, 
 			currentFeed : currentFeed,
 			feeds : feeds,
 			changeLoc : true,
-			currentPopup : state ? state.venue : undefined
+			currentPopup : popup
 		};
 	}
 

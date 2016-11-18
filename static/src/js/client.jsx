@@ -19,7 +19,7 @@ ReactDOM.render(
 	<Router history={hashHistory}>
 		<Route path="/" component={Layout}>
 			<IndexRedirect to="/feed"/>
-			<Route path="map" component={BeerMap}/>
+			<Route path="map(/:brewery)" component={BeerMap}/>
 			<Route path="feed" component={Feed}/>
 			<Route path="linkAccount" component={LinkAccount}/>
 			<Route path="about" component={About}/>
