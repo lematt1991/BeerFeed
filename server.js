@@ -83,22 +83,6 @@ app.get('/AuthRedirect', function(req, res){
   });
 });
 
-//Post location coordinates, should also contain a username
-app.get('/Loc', function(req, res){
-  var lat = req.query.lat;
-  var lon = req.query.lon;
-  var username = req.query.username;
-
-  var query = 'UPDATE users SET lat=' + lat + ', lon=' + lon + ' WHERE id=\'' + username + '\' RETURNING *;'
-  console.log(query)
-  db.query(query, function(err, result){
-  	if(result.rowCount === 0){
-      console.log('User not found in database');
-  	}
-  	res.send(req.body);
-  });
-});
-
 //Get top beers for a particular user
 app.get('/Beers/:user', function(req, res){
   var lastID = req.query.lastID ? req.query.lastID : 0;

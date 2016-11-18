@@ -1,5 +1,6 @@
 import {EventEmitter} from 'events';
 import settingsStore from './SettingsStore'
+import update from 'react/lib/update';
 
 const BACKEND_URL='https://beerfeed-ml9951.rhcloud.com'
 
@@ -11,6 +12,15 @@ class DataStore extends EventEmitter{
 				if(data.checkins){
 					this.lastID = data.lastID
 					this.data = data.checkins.concat(this.data);
+
+					for(var i = 0; i < data.checkins.length; i++){
+						if(this.mapData[data.checkins[i].venue]){
+							this.mapData[data.checkins[i].venue].push(data.checkins[i]);
+						}else{
+							this.mapData[data.checkins[i].venue] = [data.checkins[i]]
+						}
+					}
+
 					this.emit('new-data')
 				}
 			}
@@ -21,20 +31,21 @@ class DataStore extends EventEmitter{
 		return this.data;
 	}
 
+	getMapData(){
+		return this.mapData;
+	}
+
 	constructor(){
 		super();
 		settingsStore.on('change', () => {
-			this.currentFeed = settingsStore.getCurrentFeed();
-			$.get(`${BACKEND_URL}/Feed?user=${this.currentFeed}`).then(
-				(data) => {
-					this.lastID = data.lastID
-					this.data = data.checkins
-					this.emit('new-data')
-				}
-			)
+			this.lastID = 0;
+			this.data = []
+			this.currentFeed = settingsStore.getCurrentFeed()
+			this.fetchData()
 		})
 		this.lastID = 0
 		this.data = []
+		this.mapData = {};
 		this.currentFeed = settingsStore.getCurrentFeed()
 		settingsStore.on('change', () => {
 			this.currentFeed = settingsStore.getCurrentFeed();

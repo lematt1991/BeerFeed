@@ -7,7 +7,7 @@ module.exports = {
   devtool: debug ? "inline-sourcemap" : null,
   entry: "./js/client.jsx",
   resolve: {
-    extensions: ['', '.js', '.jsx'],
+    extensions: ['', '.js', '.jsx', '.css'],
     alias: {
       webworkify: 'webworkify-webpack',
       'mapbox-gl': path.resolve('./node_modules/mapbox-gl/dist/mapbox-gl.js')

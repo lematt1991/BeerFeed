@@ -8,13 +8,26 @@ class LocationStore extends EventEmitter{
 		super();
 		this.userLocation = new Promise((resolve, reject) => {
 			if (navigator.geolocation) {
-				navigator.geolocation.getCurrentPosition(function(position) {
+				navigator.geolocation.getCurrentPosition(position => {
+					console.log('Got current position!')
+					this.foundLocation = true
+					this.location = {lat : position.coords.latitude, lng : position.coords.longitude}
 					resolve({lat : position.coords.latitude, lng : position.coords.longitude});
+					this.emit('got-location')
 				})
     		}else{
+    			console.log('No HTML5 geolocation available')
     			resolve(settingsStore.getCurrentLoc())
     		}
 		})
+	}
+
+	haveUserLocation = () => {
+		return this.foundLocation
+	}
+
+	getLocation = () => {
+		return this.location;
 	}
 
 	getLocationPromise(){

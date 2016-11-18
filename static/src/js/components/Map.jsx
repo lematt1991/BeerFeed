@@ -1,49 +1,36 @@
 import React, {Component} from 'react';
-import settingsStore from '../stores/SettingsStore';
-import locationStore from '../stores/LocationStore'
+import SettingsStore from '../stores/SettingsStore';
+import LocationStore from '../stores/LocationStore'
+import DataStore from '../stores/DataStore';
 import {GoogleMapLoader, GoogleMap, Marker, InfoWindow} from "react-google-maps";
 
 var _ = require('underscore')
 
+const KEY='AIzaSyCsDj1rbaXeCe64Unrsu168VoNstG_3ItA';
+
 export default class BeerMap extends Component{
-
-	_fetchData(){
-		$.get('https://beerfeed-ml9951.rhcloud.com/Beers/' + this.state.currentFeed).then(
-			(data) => {
-				this.setState(_.extend({}, this.state, {
-					rows : data.venues,
-					lastID : data.lastID,
-				}))
+	updateData = () => {
+		var feed = SettingsStore.getCurrentFeed()
+		var feeds = this.state.feeds
+		this.setState(_.extend({}, this.state, {
+			rows : DataStore.getMapData(),
+			currentPopup : feed === this.state.currentFeed ? this.state.currentPopup : undefined,
+			currentFeed : feed,
+			changeLoc : feed === this.state.currentFeed,
+			position : {
+				lat : feeds[feed].coordinates[0],
+				lng : feeds[feed].coordinates[1]
 			}
-		)
-	}
 
-	changeFeed(){
-		var currentFeed = settingsStore.getCurrentFeed()
-		var feeds = this.state.feeds;
-		$.get('https://beerfeed-ml9951.rhcloud.com/Beers/' + currentFeed).then(
-			(data) => {
-				this.setState(_.extend({}, this.state, {
-					rows : data.venues,
-					lastID : data.lastID,
-					currentPopup : undefined,
-					currentFeed : currentFeed,
-					changeLoc : true,
-					position : {
-						lat : feeds[currentFeed].coordinates[0],	
-					   	lng : feeds[currentFeed].coordinates[1]
-					},
-				}))
-			}
-		)
+		}))
 	}
 
 	componentWillMount(){
-		settingsStore.on('change', this.changeFeed);
+		DataStore.on('new-data', this.updateData);
 	}
 
 	componentWillUnmount(){
-		settingsStore.removeListener('change', this.changeFeed)
+		DataStore.removeListener('new-data', this.updateData)
 	}
 
 	_genInfoWindow(beers){
@@ -53,7 +40,7 @@ export default class BeerMap extends Component{
 				if(used[beer.name] === undefined){
 					used[beer.name] = true;
 					return(
-						<p style={{margin : 0}}>{beer.brewery}: {beer.name} ({beer.rating})</p>
+						<p style={{margin : 0}} key={beer.name}>{beer.brewery}: {beer.name} ({beer.rating})</p>
 					)
 				}
 			})
@@ -62,22 +49,20 @@ export default class BeerMap extends Component{
 
 	constructor(props){
 		super(props);
-		this.changeFeed = this.changeFeed.bind(this);
 		var state = this.props.location.state;
-		var feeds = settingsStore.getFeeds()
-		var currentFeed = settingsStore.getCurrentFeed()
+		var feeds = SettingsStore.getFeeds()
+		var currentFeed = SettingsStore.getCurrentFeed()
 		var initPos = state ? state.pos : 
 					  {lat : feeds[currentFeed].coordinates[0],	
 					   lng : feeds[currentFeed].coordinates[1]};
 		this.state = {
-			rows : [], lastID : 0, 
+			rows : DataStore.getMapData(), 
 			position : initPos, 
 			currentFeed : currentFeed,
 			feeds : feeds,
 			changeLoc : true,
 			currentPopup : state ? state.venue : undefined
 		};
-		this._fetchData();
 	}
 
 	_handleClick(e){
@@ -93,7 +78,7 @@ export default class BeerMap extends Component{
 	}
 
 	gotoMyLoc = (event) => {
-		locationStore.getLocationPromise().then((loc) => {
+		LocationStore.getLocationPromise().then((loc) => {
 			this.setState(_.extend({}, this.state, {position : loc}))
 		})
 		console.log('going to my location')
@@ -116,22 +101,22 @@ export default class BeerMap extends Component{
 		        googleMapElement={
 			        <GoogleMap {...mapProps}>
 			        {
-			        	this.state.rows.map((row) => 
+			        	Object.keys(this.state.rows).map(k => 
 			        		<Marker
-			        			key={row.venue}
+			        			key={k}
 			        			visible={true}
 			        			position={{
-			        				lat : row.coordinate.latitude,
-			        				lng : row.coordinate.longitude
+			        				lat : this.state.rows[k][0].lat,
+			        				lng : this.state.rows[k][0].lon
 			        			}}
-			        			onClick={() => this._handleClick(row.venue)}
+			        			onClick={() => this._handleClick(k)}
 			        		>
-			        		{this.state.currentPopup === row.venue ?
+			        		{this.state.currentPopup === k ?
 			        			<InfoWindow onCloseclick={this._onClose.bind(this)}>
 			        				<div>
-			        				<b>{row.venue}</b>
+			        				<b>{k}</b>
 			        				{
-			        					this._genInfoWindow(row.beers)
+			        					this._genInfoWindow(this.state.rows[k])
 			        				}
 			        				</div>
 			        			</InfoWindow> : 
