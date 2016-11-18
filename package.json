@@ -23,6 +23,7 @@
     "dotenv": "^2.0.0",
     "express": "^4.14.0",
     "fs": "0.0.2",
+    "lodash": "^4.17.2",
     "node-schedule": "^1.1.1",
     "node-untappd": "^0.4.1",
     "parse-database-url": "^0.3.0",
@@ -31,6 +32,7 @@
     "request": "^2.72.0",
     "request-promise": "^3.0.0",
     "sleep": "^3.0.1",
+    "twit": "^2.2.5",
     "url": "^0.11.0",
     "util": "^0.10.3"
   }

@@ -181,3 +181,5 @@ app.get('/Wakeup', function(req, res){
   res.send('')
 });
 
+require('./twitter-bot').check()
+
