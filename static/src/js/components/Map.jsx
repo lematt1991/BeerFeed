@@ -16,7 +16,7 @@ export default class BeerMap extends Component{
 			rows : DataStore.getMapData(),
 			currentPopup : feed === this.state.currentFeed ? this.state.currentPopup : undefined,
 			currentFeed : feed,
-			changeLoc : feed === this.state.currentFeed,
+			changeLoc : feed !== this.state.currentFeed,
 			position : {
 				lat : feeds[feed].coordinates[0],
 				lng : feeds[feed].coordinates[1]
