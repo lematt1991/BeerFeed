@@ -17,7 +17,7 @@ function startProc(args){
   
     function getFeed(args){
         var base = 'https://api.untappd.com/v4/thepub/local'
-        var url = `${base}?access_token=${tokens[0]}&lat=${args.lat}&lng=${args.lng}&min_id=${args.min_id}?radius=25`
+        var url = `${base}?access_token=${tokens[0]}&lat=${args.lat}&lng=${args.lng}&min_id=${args.min_id}&radius=25`
         console.log(url)
         return request(url);
     }
