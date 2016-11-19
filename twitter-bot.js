@@ -19,7 +19,8 @@ function tweet(beer){
 			console.log(err)
 		}else{
 			var info = result.rows[0]
-			var status = `${beer.count} people found ${info.brewery}'s ${info.name} at ${info.venue}`
+			var url = `http://www.thebeerfeed.com/#/map/${info.venue_id}`;
+			var status = `${beer.count} people found ${info.brewery}'s ${info.name} at ${info.venue}: ${url}`
 			T.post('statuses/update', { 
 				status: status, 
 				lat : info.lat,
