@@ -121,7 +121,7 @@ export default class BeerMap extends Component{
 			        		{this.state.currentPopup === k ?
 			        			<InfoWindow onCloseclick={this._onClose.bind(this)}>
 			        				<div>
-			        				<b>{k}</b>
+			        				<b>{this.state.rows[k][0].venue}</b>
 			        				{
 			        					this._genInfoWindow(this.state.rows[k])
 			        				}

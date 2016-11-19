@@ -152,7 +152,6 @@ export default class Feed extends Component{
 		var locName = this.state.feeds[this.state.currentFeed].name
 		var items = this.state.rows.filter(createFilter(this.state.searchTerm, KEYS_TO_FILTERS))
 		items.sort(this.state.ordering.f)
-		console.log('test')
 		return(
 			<div class="container-fluid">
 				<div class="row">

@@ -14,10 +14,10 @@ class DataStore extends EventEmitter{
 					this.data = data.checkins.concat(this.data);
 
 					for(var i = 0; i < data.checkins.length; i++){
-						if(this.mapData[data.checkins[i].venue]){
-							this.mapData[data.checkins[i].venue].push(data.checkins[i]);
+						if(this.mapData[data.checkins[i].venue_id]){
+							this.mapData[data.checkins[i].venue_id].push(data.checkins[i]);
 						}else{
-							this.mapData[data.checkins[i].venue] = [data.checkins[i]]
+							this.mapData[data.checkins[i].venue_id] = [data.checkins[i]]
 						}
 					}
 
