@@ -33,7 +33,7 @@ function tweet(beer){
 }
 
 function dropOldEntries(){
-  db.query('DELETE FROM top_beers WHERE date < NOW() - INTERVAL \'2 days\';')
+  db.query('DELETE FROM top_beers WHERE date < NOW() - INTERVAL \'3 days\';')
 }
 
 function check(){
