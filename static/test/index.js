@@ -1,0 +1,3 @@
+
+
+require('./specs/components/Feed');
