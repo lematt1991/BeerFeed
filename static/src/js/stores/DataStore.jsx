@@ -1,5 +1,5 @@
 import {EventEmitter} from 'events';
-import settingsStore from './SettingsStore'
+import settingsStore from 'beerfeed/stores/SettingsStore'
 import update from 'react/lib/update';
 
 const BACKEND_URL='https://beerfeed-ml9951.rhcloud.com'

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import SettingsStore from '../stores/SettingsStore';
-import LocationStore from '../stores/LocationStore'
-import DataStore from '../stores/DataStore';
+import SettingsStore from 'beerfeed/stores/SettingsStore';
+import LocationStore from 'beerfeed/stores/LocationStore'
+import DataStore from 'beerfeed/stores/DataStore';
 import {GoogleMapLoader, GoogleMap, Marker, InfoWindow} from "react-google-maps";
 
 var _ = require('underscore')
@@ -16,7 +16,6 @@ export default class BeerMap extends Component{
 			rows : DataStore.getMapData(),
 			currentPopup : feed === this.state.currentFeed ? this.state.currentPopup : undefined,
 			currentFeed : feed,
-			changeLoc : feed !== this.state.currentFeed,
 			position : {
 				lat : feeds[feed].coordinates[0],
 				lng : feeds[feed].coordinates[1]
@@ -59,27 +58,45 @@ export default class BeerMap extends Component{
 					  {lat : feeds[currentFeed].coordinates[0],	
 					   lng : feeds[currentFeed].coordinates[1]};
 		var popup = props.location.pathname.match(/map\/.*/)
+
+		var rows = DataStore.getMapData()
+
 		if(popup){
 			popup = popup[0].substr(4)
+
 		}
 		this.state = {
-			rows : DataStore.getMapData(), 
+			rows : rows, 
 			position : initPos, 
 			currentFeed : currentFeed,
 			feeds : feeds,
-			changeLoc : true,
 			currentPopup : popup
 		};
 	}
 
-	_handleClick(e){
-		e = e === this.state.currentPopup ? undefined : e
-		this.setState(_.extend({}, this.state, {currentPopup : e, changeLoc : false}))
+	_handleClick(popup){
+		if(this.state.currentPopup !== popup){
+			var rows = this.state.rows
+			if(rows[popup]){
+				var pos = {
+					lat : rows[popup][0].lat,
+					lng : rows[popup][0].lon
+				}
+				this.refs.map.panTo(pos)
+				this.setState(_.extend({}, this.state, {
+					position : pos,
+					currentPopup : popup
+				}))
+			}
+		}else{
+			this.setState(_.extend({}, this.state, {
+				currentPopup: undefined
+			}))
+		}
 	}
 
-	_onClose(){
+	_onClose(){	
 		this.setState(_.extend({}, this.state, {
-			changeLoc : false,
 			currentPopup : undefined,
 		}))
 	}
@@ -91,22 +108,42 @@ export default class BeerMap extends Component{
 		console.log('going to my location')
 	}
 
+	dragEnd = () => {
+		this.setState(_.extend({}, this.state, {
+			position : {
+				lat : this.refs.map.getCenter().lat(),
+				lng : this.refs.map.getCenter().lng()
+			}
+		}))
+	}
+
 	render(){
-		const cover = {position: 'absolute', left: 0, right: 0, top: 50, bottom: 0};
-		const mapProps = 
-			this.state.changeLoc ? {defaultZoom : 15, center : this.state.position} : {defaultZoom : 15}
+		var pos = this.state.position;
+		const mapProps = {
+			defaultZoom : 15,
+			center : pos
+		}
+
+		console.log(mapProps)
+
 		return(
 			<div>
 			<GoogleMapLoader
 		        containerElement={
 		          <div
-		            style={cover}
+		            style={{position: 'absolute', left: 0, right: 0, top: 50, bottom: 0}}
 		          />
 		        }
 		        key={'AIzaSyAYlCzVosumU9Eo_SdRwfZ-bkjSmJzghpA'}
 		        query={{key : 'AIzaSyAYlCzVosumU9Eo_SdRwfZ-bkjSmJzghpA'}}
 		        googleMapElement={
-			        <GoogleMap {...mapProps}>
+			        <GoogleMap 
+			        	onDragStart={this.dragEnd}
+			        	onDragEnd={this.dragEnd}
+			        	ref="map"
+			        	onIdle={this.dragEnd}
+			        	{...mapProps}
+			        >
 			        {
 			        	Object.keys(this.state.rows).map(k => 
 			        		<Marker

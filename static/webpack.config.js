@@ -10,7 +10,8 @@ module.exports = {
     extensions: ['', '.js', '.jsx', '.css'],
     alias: {
       webworkify: 'webworkify-webpack',
-      'mapbox-gl': path.resolve('./node_modules/mapbox-gl/dist/mapbox-gl.js')
+      'mapbox-gl': path.resolve('./node_modules/mapbox-gl/dist/mapbox-gl.js'),
+      beerfeed : path.resolve(path.join(__dirname, 'src/js'))
     }
   },
   module: {

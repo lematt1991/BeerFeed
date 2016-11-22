@@ -1,5 +1,5 @@
 import {EventEmitter} from 'events';
-import dispatcher from '../Dispatcher';
+import dispatcher from 'beerfeed/Dispatcher';
 import cookie from 'react-cookie';
 
 class SettingsStore extends EventEmitter{

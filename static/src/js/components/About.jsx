@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Row, Jumbotron, Col, Button} from 'react-bootstrap';
-import QA from './QA';
-import LinkAccount from './LinkAccount';
+import QA from 'beerfeed/components/QA';
+import LinkAccount from 'beerfeed/components/LinkAccount';
 
 const childID = {
 	QA_ID : 0,
