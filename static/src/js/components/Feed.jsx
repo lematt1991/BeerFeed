@@ -1,15 +1,15 @@
 import React, {Component} from 'react';
-import settingsStore from '../stores/SettingsStore';
-import searchStore from '../stores/SearchStore';
-import dataStore from '../stores/DataStore';
+import settingsStore from 'beerfeed/stores/SettingsStore';
+import searchStore from 'beerfeed/stores/SearchStore';
+import dataStore from 'beerfeed/stores/DataStore';
 import {Button, Alert, SafeAnchor} from 'react-bootstrap';
 import SearchInput, {createFilter} from 'react-search-input'
 import Select from 'react-select';
-import LocationStore from '../stores/LocationStore';
+import LocationStore from 'beerfeed/stores/LocationStore';
+import * as _ from 'lodash'
+import FeedRow from 'beerfeed/components/FeedRow'
 
-var _ = require('underscore')
-
-const KEYS_TO_FILTERS = ['brewery', 'name', 'venue']
+const KEYS_TO_FILTER = ['brewery', 'name', 'venue']
 
 export default class Feed extends Component{
 
@@ -96,35 +96,6 @@ export default class Feed extends Component{
 		};
 	}
 
-	_renderRow(row){
-		var date = new Date(row.created)
-		var beerLink = `https://untappd.com/b/${row.beer_slug}/${row.bid}`
-		return(
-			<tr data-status="pagado" key={row.checkin_id}>
-				<td>
-					<div class="media">
-						<img style={{marginTop : '12px'}} src={row.pic} width="100" height="100" class="pull-left media-photo beer-image"/>
-						<div class="media-body">
-							<span class="media-meta pull-right">{date.toDateString()}</span>
-							<h4 class="title">
-								Brewery: {row.brewery}
-							</h4>
-							<h4>
-								Beer: <a target="_blank" href={beerLink}>{row.name}</a>
-							</h4>
-							<h4>
-								Score: {row.rating}
-							</h4>
-							<h4>	
-								Found at: <SafeAnchor onClick={() => this.props.history.pushState({pos : {lat:row.lat, lng:row.lon}, venue : row.venue}, 'map/' + row.venue_id)}>{row.venue}</SafeAnchor>
-							</h4>
-						</div>
-					</div>
-				</td>
-			</tr>
-		);
-	}
-
 	_showMore(event){
 		event.target.blur()
 		this.setState(_.extend({}, this.state, {
@@ -150,7 +121,7 @@ export default class Feed extends Component{
 
 	render(){
 		var locName = this.state.feeds[this.state.currentFeed].name
-		var items = this.state.rows.filter(createFilter(this.state.searchTerm, KEYS_TO_FILTERS))
+		var items = this.state.rows.filter(createFilter(this.state.searchTerm, KEYS_TO_FILTER))
 		items.sort(this.state.ordering.f)
 		return(
 			<div class="container-fluid">
@@ -175,7 +146,12 @@ export default class Feed extends Component{
 										<table class="table table-filter">
 											<tbody>
 												{
-													items.slice(0, this.state.numRows).map(this._renderRow.bind(this))
+													items.slice(0, this.state.numRows).map(row => 
+														<FeedRow
+															key={row.checkin_id}
+															{...row}
+														/>
+													)
 												}
 											</tbody>
 

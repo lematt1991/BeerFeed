@@ -3,10 +3,7 @@ import SettingsStore from 'beerfeed/stores/SettingsStore';
 import LocationStore from 'beerfeed/stores/LocationStore'
 import DataStore from 'beerfeed/stores/DataStore';
 import {GoogleMapLoader, GoogleMap, Marker, InfoWindow} from "react-google-maps";
-
-var _ = require('underscore')
-
-const KEY='AIzaSyCsDj1rbaXeCe64Unrsu168VoNstG_3ItA';
+import * as _ from 'lodash'
 
 export default class BeerMap extends Component{
 	updateData = () => {
@@ -20,7 +17,6 @@ export default class BeerMap extends Component{
 				lat : feeds[feed].coordinates[0],
 				lng : feeds[feed].coordinates[1]
 			}
-
 		}))
 	}
 

@@ -5,8 +5,7 @@ import * as SearchActions from 'beerfeed/actions/SearchActions';
 import * as SettingsActions from 'beerfeed/actions/SettingsActions';
 import * as BS from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-
-var _ = require('underscore')
+import * as _ from 'lodash'
 
 export default class Nav extends React.Component {
 
