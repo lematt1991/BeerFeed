@@ -7,3 +7,5 @@ before_install:
 script: "./node_modules/karma/bin/karma start static/test/karma.conf.js --browsers Firefox --single-run --no-auto-watch --capture-timeout 60000"
 after_success:
   - cat static/test/coverage/lcov.info | node_modules/.bin/coveralls
+env:
+  - TRAVIS=travis CXX=g++-4.8
