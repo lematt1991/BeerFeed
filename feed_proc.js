@@ -30,10 +30,14 @@ function startProc(args){
             }
             return v
         })
-        return db.query(`
-            INSERT INTO ${table} (${values.join(',')})
-                ON CONFLICT (${primary_key}) DO NOTHING;
-        `, (err, result) => {
+
+        var q = `
+            INSERT INTO ${table} SELECT ${values.join(',')} WHERE
+                NOT EXISTS (SELECT 1 FROM ${table} WHERE ${primary_key.name}=${primary_key.value});
+        `
+
+        console.log(q)
+        return db.query(q, (err, result) => {
             if(err){
                 console.log(err)
             }
@@ -57,7 +61,7 @@ function startProc(args){
                 date.getMonth()+1, date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds());
             if(beer.rating_score >= 4.0){
                 // Insert checkin
-                dbInsert('checkins', 'checkin_id', [
+                dbInsert('checkins', {name : 'checkin_id', value : checkin.checkin_id}, [
                     checkin.checkin_id, 
                     checkin.beer.bid, 
                     checkin.venue.venue_id,
@@ -66,7 +70,7 @@ function startProc(args){
                     username
                 ])
                 // Insert brewery
-                dbInsert('breweries', 'brewery_id', [
+                dbInsert('breweries', {name : 'brewery_id', value : checkin.brewery.brewery_id}, [
                     checkin.brewery.brewery_id,
                     checkin.brewery.brewery_name,
                     checkin.brewery.brewery_slug,
@@ -75,7 +79,7 @@ function startProc(args){
                     checkin.brewery.contact.url
                 ])
                 // Insert beer
-                dbInsert('beers_', 'bid', [
+                dbInsert('beers_', {name : 'bid', value : checkin.beer.bid}, [
                     checkin.beer.bid,
                     checkin.beer.beer_name,
                     beer.rating_score,
@@ -86,7 +90,7 @@ function startProc(args){
                     checkin.beer.beer_ibu
                 ])
 
-                dbInsert('venues', 'venue_id', [
+                dbInsert('venues', {name : 'venue_id', value : checkin.venue.venue_id}, [
                     checkin.venue.venue_id,
                     checkin.venue.venue_name,
                     checkin.venue.venue_slug,
@@ -95,10 +99,9 @@ function startProc(args){
                     checkin.venue.primary_category,
                     checkin.venue.is_verified,
                     {
-                        val : `ST_GeomFromText('POINT(${checkin.venue.location.lng} ${checkin.venue.location.lat}})', 4326)`
+                        val : `ST_GeomFromText('POINT(${checkin.venue.location.lng} ${checkin.venue.location.lat})', 4326)`
                     }
                 ])
-
             }
         }, {BID : checkin.beer.bid})
     }
@@ -110,13 +113,15 @@ function startProc(args){
             db.query(query).then(result => {
                 var row = result.rows[0];
                 untappd.pubFeed((err, feedData) => {
-                    if(err){
+                    if(err || feedData.meta.error_type === 'invalid_limit'){
                         console.log(err)
                         console.log('Access %s token exhausted, recycling...', tokens[0])
                         tokens.push(untappd.getAccessToken())
                         untappd.setAccessToken(tokens.shift())
                         setTimeoutObj(setTimeout(iter, waitTime))//try again
                     }else{
+
+                        debugger
                         var checkins = feedData.response.checkins.items;
                         console.log('\n' + checkins.length + ' checkins found')
               
@@ -162,7 +167,7 @@ function startProc(args){
     var query = 'SELECT checkin_id FROM beers WHERE username = \'' + username + '\' ORDER BY checkin_id DESC LIMIT 1;';
     db.query(query).then(result => {
         if(result.rows.length == 1){
-            lastID = result.rows[0].checkin_id;
+            //lastID = result.rows[0].checkin_id;
             getWorkerTokens();
         }else{
             getWorkerTokens();
