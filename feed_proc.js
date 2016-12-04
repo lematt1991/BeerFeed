@@ -121,7 +121,9 @@ function startProc(args){
                     checkin.brewery.brewery_slug, 
                     checkin.venue.venue_id, 
                     checkin.venue.venue_slug, 
-                    `ST_GeomFromText('POINT(${checkin.venue.location.lng} ${checkin.venue.location.lat})', 4326)`,
+                    {
+                        val : `ST_GeomFromText('POINT(${checkin.venue.location.lng} ${checkin.venue.location.lat})', 4326)`
+                    }                
                 ])
 
             }
