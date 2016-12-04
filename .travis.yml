@@ -1,15 +1,21 @@
 language: node_js
 node_js:
-  - "6"
+- '6'
 before_install:
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-script: "./node_modules/karma/bin/karma start static/test/karma.conf.js --browsers Firefox --single-run --no-auto-watch --capture-timeout 60000"
+- export DISPLAY=:99.0
+- sh -e /etc/init.d/xvfb start
+script: ./node_modules/karma/bin/karma start static/test/karma.conf.js --browsers
+  Firefox --single-run --no-auto-watch --capture-timeout 60000
 env:
+  matrix:
   - CXX=g++-4.8
+  - secure: VEhQ2qHhTxj3kvUxbJEZ7S17mhcQJJ4BUUl6A20ijjVpg8NRyhfHnmY8zVBy+YAZWghSlC/pQGDWP5eYZQq3OF7/KpZ6rGgGfPDLF3MqSTxrJ96wff8ORGgLA9Hj369L7h5QNDxyaVpLOXMsN62dAeGRBPn3Y8EJu4KgjCPToBF5pWtfQm0xWmybkw5WGwBuAsKN+l0GKaVNDH6NN9l/DjU3SBu7fdfo5Lm/kLjnIsQezQ5nSovUfxwUe5Itv1ASeQJIG3dL7g8R4JnmLicXXxpoo+LW6z0tf0+eorhusEtIcA1olF1ZKoe4Gz13Ar5FZVs137AqRpwg1cp4fAIGPZztZUeQbZ1K/epskDcEQW7t5KB6o68aDZTMYC/QWADbbKIre3WX0PdLToBIfNxx9NxY9YG3OHY2aq26a0Zt+Cnrnxgv2Tc/1iv3JTbPi0CUf5WMouZRu1JiW8iYLFR68KqdUZ0qTG8ciIhDeFCRePAw+MzocHYVk8zy/3+thFPAV7QS1Q5Di1t5BRDitSAAY4zws/vHpfUi4jFwgM8TeWrLsExEvVjbu8GbRQ22FpGUp3pDMmNmuIawVyFKbpxtgaSiEqOGZc2bFGuSpCgcW5iqxAUpnDLkGYWGvq1o95Y6E3xFfuGK4r+CDqKH1YO3csk57RC5TeNdyy3Q5iKzftQ=
+  - secure: oHaz4mROpvkYJOwi2iAHdvrTMVEoAM3O9U4HIlFgf9fIP6z38OydCs9bO7QHdajplJlqDtcNYmE/o0CuWaX+D5gBzfd7aLPEYrP3EFPp8QlygnXuPRVq/3K9CkBHM3VG5oDz9t7Nu9tdWrdwA2T9OWeME4pTAr7uEcXwawCSVBcG0GEKclKOTs0xVh9gD/UQ+x8cBZNxr9s0ApMUIh9EUSLZNurANd7DW/am2Uu349YmCFQX8/76MxKU0tCzFNMBCZjgPos/UMv2tMeZB1LX8StuPxs/pCDtdgS3e+x11tsGkRJF+Pl8hRW9HCMEbfNXlnQPLTJHHL0Yfm1k7lBhUr1q5NR+hbFMzvDVzE5F7zVHBB2tB9zsHFXVTOSf7+cfFvGMIGlX/yb0er+ZUodlFqc8pT2pPACHnzMg1vETi1rKFZg5HV3xsP1qumZjeGata8P6kt/fnB3ZiufUtbU5hfM61Q6LNNM3G7jDoLjiIZVvaIoUpmLMDx73i5kUYBhsn/72t0KdmeHTnUVCxgI1XoElGsQfOtbpsvwbinyQ5odc0o1Xo79VABt4GVv4QSduOg6CYI1pn7hJsjKtmoemjItGvWPFbiDNQVK2OwtrGEhpuHnAFJ0OtZuwa9P+mDRUBhxiAVG7iYxPA3DT8SQoIp0J7PxG1W1e6cj8aZJRnRw=
 addons:
   apt:
     sources:
     - ubuntu-toolchain-r-test
     packages:
     - g++-4.8
+after_success:
+  - cat static/test/coverage/lcov.info | node_modules/.bin/coveralls
