@@ -9,3 +9,10 @@ after_success:
   - cat static/test/coverage/lcov.info | node_modules/.bin/coveralls
 env:
   - TRAVIS=travis CXX=g++-4.8
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - gcc-4.8
+    - g++-4.8
