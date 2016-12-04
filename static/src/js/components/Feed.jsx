@@ -12,11 +12,6 @@ import FeedRow from 'beerfeed/components/FeedRow'
 const KEYS_TO_FILTER = ['brewery', 'name', 'venue']
 
 export default class Feed extends Component{
-
-	static contextTypes = {
-		router : React.PropTypes.object.isRequired
-	}
-
 	updateFeed = () => {
 		this.setState(_.extend({}, this.state, {
 			currentFeed : settingsStore.getCurrentFeed()
@@ -96,7 +91,7 @@ export default class Feed extends Component{
 		};
 	}
 
-	_showMore(event){
+	showMore = (event) => {
 		event.target.blur()
 		this.setState(_.extend({}, this.state, {
 			numRows : this.state.numRows + 40,
@@ -126,7 +121,6 @@ export default class Feed extends Component{
 		return(
 			<div class="container-fluid">
 				<div class="row">
-					
 					<section class="content">
 						<div class="col-md-8 col-md-offset-2">
 							{this._mkAlert()}
@@ -147,10 +141,12 @@ export default class Feed extends Component{
 											<tbody>
 												{
 													items.slice(0, this.state.numRows).map(row => 
+														<tr data-status="pagado" key={row.checkin_id}><td>
 														<FeedRow
-															key={row.checkin_id}
+															
 															{...row}
 														/>
+														</td></tr>
 													)
 												}
 											</tbody>
@@ -159,7 +155,7 @@ export default class Feed extends Component{
 										{
 											this.state.numRows < items.length ? 
 											<div class="col-md-12 center-block">
-											    <Button onClick={this._showMore.bind(this)} 
+											    <Button onClick={this.showMore} 
 											    		class="btn btn-primary center-block">
 											       	Show More
 											    </Button>
