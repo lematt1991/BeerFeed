@@ -144,8 +144,6 @@ function startProc(args){
                         untappd.setAccessToken(tokens.shift())
                         setTimeoutObj(setTimeout(iter, waitTime))//try again
                     }else{
-
-                        debugger
                         var checkins = feedData.response.checkins.items;
                         console.log('\n' + checkins.length + ' checkins found')
               
@@ -191,7 +189,7 @@ function startProc(args){
     var query = 'SELECT checkin_id FROM beers WHERE username = \'' + username + '\' ORDER BY checkin_id DESC LIMIT 1;';
     db.query(query).then(result => {
         if(result.rows.length == 1){
-            //lastID = result.rows[0].checkin_id;
+            lastID = result.rows[0].checkin_id;
             getWorkerTokens();
         }else{
             getWorkerTokens();

@@ -14,13 +14,19 @@ var T = new Twit({
 })
 
 function tweet(beer){
-	db.query(`SELECT * FROM beers WHERE bid=${beer.bid} AND venue_id=${beer.venue_id}`, (err, result) => {
+
+	db.query(`
+		SELECT * FROM checkins 
+			NATURAL JOIN beers NATURAL JOIN venues
+		WHERE venue_id=${beer.venue_id} AND bid=${beer.bid};
+	`, (err, result) => {
 		if(err){
 			console.log(err)
 		}else{
 			var info = result.rows[0]
 			var url = `http://www.thebeerfeed.com/#/map/${info.venue_id}`;
-			var status = `${beer.count} people found ${info.brewery}'s ${info.name} at ${info.venue}: ${url}`
+			var loc = info.twitter || `at ${info.venue}`
+			var status = `${beer.count} people checked in ${info.brewery}'s ${info.name} ${loc}: ${url}`
 			T.post('statuses/update', { 
 				status: status, 
 				lat : info.lat,
@@ -33,13 +39,13 @@ function tweet(beer){
 }
 
 function dropOldEntries(){
-  db.query('DELETE FROM top_beers WHERE date < NOW() - INTERVAL \'3 days\';')
+  db.query('DELETE FROM top_beers WHERE date < NOW() - INTERVAL \'7 days\';')
 }
 
 function check(){
 	db.query(`SELECT * FROM(
 				SELECT bid, venue_id, count(*), avg(rating) as rating, max(created) as date, username
-				FROM beers
+				FROM checkins NATURAL JOIN beers NATURAL JOIN venues
 				GROUP BY bid, venue_id, username
 				HAVING count(*) > 5
 			)q WHERE rating > 4.4 AND username='nyc_feed'`, (err, result) => {
@@ -66,8 +72,6 @@ function check(){
 								tweet(row)
 							}
 						})
-					}else{// already tweeted this one
-						console.log('already inserted')
 					}
 				})
 			})
