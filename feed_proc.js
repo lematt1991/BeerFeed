@@ -104,7 +104,7 @@ function startProc(args){
                 ])
 
                 // TODO: remove this
-                dbInsert('beers', {name : 'checkin_id', checkin.checkin_id}, [
+                dbInsert('beers', {name : 'checkin_id', value : checkin.checkin_id}, [
                     checkin.checkin_id, 
                     checkin.beer.beer_name, 
                     checkin.brewery.brewery_name,             
