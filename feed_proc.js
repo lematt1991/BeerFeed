@@ -102,6 +102,28 @@ function startProc(args){
                         val : `ST_GeomFromText('POINT(${checkin.venue.location.lng} ${checkin.venue.location.lat})', 4326)`
                     }
                 ])
+
+                // TODO: remove this
+                dbInsert('beers', {name : 'checkin_id', checkin.checkin_id}, [
+                    checkin.checkin_id, 
+                    checkin.beer.beer_name, 
+                    checkin.brewery.brewery_name,             
+                    checkin.venue.venue_name, 
+                    formattedDate, 
+                    beer.rating_score, 
+                    checkin.venue.location.lat, 
+                    checkin.venue.location.lng, 
+                    username, 
+                    checkin.beer.beer_label, 
+                    checkin.beer.bid, 
+                    checkin.beer.beer_slug,
+                    checkin.brewery.brewery_id, 
+                    checkin.brewery.brewery_slug, 
+                    checkin.venue.venue_id, 
+                    checkin.venue.venue_slug, 
+                    `ST_GeomFromText('POINT(${checkin.venue.location.lng} ${checkin.venue.location.lat})', 4326)`,
+                ])
+
             }
         }, {BID : checkin.beer.bid})
     }
