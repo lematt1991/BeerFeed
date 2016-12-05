@@ -87,7 +87,8 @@ function startProc(args){
                     checkin.beer.beer_slug,
                     checkin.beer.beer_style,
                     checkin.beer.beer_abv,
-                    checkin.beer.beer_ibu
+                    checkin.beer.beer_ibu,
+                    checkin.beer.beer_label
                 ])
 
                 dbInsert('venues', {name : 'venue_id', value : checkin.venue.venue_id}, [
