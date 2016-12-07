@@ -126,6 +126,20 @@ app.get('/Feed', function(req, res){
   });
 });
 
+db.query('SELECT * FROM users WHERE general_purpose=false;', (err, result) => {
+  if(err){
+    console.log(err)
+  }else{
+    result.rows.forEach(r => {
+      feedProc.startProc({
+        username : r.id,
+        access_token : r.access_token,
+        setTimeoutObj : obj => {proces[r.id] = obj;}
+      })
+    })
+  }
+})
+
 app.get('/Start/:user', function(req, resp){
   db.query('SELECT id, access_token FROM users WHERE id=$$' + req.params.user + '$$;').then(
     function(res){
@@ -148,7 +162,7 @@ app.get('/Start/:user', function(req, resp){
 
 
 function dropOldEntries(){
-  db.query('DELETE FROM beers WHERE created < NOW() - INTERVAL \'2 days\';')
+  db.query('DELETE FROM checkins WHERE created < NOW() - INTERVAL \'2 days\';')
 }
 
 var rule = new sched.RecurrenceRule();
