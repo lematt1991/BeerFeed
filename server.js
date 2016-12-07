@@ -134,7 +134,7 @@ db.query('SELECT * FROM users WHERE general_purpose=false;', (err, result) => {
       feedProc.startProc({
         username : r.id,
         access_token : r.access_token,
-        setTimeoutObj : obj => {proces[r.id] = obj;}
+        setTimeoutObj : obj => {procs[r.id] = obj;}
       })
     })
   }
