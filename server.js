@@ -160,6 +160,43 @@ app.get('/Start/:user', function(req, resp){
   });
 });
 
+app.get('/TopBeers', (req, res) => {
+  var feed=req.query.feed
+  db.query(`
+    SELECT * FROM(
+      SELECT 
+        beers_.name as beer, 
+        venues.venue as venue,
+        breweries.name as brewery,
+        breweries.brewery_id,
+        bid, 
+        venue_id, 
+        count(*), 
+        avg(rating) as rating, 
+        max(created) as date, 
+        username
+      FROM checkins 
+          NATURAL JOIN beers_ 
+          NATURAL JOIN venues 
+          LEFT JOIN breweries ON breweries.brewery_id=checkins.brewery_id
+      GROUP BY 
+        bid, 
+        venue_id, 
+        username, 
+        beers_.name,
+        venues.venue,
+        breweries.name,
+        breweries.brewery_id
+      HAVING count(*) > 5
+    )q WHERE rating > 4.4 AND username='${feed}';`, (err, result) => {
+      if(err){
+        console.log(err)
+        res.status(500).send(err)
+      }else{
+        res.json(result.rows)
+      }
+    })
+})
 
 function dropOldEntries(){
   db.query('DELETE FROM checkins WHERE created < NOW() - INTERVAL \'2 days\';')
