@@ -44,9 +44,9 @@ function dropOldEntries(){
 
 function check(){
 	db.query(`SELECT * FROM(
-				SELECT bid, venue_id, count(*), avg(rating) as rating, max(created) as date, username
-				FROM checkins NATURAL JOIN beers NATURAL JOIN venues
-				GROUP BY bid, venue_id, username
+				SELECT beers_.name as beer, bid, venue_id, count(*), avg(rating) as rating, max(created) as date, username
+				FROM checkins NATURAL JOIN beers_ NATURAL JOIN venues
+				GROUP BY bid, venue_id, username, beers_.name
 				HAVING count(*) > 5
 			)q WHERE rating > 4.4 AND username='nyc_feed'`, (err, result) => {
 		if(err){
@@ -72,6 +72,8 @@ function check(){
 								tweet(row)
 							}
 						})
+					}else{
+						console.log(`${row.beer} at ${row.venue_id} was already inserted and now has a count of ${row.count}`)
 					}
 				})
 			})
@@ -80,5 +82,7 @@ function check(){
 		}
 	})
 }
+
+check()
 
 module.exports.check = check
