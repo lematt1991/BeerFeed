@@ -83,6 +83,4 @@ function check(){
 	})
 }
 
-check()
-
 module.exports.check = check
