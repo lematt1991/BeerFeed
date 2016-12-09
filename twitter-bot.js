@@ -43,6 +43,9 @@ function dropOldEntries(){
 }
 
 function check(){
+	var d = new Date()
+	console.log(`Checking top beers at ${d.toLocaleString()}`)
+
 	db.query(`SELECT * FROM(
 				SELECT beers_.name as beer, bid, venue_id, count(*), avg(rating) as rating, max(created) as date, username
 				FROM checkins NATURAL JOIN beers_ NATURAL JOIN venues
