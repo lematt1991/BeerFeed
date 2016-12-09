@@ -165,7 +165,8 @@ function startProc(args){
                 }, {
                     lat : row.lat,
                     lng : row.lon,
-                    min_id : lastID
+                    min_id : lastID,
+                    radius : 25
                 })
             }).catch(function(err){
                 console.log(err)
