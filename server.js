@@ -6,6 +6,7 @@ var request = require('request');
 var feedProc = require('./feed_proc');
 var util = require('util');
 var sched = require('node-schedule');
+var cluster = require('cluster')
 require('dotenv').config({silent : true})
 
 var untappd = new UntappdClient();
@@ -126,19 +127,19 @@ app.get('/Feed', function(req, res){
   });
 });
 
-db.query('SELECT * FROM users WHERE general_purpose=false;', (err, result) => {
-  if(err){
-    console.log(err)
-  }else{
-    result.rows.forEach(r => {
-      feedProc.startProc({
-        username : r.id,
-        access_token : r.access_token,
-        setTimeoutObj : obj => {procs[r.id] = obj;}
-      })
-    })
-  }
-})
+// db.query('SELECT * FROM users WHERE general_purpose=false;', (err, result) => {
+//   if(err){
+//     console.log(err)
+//   }else{
+//     result.rows.forEach(r => {
+//       feedProc.startProc({
+//         username : r.id,
+//         access_token : r.access_token,
+//         setTimeoutObj : obj => {procs[r.id] = obj;}
+//       })
+//     })
+//   }
+// })
 
 app.get('/Start/:user', function(req, resp){
   db.query('SELECT id, access_token FROM users WHERE id=$$' + req.params.user + '$$;').then(
