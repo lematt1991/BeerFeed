@@ -59,6 +59,10 @@ function startProc(args){
             var date = new Date(checkin.created_at);
             var formattedDate = util.format('%d-%d-%d %d:%d:%d', date.getFullYear(), 
                 date.getMonth()+1, date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds());
+            if(beer == null){
+                console.log(beer_data)
+                return
+            }
             if(beer.rating_score >= 4.0){
                 // Insert checkin
                 dbInsert('checkins', {name : 'checkin_id', value : checkin.checkin_id}, [
@@ -166,7 +170,7 @@ function startProc(args){
                     lat : row.lat,
                     lng : row.lon,
                     min_id : lastID,
-                    radius : 25,
+                    radius : 25
                 })
             }).catch(function(err){
                 console.log(err)
