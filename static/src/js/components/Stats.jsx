@@ -58,7 +58,8 @@ export default class Stats extends React.Component{
 	updateData = () => {
 		this.setState(_.extend({}, this.state, {
 			venues : this.getVenuesArr(),
-			breweries : this.getBreweryArr()
+			breweries : this.getBreweryArr(),
+			topCheckins : DataStore.getTopCheckins()
 		}))
 	}
 
@@ -75,13 +76,52 @@ export default class Stats extends React.Component{
 		this.state = {
 			data : DataStore.getFeedData(),
 			venues : this.getVenuesArr(),
-			breweries : this.getBreweryArr()
+			breweries : this.getBreweryArr(),
+			topCheckins : DataStore.getTopCheckins()
 		}
 	}
 
 	render(){
 		return(
 			<div class="container">
+				<div class="row">
+					<h3 class="text-center">
+						Top Checkins
+					</h3>
+				</div>
+				<div class="row" style={{height : 300}}>
+					<div class="col-md-3"></div>
+					<div class="col-md-6">
+						<table class="table table-striped">
+						    <thead>
+						      	<tr style={{display : 'inline-table', width : '100%', textAlign : 'left'}}>
+						        	<th class="col-xs-2">Beer</th>
+						        	<th class="col-xs-2">Brewery</th>
+						        	<th class="cols-xs-2">Venue</th>
+						        	<th class="cols-xs-2"># Checkins</th>
+						        	<th class="cols-xs-2">Rating</th>
+						        	<th class="col-xs-2">Last Checkin</th>
+						      	</tr>
+						    </thead>
+						    <tbody style={{overflowY: 'scroll', height : 250, position : 'absolute', width : '100%'}}>
+						    {
+
+						    	this.state.topCheckins.map((obj, i) => 
+						    		<tr key={i} style={{display : 'inline-table', width : '100%', textAlign : 'left'}}>
+						    			<td class="col-xs-2">{obj.beer}</td>
+						    			<td class="col-xs-2">{obj.brewery}</td>
+						    			<td class="col-xs-2">{obj.venue}</td>
+						    			<td class="col-xs-2">{obj.numCheckins}</td>
+						    			<td class="col-xs-2">{obj.rating}</td>
+						    			<td class="col-xs-2">{obj.lastCheckin.toLocaleString()}</td>
+						    		</tr>
+						    	)
+						    }
+						    </tbody>
+						</table>
+					</div>
+				</div>
+
 				<div class="row">
 					<h3 class="text-center">
 						Total Checkins by Venue

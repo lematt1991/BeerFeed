@@ -8,15 +8,18 @@ class SettingsStore extends EventEmitter{
 		this.feeds = {
 			rochester_feed : {
 				coordinates : [43.1558, -77.5909], 
-				name: 'Rochester, NY'
+				name: 'Rochester, NY',
+				topRating : 4.3
 			},
 			nyc_feed : {
 				coordinates : [40.789, -73.9479], 
-				name : 'New York, NY'
+				name : 'New York, NY',
+				topRating : 4.4
 			},
 			worker1234 : {
 				coordinates : [44.975715, -93.263540],
-				name : 'Minneapolis, MN'
+				name : 'Minneapolis, MN',
+				topRating : 4.3
 			}
 		}
 		var storedLoc = cookie.load('beerFeedLocation')
