@@ -58,6 +58,11 @@ export default class BeerMap extends Component{
 
 		if(props.location.query && props.location.query.venue){
 			popup = props.location.query.venue
+		}else{
+			var venue = props.location.pathname.match(/map\/.*/)
+			if(venue){
+				popup = venue[0].substr(4)
+			}
 		}
 
 		var rows = DataStore.getMapData()
