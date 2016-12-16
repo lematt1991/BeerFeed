@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/ml9951/UntappdFeedFilter#readme",
   "dependencies": {
+    "babel-loader": "^6.2.9",
     "body-parser": "^1.15.2",
     "cors": "^2.7.1",
     "dotenv": "^2.0.0",
@@ -45,7 +46,8 @@
     "sleep": "^3.0.1",
     "twit": "^2.2.5",
     "url": "^0.11.0",
-    "util": "^0.10.3"
+    "util": "^0.10.3",
+    "webpack": "^1.14.0"
   },
   "devDependencies": {
     "babel": "^6.5.2",
