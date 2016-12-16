@@ -71,17 +71,17 @@ export default class Nav extends React.Component {
               </BS.NavItem>
             </LinkContainer>
             <LinkContainer to="map">
-              <BS.NavItem eventKey={2}>
+              <BS.NavItem eventKey={3}>
                 Map View
               </BS.NavItem>
             </LinkContainer>
             <LinkContainer to="about">
-              <BS.NavItem eventKey={3}>
+              <BS.NavItem eventKey={4}>
                 About
               </BS.NavItem>
             </LinkContainer>
             <LinkContainer to="stats">
-              <BS.NavItem eventKey={4}>
+              <BS.NavItem eventKey={5}>
                 Stats
               </BS.NavItem>
             </LinkContainer>

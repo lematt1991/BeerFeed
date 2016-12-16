@@ -43,7 +43,7 @@ module.exports = {
     }]    
   },
   output: {
-    path: __dirname + "/src/",
+    path: __dirname + "/static/src/",
     filename: "client.min.js"
   },
   plugins: debug ? [] : [

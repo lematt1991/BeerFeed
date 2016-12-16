@@ -106,10 +106,10 @@ export default class Stats extends React.Component{
 										<td class="col-xs-2">
 											<SafeAnchor
 												onClick={() => {
-													this.props.history.pushState({
-														pos : {lat : obj.checkins[0].lat, lng : obj.checkins[0].lon},
-														venue : obj.venue
-													}, 'map')
+													this.context.router.push({
+														pathname : '/map',
+														query : {venue : obj.checkins[0].venue_id}
+													})
 												}}
 											>
 												{obj.venue}
@@ -149,7 +149,9 @@ export default class Stats extends React.Component{
 										<SafeAnchor
 											onClick={() => {
 												SearchActions.changeSearchTerm(obj.brewery)
-												this.props.history.push('feed')
+												this.context.router.push({
+													pathname : 'feed'
+												})
 											}}
 										>
 											{obj.brewery}
@@ -167,4 +169,8 @@ export default class Stats extends React.Component{
 			</div>
 		)
 	}
+}
+
+Stats.contextTypes = {
+	router: React.PropTypes.object.isRequired
 }

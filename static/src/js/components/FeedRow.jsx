@@ -7,6 +7,13 @@ export default class FeedRow extends Component{
 		super(props);
 	}
 
+	toMap = (venueID) => {
+		this.context.router.push({
+			pathname : '/map',
+			query : {venue : venueID}
+		})
+	}
+
 	render(){
 		var date = new Date(this.props.created)
 		var beerLink = `https://untappd.com/b/${this.props.beer_slug}/${this.props.bid}`
@@ -26,10 +33,14 @@ export default class FeedRow extends Component{
 					</h4>
 					<h4>	
 						Found at: <SafeAnchor 
-									onClick={() => this.props.history.pushState({pos : {lat:this.props.lat, lng:this.props.lon}, venue : this.props.venue}, 'map/' + this.props.venue_id)}>{this.props.venue}</SafeAnchor>
+									onClick={() => this.toMap(this.props.venue_id)}>{this.props.venue}</SafeAnchor>
 					</h4>
 				</div>
 			</div>
 		);
 	}
+}
+
+FeedRow.contextTypes = {
+	router: React.PropTypes.object.isRequired
 }

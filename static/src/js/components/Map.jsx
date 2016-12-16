@@ -53,14 +53,14 @@ export default class BeerMap extends Component{
 		var initPos = state ? state.pos : 
 					  {lat : feeds[currentFeed].coordinates[0],	
 					   lng : feeds[currentFeed].coordinates[1]};
-		var popup = props.location.pathname.match(/map\/.*/)
+
+		var popup = null
+
+		if(props.location.query && props.location.query.venue){
+			popup = props.location.query.venue
+		}
 
 		var rows = DataStore.getMapData()
-
-		if(popup){
-			popup = popup[0].substr(4)
-
-		}
 		this.state = {
 			rows : rows, 
 			position : initPos, 
@@ -97,31 +97,11 @@ export default class BeerMap extends Component{
 		}))
 	}
 
-	gotoMyLoc = (event) => {
-		LocationStore.getLocationPromise().then((loc) => {
-			this.setState(_.extend({}, this.state, {position : loc}))
-		})
-		console.log('going to my location')
-	}
-
-	dragEnd = () => {
-		this.setState(_.extend({}, this.state, {
-			position : {
-				lat : this.refs.map.getCenter().lat(),
-				lng : this.refs.map.getCenter().lng()
-			}
-		}))
-	}
-
 	render(){
-		var pos = this.state.position;
 		const mapProps = {
 			defaultZoom : 15,
-			center : pos
+			defaultCenter : this.state.position
 		}
-
-		console.log(mapProps)
-
 		return(
 			<div>
 			<GoogleMapLoader
@@ -134,10 +114,7 @@ export default class BeerMap extends Component{
 		        query={{key : 'AIzaSyAYlCzVosumU9Eo_SdRwfZ-bkjSmJzghpA'}}
 		        googleMapElement={
 			        <GoogleMap 
-			        	onDragStart={this.dragEnd}
-			        	onDragEnd={this.dragEnd}
 			        	ref="map"
-			        	onIdle={this.dragEnd}
 			        	{...mapProps}
 			        >
 			        {
@@ -165,9 +142,6 @@ export default class BeerMap extends Component{
 			        		</Marker>
 			        	)
 			        }
-		            <div style={styles.locButton} onClick={this.gotoMyLoc}>
-		            	My Location
-		            </div>
 		          	</GoogleMap>
 		        }/>
 		      </div>
@@ -175,28 +149,7 @@ export default class BeerMap extends Component{
 	}
 }
 
-const styles = {
-	locButton : {
-		position : 'absolute',
-		top : 10,
-		right : '2%',
-		fontFamily : 'Roboto,Arial,sans-serif',
-		fontSize : '14px',
-		lineHeight : '25px',
-		color : 'rgb(25, 25, 25)',
-		zIndex : 2,
-		backgroundColor : '#fff',
-		border : '2px solid #fff',
-		borderRadius : '3px',
-		boxShadow : '0 2px 6px rgba(0,0,0,.3)',
-		cursor : 'pointer',
-		marginBottom : '22px',
-		textAlign : 'center',
-	}
+BeerMap.contextTypes = {
+	router: React.PropTypes.object.isRequired
 }
-
-
-
-
-
 
