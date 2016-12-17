@@ -2,6 +2,7 @@ require('dotenv').config({silent : true})
 var Twit = require('twit')
 var pg = require('pg')
 var _ = require('lodash')
+var request = require('request').defaults({ encoding: null });
 
 var db = new pg.Client(process.env.OPENSHIFT_POSTGRESQL_DB_URL);
 db.connect();
@@ -14,12 +15,19 @@ var T = new Twit({
 })
 
 function tweet(beer){
-
-	db.query(`
-		SELECT * FROM checkins 
-			NATURAL JOIN beers NATURAL JOIN venues
-		WHERE venue_id=${beer.venue_id} AND bid=${beer.bid};
-	`, (err, result) => {
+	var q = `
+		SELECT beers_.bid, 
+			   venues.venue_id as venue_id, 
+			   beers_.name as name, 
+			   breweries.name as brewery ,
+			   beers_.pic
+		FROM checkins 
+			NATURAL JOIN beers_ NATURAL JOIN venues 
+			LEFT JOIN breweries on breweries.brewery_id=checkins.brewery_id
+		WHERE venues.venue_id=${beer.venue_id} AND beers_.bid=${beer.bid};
+	`
+	console.log(q)
+	db.query(q, (err, result) => {
 		if(err){
 			console.log(err)
 		}else{
@@ -27,13 +35,28 @@ function tweet(beer){
 			var url = `http://www.thebeerfeed.com/#/map/${info.venue_id}`;
 			var loc = info.twitter || `at ${info.venue}`
 			var status = `${beer.count} people checked in ${info.brewery}'s ${info.name} ${loc}: ${url}`
-			T.post('statuses/update', { 
-				status: status, 
-				lat : info.lat,
-				long : info.lon
-			}, function(err, data, response) {
-			  console.log(data)
-			});			
+			request.get(info.pic, (error, response, body) => {
+			    if (!error && response.statusCode == 200) {
+			        data = new Buffer(body).toString('base64');
+			        T.post('media/upload', {media_data : data}, (err2, data2, response2) => {
+			        	if(err2){
+			        		console.log(err2)
+			        	}else{
+			        		var mediaIdStr = data2.media_id_string
+			        		T.post('statuses/update', {status : status, media_ids : [mediaIdStr]}, (err3, data3, response3) => {
+			        			if(err3){
+			        				console.log(err3)
+			        			}else{
+				        			console.log(data)
+				        			console.log('Success!')
+				        		}
+			        		})
+			        	}
+			        })
+			    }else{
+			    	console.log('Could not download image')
+			    }
+			});
 		}
 	})
 }
