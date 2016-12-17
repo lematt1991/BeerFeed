@@ -45,7 +45,9 @@ function startProc(args){
     }
 
     function processCheckin(checkin){
-        if(checkin.venue.contact.venue_url === ""){//probably a private residence
+        if(checkin == null || checkin.venue == null || 
+           checkin.venue.contact == null || checkin.venue.contact.venue_url == null ||
+           checkin.venue.contact.venue_url === ""){//probably a private residence
             console.log('Skipping due to no url')
             return;
         }
