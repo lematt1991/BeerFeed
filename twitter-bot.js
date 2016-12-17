@@ -20,7 +20,9 @@ function tweet(beer){
 			   venues.venue_id as venue_id, 
 			   beers_.name as name, 
 			   breweries.name as brewery ,
-			   beers_.pic
+			   beers_.pic,
+			   venues.venue,
+			   venues.twitter
 		FROM checkins 
 			NATURAL JOIN beers_ NATURAL JOIN venues 
 			LEFT JOIN breweries on breweries.brewery_id=checkins.brewery_id
