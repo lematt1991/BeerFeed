@@ -9,6 +9,8 @@ var sched = require('node-schedule');
 var cluster = require('cluster')
 require('dotenv').config({silent : true})
 
+const DEBUG = process.env.NODE_ENV === 'debug'
+
 var untappd = new UntappdClient();
 
 var clientSecret = process.env.UNTAPPD_CLIENT_SECRET;
@@ -21,7 +23,7 @@ var app = express();
 
 app.use(cors());
 
-var db = new pg.Client(process.env.OPENSHIFT_POSTGRESQL_DB_URL);
+var db = new pg.Client(DEBUG ? {database : 'beerfeed'} : process.env.OPENSHIFT_POSTGRESQL_DB_URL);
 db.connect();
 
 var procs = [];
@@ -29,7 +31,28 @@ var procs = [];
 //var redirectURL = 'https://untappd-feed-filter.herokuapp.com/AuthRedirect'
 var redirectURL = 'http://beerfeed-ml9951.rhcloud.com/AuthRedirect'
 
+if(DEBUG){
+  var config = require('./webpack.config')
+  var webpack = require('webpack')
+
+  config.plugins.push(new webpack.DefinePlugin({
+    'process.env' : {'NODE_ENV' : JSON.stringify('debug')}
+  }))
+
+  var compiler = webpack(config)
+  app.use(require('webpack-dev-middleware')(compiler, {
+    noInfo: true, publicPath: config.output.publicPath
+  }))
+
+  app.use(require('webpack-hot-middleware')(compiler, {
+    log: console.log,
+    path: '/__webpack_hmr',
+    heartbeat: 10 * 1000
+  }))
+}
+
 app.use(express.static('static/src'));
+
 
 app.get('/health', function(req, res){
   res.send({})
@@ -84,62 +107,41 @@ app.get('/AuthRedirect', function(req, res){
   });
 });
 
-//Get top beers for a particular user
-app.get('/Beers/:user', function(req, res){
-  var lastID = req.query.lastID ? req.query.lastID : 0;
-  var username = req.params.user;
-  var query = util.format('SELECT * FROM beers WHERE username = $$%s$$ AND ' + 
-                          'checkin_id > %d ORDER BY venue', username, lastID)
-  db.query(query, function(err, result){
-    var jsonRes = [];
-    var mapping = {};
-    var latest = 0
-    for(var i = 0; i < result.rows.length; i++){
-      var row = result.rows[i];
-      if(row.checkin_id > latest)
-        latest = row.checkin_id;
-      if(mapping[row.venue] === undefined){
-        jsonRes.push({
-          coordinate : {latitude : row.lat, longitude : row.lon}, venue : row.venue,
-          beers : [{name : row.name, brewery : row.brewery, rating : row.rating}]
-        });
-        mapping[row.venue] = jsonRes.length;
-      }else{
-        jsonRes[mapping[row.venue]-1].beers.push({name : row.name, brewery : row.brewery,
-                                       rating : row.rating});
-      }
-    }    
-    res.send({lastID : latest, venues : jsonRes});
-  })
-});
-
 app.get('/Feed', function(req, res){
   var lastID = req.query.lastID ? req.query.lastID : 0;
   var userPred = req.query.user ? ('AND username=$$' + req.query.user + '$$') : ''
-  query = util.format('SELECT * FROM beers WHERE checkin_id > %d ' + userPred + 
-                      ' ORDER BY checkin_id DESC;', lastID)
+
+
+  var query = `
+      SELECT 
+        checkins.checkin_id,
+        beers_.name as name, 
+        venues.venue as venue,
+        breweries.name as brewery,
+        beers_.bid, 
+        ST_X(venues.geom) as lon,
+        ST_Y(venues.geom) as lat,
+        checkins.venue_id, 
+        beers_.rating,
+        beers_.slug as beer_slug,
+        checkins.created,
+        beers_.pic 
+      FROM checkins 
+          NATURAL JOIN beers_ 
+          NATURAL JOIN venues 
+          LEFT JOIN breweries ON breweries.brewery_id=checkins.brewery_id
+      WHERE checkin_id > ${lastID} ${userPred} ORDER BY checkin_id DESC
+  `
   db.query(query, function(err, result){
-    if(result.rows.length > 0){
+    if(err){
+      console.log(err)
+    }else if(result.rows.length > 0){
       res.send({checkins : result.rows, lastID : result.rows[0].checkin_id})
     }else{
       res.send({})
     }
   });
 });
-
-// db.query('SELECT * FROM users WHERE general_purpose=false;', (err, result) => {
-//   if(err){
-//     console.log(err)
-//   }else{
-//     result.rows.forEach(r => {
-//       feedProc.startProc({
-//         username : r.id,
-//         access_token : r.access_token,
-//         setTimeoutObj : obj => {procs[r.id] = obj;}
-//       })
-//     })
-//   }
-// })
 
 app.get('/Start/:user', function(req, resp){
   db.query('SELECT id, access_token FROM users WHERE id=$$' + req.params.user + '$$;').then(
@@ -233,5 +235,7 @@ app.get('/Wakeup', function(req, res){
   res.send('')
 });
 
-require('./twitter-bot').check()
+if(!DEBUG){
+  require('./twitter-bot').check()
+}
 

@@ -33,7 +33,10 @@ function startProc(args){
 
         var q = `
             INSERT INTO ${table} SELECT ${values.join(',')} WHERE
-                NOT EXISTS (SELECT 1 FROM ${table} WHERE ${primary_key.name}=${primary_key.value});
+                NOT EXISTS (
+                    SELECT 1 FROM ${table} 
+                        WHERE ${primary_key.name}=${primary_key.value}
+                );
         `
 
         console.log(q)
@@ -109,30 +112,6 @@ function startProc(args){
                         val : `ST_GeomFromText('POINT(${checkin.venue.location.lng} ${checkin.venue.location.lat})', 4326)`
                     }
                 ])
-
-                // TODO: remove this
-                dbInsert('beers', {name : 'checkin_id', value : checkin.checkin_id}, [
-                    checkin.checkin_id, 
-                    checkin.beer.beer_name, 
-                    checkin.brewery.brewery_name,             
-                    checkin.venue.venue_name, 
-                    formattedDate, 
-                    beer.rating_score, 
-                    checkin.venue.location.lat, 
-                    checkin.venue.location.lng, 
-                    username, 
-                    checkin.beer.beer_label, 
-                    checkin.beer.bid, 
-                    checkin.beer.beer_slug,
-                    checkin.brewery.brewery_id, 
-                    checkin.brewery.brewery_slug, 
-                    checkin.venue.venue_id, 
-                    checkin.venue.venue_slug, 
-                    {
-                        val : `ST_GeomFromText('POINT(${checkin.venue.location.lng} ${checkin.venue.location.lat})', 4326)`
-                    }                
-                ])
-
             }
         }, {BID : checkin.beer.bid})
     }
@@ -194,7 +173,7 @@ function startProc(args){
         })
     }
 
-    var query = 'SELECT checkin_id FROM beers WHERE username = \'' + username + '\' ORDER BY checkin_id DESC LIMIT 1;';
+    var query = 'SELECT checkin_id FROM checkins WHERE username = \'' + username + '\' ORDER BY checkin_id DESC LIMIT 1;';
     db.query(query).then(result => {
         if(result.rows.length == 1){
             lastID = result.rows[0].checkin_id;

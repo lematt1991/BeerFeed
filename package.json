@@ -6,7 +6,8 @@
   "scripts": {
     "test": "./node_modules/karma/bin/karma start static/test/karma.conf.js",
     "start": "node start.js",
-    "dev": "./node_modules/.bin/webpack-dev-server --content-base static/src --inline --hot"
+    "dev": "./node_modules/.bin/webpack-dev-server --content-base static/src --inline --hot",
+    "local": "NODE_ENV=debug node server.js"
   },
   "repository": {
     "type": "git",
@@ -33,7 +34,7 @@
     "node-untappd": "^0.4.1",
     "parse-database-url": "^0.3.0",
     "parse-db-url": "0.0.0",
-    "pg": "^6.0.1",
+    "pg": "^6.1.2",
     "react-bootstrap": "^0.30.7",
     "react-cookie": "^1.0.1",
     "react-google-maps": "^4.11.0",
@@ -80,6 +81,7 @@
     "react-dom": "^15.4.0",
     "style-loader": "^0.13.1",
     "webpack": "^1.13.3",
-    "webpack-dev-server": "^1.16.2"
+    "webpack-dev-server": "^1.16.2",
+    "webpack-hot-middleware": "^2.13.2"
   }
 }

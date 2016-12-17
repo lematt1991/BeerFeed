@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-
 import {Col, Row, Jumbotron, Button} from 'react-bootstrap';
 import {Link} from 'react-router';
+import {BACKEND_URL} from 'beerfeed/Constants'
 
 export default class LinkAccount extends Component{
 
@@ -54,7 +54,7 @@ export default class LinkAccount extends Component{
 
 				<Row>
 					<div class="col-md-12 text-center">
-						<a class="btn btn-primary" href="http://beerfeed-ml9951.rhcloud.com/Auth" onClick={this._handleClick.bind(this)}>
+						<a class="btn btn-primary" href={`${BACKEND_URL}/Auth`} onClick={this._handleClick.bind(this)}>
 							Click Here To Link Account
 						</a>
 					</div>
