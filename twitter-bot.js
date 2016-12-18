@@ -36,7 +36,7 @@ function tweet(beer){
 			var info = result.rows[0]
 			var url = `http://www.thebeerfeed.com/#/map/${info.venue_id}`;
 			var loc = info.twitter || `at ${info.venue}`
-			var status = `${beer.count} people checked in ${info.brewery}'s ${info.name} ${loc}: ${url}`
+			var status = `${beer.count} people checked in ${info.brewery}'s ${info.name} ${loc}: ${url} #beer #untappd`
 			request.get(info.pic, (error, response, body) => {
 			    if (!error && response.statusCode == 200) {
 			        data = new Buffer(body).toString('base64');
