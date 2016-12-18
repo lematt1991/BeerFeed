@@ -18,7 +18,7 @@ function startProc(args){
 
     var tokens = [];
 
-    var db = new pg.Client(process.env.OPENSHIFT_POSTGRESQL_DB_URL);
+    var db = new pg.Client(process.env.NODE_ENV==='debug' ? {database : 'beerfeed'} : process.env.OPENSHIFT_POSTGRESQL_DB_URL);
     db.connect();
 
     function dbInsert(table, primary_key, values){
@@ -47,28 +47,34 @@ function startProc(args){
         })
     }
 
-    function processCheckin(checkin){
-        if(checkin == null || checkin.venue == null || 
-           checkin.venue.contact == null || checkin.venue.contact.venue_url == null ||
-           checkin.venue.contact.venue_url === ""){//probably a private residence
-            console.log('Skipping due to no url')
-            return;
-        }
-
+    /**
+     * Retrieve beer information from beer/info endpoint
+     * @param {object} checkin - the checkin object returned from local pub endpoint
+     * @param {boolean} found - if the beer was found in the database.  If it was, then
+     *                          then it means that we need to update the timestamp
+     */
+    function getBeer(checkin, found){
         untappd.beerInfo((error, beer_data) => {
             if(error){
                 console.log(error);
                 return;
             }
             beer = beer_data.response.beer;
-            var date = new Date(checkin.created_at);
-            var formattedDate = util.format('%d-%d-%d %d:%d:%d', date.getFullYear(), 
-                date.getMonth()+1, date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds());
+            var formattedDate = new Date(checkin.created_at).toISOString();
             if(beer == null){
                 console.log(beer_data)
                 return
             }
-            if(beer.rating_score >= 4.0){
+
+            if(found){
+                var datestr = new Date().toISOString()
+                console.log(`UPDATE beers_ SET rating=${beer.rating_score}, last_updated='${datestr}'`)
+                db.query(`UPDATE beers_ SET rating=${beer.rating_score}, last_updated='${datestr}'`, (err, result) => {
+                    if(err){
+                        console.log(err)
+                    }
+                })
+            }else if(beer.rating_score >= 4.0){
                 // Insert checkin
                 dbInsert('checkins', {name : 'checkin_id', value : checkin.checkin_id}, [
                     checkin.checkin_id, 
@@ -97,7 +103,8 @@ function startProc(args){
                     checkin.beer.beer_style,
                     checkin.beer.beer_abv,
                     checkin.beer.beer_ibu,
-                    checkin.beer.beer_label
+                    checkin.beer.beer_label,
+                    new Date().toISOString()
                 ])
 
                 dbInsert('venues', {name : 'venue_id', value : checkin.venue.venue_id}, [
@@ -114,6 +121,44 @@ function startProc(args){
                 ])
             }
         }, {BID : checkin.beer.bid})
+    }
+
+    function processCheckin(checkin){
+        if(checkin == null || checkin.venue == null || 
+           checkin.venue.contact == null || checkin.venue.contact.venue_url == null ||
+           checkin.venue.contact.venue_url === ""){//probably a private residence
+            console.log('Skipping due to no url')
+            return;
+        }
+
+        db.query(`SELECT * FROM beers_ WHERE bid=${checkin.beer.bid}`, (err, result) => {
+            if(err){
+                console.log(err)
+            }else{
+                if(result.rows.length > 0){
+                    var datestr = result.rows[0].last_updated;
+                    sevenDaysAgo = new Date().getTime() - (7 * 24 * 60 * 60 * 1000)
+                    if(datestr == null || new Date(datestr).getTime() < sevenDaysAgo){
+                        console.log(`Updating beer rating, last_updated = ${datestr}`)
+                        getBeer(checkin, true)
+                    }else{
+                        console.log(`Found cached beer in database.  Last updated on ${datestr}`)
+                        // Insert checkin
+                        dbInsert('checkins', {name : 'checkin_id', value : checkin.checkin_id}, [
+                            checkin.checkin_id, 
+                            checkin.beer.bid, 
+                            checkin.venue.venue_id,
+                            checkin.brewery.brewery_id,
+                            new Date(checkin.created_at).toISOString(),
+                            username
+                        ])
+                    }
+                }else{
+                    console.log('Beer not found in database')
+                    getBeer(checkin, false)
+                }
+            }
+        })
     }
 
     function iter(){
