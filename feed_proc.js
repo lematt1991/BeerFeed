@@ -10,7 +10,7 @@ function startProc(args){
     var access_token = args.access_token;
     var setTimeoutObj = args.setTimeoutObj
     var lastID = args.lastID;
-    var waitTime = 16000 //miliseconds
+    var waitTime = 16000 //milliseconds
 
     var untappd = new UntappdClient();
 
@@ -21,6 +21,14 @@ function startProc(args){
     var db = new pg.Client(process.env.NODE_ENV==='debug' ? {database : 'beerfeed'} : process.env.OPENSHIFT_POSTGRESQL_DB_URL);
     db.connect();
 
+    /**
+     * Insert a row into a table int he database.  If the primary key
+     * already exists, then do nothing.
+     * @param {string} table - The table to insert into
+     * @param {string} primary_key - Primary key of the table
+     * @param {array} values - Array of the values to be inserted into 
+     *      the table.  Strings get wrapped in `$` to escape quotes.  
+     */
     function dbInsert(table, primary_key, values){
         values = values.map(v => {
             if(typeof(v) === 'string'){
@@ -123,6 +131,17 @@ function startProc(args){
         }, {BID : checkin.beer.bid})
     }
 
+    /**
+     * Process a single checkin.  We first lookup the beer in our beers 
+     * table.  If it exists, then we look at when it was last updated.
+     * If it has been updated in the last week, we simply insert the 
+     * checkin into the checkins table.  If it is stale, then we make a 
+     * call to the beer/info endpoint and update the rating and last updated
+     * fields of the existing row.  If it wasn't found at all, then we also
+     * insert rows into the breweries and venues tables.
+     * @param {object} checkin - One element from the returned array of checkins
+     *      from the local/pub endpoint
+     */
     function processCheckin(checkin){
         if(checkin == null || checkin.venue == null || 
            checkin.venue.contact == null || checkin.venue.contact.venue_url == null ||
@@ -161,6 +180,11 @@ function startProc(args){
         })
     }
 
+    /**
+     * Perform a single iteration of the checkin process.  This will make a 
+     * call to the local/pub endpoint receiving any new checkins.  For 
+     * each checkin we will call the `processCheckin` function to do the rest
+     */
     function iter(){
         //Query the users table each iteration in case location changes
         var query = 'SELECT * FROM users WHERE id=\'' + username + '\';';
