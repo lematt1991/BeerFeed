@@ -76,8 +76,12 @@ function startProc(args){
 
             if(found){
                 var datestr = new Date().toISOString()
-                console.log(`UPDATE beers_ SET rating=${beer.rating_score}, last_updated='${datestr}'`)
-                db.query(`UPDATE beers_ SET rating=${beer.rating_score}, last_updated='${datestr}'`, (err, result) => {
+                var q = `
+                    UPDATE beers_ SET rating=${beer.rating_score}, last_updated='${datestr}'
+                        WHERE bid=${checkin.beer.bid};
+                `
+                console.log(q)
+                db.query(q, (err, result) => {
                     if(err){
                         console.log(err)
                     }
