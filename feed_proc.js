@@ -86,16 +86,18 @@ function startProc(args){
                         console.log(err)
                     }
                 })
-            }else if(beer.rating_score >= 4.0){
-                // Insert checkin
-                dbInsert('checkins', {name : 'checkin_id', value : checkin.checkin_id}, [
-                    checkin.checkin_id, 
-                    checkin.beer.bid, 
-                    checkin.venue.venue_id,
-                    checkin.brewery.brewery_id,
-                    formattedDate,
-                    username
-                ])
+            }else{ 
+                if(beer.rating_score >= 4.0){
+                    // Insert checkin
+                    dbInsert('checkins', {name : 'checkin_id', value : checkin.checkin_id}, [
+                        checkin.checkin_id, 
+                        checkin.beer.bid, 
+                        checkin.venue.venue_id,
+                        checkin.brewery.brewery_id,
+                        formattedDate,
+                        username
+                    ])
+                }
                 // Insert brewery
                 dbInsert('breweries', {name : 'brewery_id', value : checkin.brewery.brewery_id}, [
                     checkin.brewery.brewery_id,
@@ -258,5 +260,11 @@ function startProc(args){
         console.log(err);
     })  
 }
+
+startProc({
+    username : 'nyc_feed',
+    access_token : '174053F5CE3539683659A13D23990E6C20DB8934',
+    setTimeoutObj : x => x
+});
 
 module.exports.startProc = startProc;
