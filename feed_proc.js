@@ -87,17 +87,16 @@ function startProc(args){
                     }
                 })
             }else{ 
-                if(beer.rating_score >= 4.0){
-                    // Insert checkin
-                    dbInsert('checkins', {name : 'checkin_id', value : checkin.checkin_id}, [
-                        checkin.checkin_id, 
-                        checkin.beer.bid, 
-                        checkin.venue.venue_id,
-                        checkin.brewery.brewery_id,
-                        formattedDate,
-                        username
-                    ])
-                }
+                // Insert checkin
+                dbInsert('checkins', {name : 'checkin_id', value : checkin.checkin_id}, [
+                    checkin.checkin_id, 
+                    checkin.beer.bid, 
+                    checkin.venue.venue_id,
+                    checkin.brewery.brewery_id,
+                    formattedDate,
+                    username
+                ])
+                
                 // Insert brewery
                 dbInsert('breweries', {name : 'brewery_id', value : checkin.brewery.brewery_id}, [
                     checkin.brewery.brewery_id,
