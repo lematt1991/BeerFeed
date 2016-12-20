@@ -37,28 +37,14 @@ function tweet(beer){
 			var url = `http://www.thebeerfeed.com/#/map/${info.venue_id}`;
 			var loc = info.twitter || `at ${info.venue}`
 			var status = `${beer.count} people checked in ${info.brewery}'s ${info.name} ${loc}: ${url} #beer #untappd`
-			request.get(info.pic, (error, response, body) => {
-			    if (!error && response.statusCode == 200) {
-			        data = new Buffer(body).toString('base64');
-			        T.post('media/upload', {media_data : data}, (err2, data2, response2) => {
-			        	if(err2){
-			        		console.log(err2)
-			        	}else{
-			        		var mediaIdStr = data2.media_id_string
-			        		T.post('statuses/update', {status : status, media_ids : [mediaIdStr]}, (err3, data3, response3) => {
-			        			if(err3){
-			        				console.log(err3)
-			        			}else{
-				        			console.log(data)
-				        			console.log('Success!')
-				        		}
-			        		})
-			        	}
-			        })
-			    }else{
-			    	console.log('Could not download image')
-			    }
-			});
+			T.post('statuses/update', {status : status}, (err3, data3, response3) => {
+    			if(err3){
+    				console.log(err3)
+    			}else{
+        			console.log(data)
+        			console.log('Success!')
+        		}
+    		})
 		}
 	})
 }
