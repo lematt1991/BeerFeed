@@ -261,10 +261,4 @@ function startProc(args){
     })  
 }
 
-startProc({
-    username : 'nyc_feed',
-    access_token : '174053F5CE3539683659A13D23990E6C20DB8934',
-    setTimeoutObj : x => x
-});
-
 module.exports.startProc = startProc;
