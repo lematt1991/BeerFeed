@@ -17,6 +17,10 @@ class SettingsStore extends EventEmitter{
 			worker1234 : {
 				coordinates : [44.975715, -93.263540],
 				name : 'Minneapolis, MN'
+			},
+			lexxx320 : {
+				coordinates : [41.881721, -87.630746],
+				name : 'Chicago, IL'
 			}
 		}
 		var storedLoc = cookie.load('beerFeedLocation')
