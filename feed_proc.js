@@ -218,7 +218,7 @@ function startProc(args){
                             waitTime = waitTime * 2;
                         }
                         lastID = checkins.length > 0 ? checkins[0].checkin_id : lastID;
-                        console.log(username + 'Going to sleep for ' + (waitTime/1000) + ' seconds')
+                        console.log(username + ' Going to sleep for ' + (waitTime/1000) + ' seconds')
                         setTimeoutObj(setTimeout(iter, waitTime));
                     }
                 }, {

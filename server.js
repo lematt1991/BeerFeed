@@ -235,7 +235,3 @@ app.get('/Wakeup', function(req, res){
   res.send('')
 });
 
-if(!DEBUG){
-  require('./twitter-bot').check()
-}
-
