@@ -51,7 +51,7 @@ class TwitterBot{
 	    			if(err3){
 	    				console.log(err3)
 	    			}else{
-	        			console.log(data)
+	        			console.log(data3)
 	        			console.log('Success!')
 	        		}
 	    		})
