@@ -130,7 +130,12 @@ app.get('/Feed', function(req, res){
           NATURAL JOIN beers_ 
           NATURAL JOIN venues 
           LEFT JOIN breweries ON breweries.brewery_id=checkins.brewery_id
-      WHERE rating >= 4.0 AND checkin_id > ${lastID} ${userPred} ORDER BY checkin_id DESC
+      WHERE rating >= 4.0 AND 
+            checkin_id > ${lastID} AND
+            venues.venue <> 'Travel & Transport' AND
+            venues.venue <> 'Outdoors & Recreation'
+            ${userPred} 
+      ORDER BY checkin_id DESC
   `
   db.query(query, function(err, result){
     if(err){
