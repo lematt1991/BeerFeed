@@ -1,5 +1,4 @@
 require('dotenv').config({silent : true})
-var request = require('request-promise');
 var pg = require('pg');
 var util = require('util');
 var fs = require('fs');
