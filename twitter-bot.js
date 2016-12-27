@@ -24,17 +24,17 @@ class TwitterBot{
 
 	tweet(beer){
 		var q = `
-			SELECT beers_.bid, 
+			SELECT beers.bid, 
 				   venues.venue_id as venue_id, 
-				   beers_.name as name, 
+				   beers.name as name, 
 				   breweries.name as brewery ,
-				   beers_.pic,
+				   beers.pic,
 				   venues.venue,
 				   venues.twitter
 			FROM checkins 
-				NATURAL JOIN beers_ NATURAL JOIN venues 
+				NATURAL JOIN beers NATURAL JOIN venues 
 				LEFT JOIN breweries on breweries.brewery_id=checkins.brewery_id
-			WHERE venues.venue_id=${beer.venue_id} AND beers_.bid=${beer.bid};
+			WHERE venues.venue_id=${beer.venue_id} AND beers.bid=${beer.bid};
 		`
 		console.log(q)
 		db.query(q, (err, result) => {
@@ -63,9 +63,9 @@ class TwitterBot{
 		console.log(`Checking top beers at ${d.toLocaleString()}`)
 
 		db.query(`SELECT * FROM(
-					SELECT beers_.name as beer, bid, venue_id, count(*), avg(rating) as rating, max(created) as date, username
-					FROM checkins NATURAL JOIN beers_ NATURAL JOIN venues
-					GROUP BY bid, venue_id, username, beers_.name
+					SELECT beers.name as beer, bid, venue_id, count(*), avg(rating) as rating, max(created) as date, username
+					FROM checkins NATURAL JOIN beers NATURAL JOIN venues
+					GROUP BY bid, venue_id, username, beers.name
 					HAVING count(*) > 5
 				)q WHERE rating > 4.4 AND username='${this.username}'`, (err, result) => {
 			if(err){

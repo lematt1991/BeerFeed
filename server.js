@@ -115,19 +115,19 @@ app.get('/Feed', function(req, res){
   var query = `
       SELECT 
         checkins.checkin_id,
-        beers_.name as name, 
+        beers.name as name, 
         venues.venue as venue,
         breweries.name as brewery,
-        beers_.bid, 
+        beers.bid, 
         ST_X(venues.geom) as lon,
         ST_Y(venues.geom) as lat,
         checkins.venue_id, 
-        beers_.rating,
-        beers_.slug as beer_slug,
+        beers.rating,
+        beers.slug as beer_slug,
         checkins.created,
-        beers_.pic 
+        beers.pic 
       FROM checkins 
-          NATURAL JOIN beers_ 
+          NATURAL JOIN beers 
           NATURAL JOIN venues 
           LEFT JOIN breweries ON breweries.brewery_id=checkins.brewery_id
       WHERE rating >= 4.0 AND 
@@ -173,7 +173,7 @@ app.get('/TopBeers', (req, res) => {
   db.query(`
     SELECT * FROM(
       SELECT 
-        beers_.name as beer, 
+        beers.name as beer, 
         venues.venue as venue,
         breweries.name as brewery,
         breweries.brewery_id,
@@ -184,14 +184,14 @@ app.get('/TopBeers', (req, res) => {
         max(created) as date, 
         username
       FROM checkins 
-          NATURAL JOIN beers_ 
+          NATURAL JOIN beers 
           NATURAL JOIN venues 
           LEFT JOIN breweries ON breweries.brewery_id=checkins.brewery_id
       GROUP BY 
         bid, 
         venue_id, 
         username, 
-        beers_.name,
+        beers.name,
         venues.venue,
         breweries.name,
         breweries.brewery_id

@@ -76,7 +76,7 @@ function startProc(args){
             if(found){
                 var datestr = new Date().toISOString()
                 var q = `
-                    UPDATE beers_ SET rating=${beer.rating_score}, last_updated='${datestr}'
+                    UPDATE beers SET rating=${beer.rating_score}, last_updated='${datestr}'
                         WHERE bid=${checkin.beer.bid};
                 `
                 console.log(q)
@@ -106,7 +106,7 @@ function startProc(args){
                     checkin.brewery.contact.url
                 ])
                 // Insert beer
-                dbInsert('beers_', {name : 'bid', value : checkin.beer.bid}, [
+                dbInsert('beers', {name : 'bid', value : checkin.beer.bid}, [
                     checkin.beer.bid,
                     checkin.beer.beer_name,
                     beer.rating_score,
@@ -154,7 +154,7 @@ function startProc(args){
             return;
         }
 
-        db.query(`SELECT * FROM beers_ WHERE bid=${checkin.beer.bid}`, (err, result) => {
+        db.query(`SELECT * FROM beers WHERE bid=${checkin.beer.bid}`, (err, result) => {
             if(err){
                 console.log(err)
             }else{
