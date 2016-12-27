@@ -132,8 +132,8 @@ app.get('/Feed', function(req, res){
           LEFT JOIN breweries ON breweries.brewery_id=checkins.brewery_id
       WHERE rating >= 4.0 AND 
             checkin_id > ${lastID} AND
-            venues.venue <> 'Travel & Transport' AND
-            venues.venue <> 'Outdoors & Recreation'
+            venues.category <> 'Travel & Transport' AND
+            venues.category <> 'Outdoors & Recreation'
             ${userPred} 
       ORDER BY checkin_id DESC
   `
