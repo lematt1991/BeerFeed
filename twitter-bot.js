@@ -45,7 +45,7 @@ class TwitterBot{
 				var url = `http://www.thebeerfeed.com/#/map/${info.venue_id}`;
 				var loc = info.twitter || `at ${info.venue}`
 				var status = `${beer.count} people checked in ${info.brewery}'s ${info.name} ${loc}: ${url}`
-				status += status.length < 166 ? '#beer #untappd' : ''
+				status += status.length < 146 ? '#beer #untappd' : ''
 				console.log(status)
 				this.T.post('statuses/update', {status : status}, (err3, data3, response3) => {
 	    			if(err3){
