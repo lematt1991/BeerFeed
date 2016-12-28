@@ -96,7 +96,7 @@ class TwitterBot{
 						}
 					})
 				})
-				setTimeout(() => this.check, 1000 * 60 * 15) //15 minutes
+				setTimeout(() => this.check.bind(this), 1000 * 60 * 15) //15 minutes
 				this.dropOldEntries()
 			}
 		})
