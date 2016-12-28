@@ -45,7 +45,7 @@ class TwitterBot{
 				var url = `http://www.thebeerfeed.com/#/map/${info.venue_id}`;
 				var loc = info.twitter || `at ${info.venue}`
 				var status = `${beer.count} people checked in ${info.brewery}'s ${info.name} ${loc}: ${url}`
-				status += status.length < 145 ? ' #beer #untappd' : ''
+				status += status.length <= 125 ? ' #beer #untappd' : ''
 				console.log(status)
 				this.T.post('statuses/update', {status : status}, (err3, data3, response3) => {
 	    			if(err3){
@@ -96,7 +96,8 @@ class TwitterBot{
 						}
 					})
 				})
-				setTimeout(() => this.check.bind(this), 1000 * 60 * 15) //15 minutes
+				console.log('Setting timeout for next check')
+				setTimeout(this.check.bind(this), 1000 * 60 * 15) //15 minutes
 				this.dropOldEntries()
 			}
 		})
