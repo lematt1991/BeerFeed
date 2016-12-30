@@ -71,7 +71,10 @@ class DataStore extends EventEmitter{
 						rating : beer.rating,
 						venue : beer.venue,
 						numCheckins : beers.length,
-						lastCheckin : newestDate
+						lastCheckin : newestDate,
+						venue_id : beer.venue_id,
+						bid : beer.bid,
+						beer_slug : beer.beer_slug
 					})
 				}
 			})
