@@ -3,8 +3,7 @@ import settingsStore from 'beerfeed/stores/SettingsStore'
 import update from 'react/lib/update';
 import $ from 'jquery'
 import * as _ from 'lodash'
-
-const BACKEND_URL='https://beerfeed-ml9951.rhcloud.com'
+import {BACKEND_URL} from 'beerfeed/Constants'
 
 class DataStore extends EventEmitter{
 
@@ -104,10 +103,6 @@ class DataStore extends EventEmitter{
 		this.mapData = {};
 		this.topBeers = {};
 		this.currentFeed = settingsStore.getCurrentFeed()
-		settingsStore.on('change', () => {
-			this.currentFeed = settingsStore.getCurrentFeed();
-			this.fetchData()
-		});
 		this.fetchData()
 		setInterval(this.fetchData, 5000);
 	}

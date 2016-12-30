@@ -114,7 +114,7 @@ export default class Stats extends React.Component{
 						</h5>
 						<h5>Number of Checkins: {props.numCheckins}</h5>
 						<h5>Rating: {props.rating}</h5>
-						<h5>Last Checked in at: {props.lastCheckin.toLocaleString()}</h5>
+						<h5>Last Checked in at: {props.lastCheckin.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</h5>
 					</div>
 				</div>
 			</td></tr>

@@ -1,16 +1,17 @@
-var debug = process.env.NODE_ENV !== "production";
-var webpack = require('webpack');
-var path = require('path');
+var debug = process.env.NODE_ENV !== 'production'
+var webpack = require('webpack')
+var path = require('path')
 
 module.exports = {
-  context: path.join(__dirname, "static/src"),
-  devtool: debug ? "inline-sourcemap" : null,
-  entry: "./js/client.jsx",
+  context: path.resolve(__dirname + '/static/src'),
+  devtool: debug ? 'inline-sourcemap' : null,
+  entry: './js/client.jsx',
+  resolveLoader: {
+    root: path.join(__dirname, 'node_modules')
+  },
   resolve: {
     extensions: ['', '.js', '.jsx'],
-    alias: {
-      webworkify: 'webworkify-webpack',
-      'mapbox-gl': path.resolve('./node_modules/mapbox-gl/dist/mapbox-gl.js'),
+    alias : {
       beerfeed : path.resolve(path.join(__dirname, 'static/src/js'))
     }
   },
@@ -22,7 +23,7 @@ module.exports = {
         loader: 'babel-loader',
         query: {
           presets: ['react', 'es2015', 'stage-0'],
-          plugins: ['react-html-attrs', 'transform-class-properties', 'transform-decorators-legacy'],
+          plugins: ['react-html-attrs', 'transform-class-properties', 'transform-decorators-legacy']
         }
       },
       {
@@ -30,25 +31,33 @@ module.exports = {
         loader: 'json-loader'
       },
       {
-        test: /\.jsx?$/,
-        include: path.resolve(__dirname, 'node_modules/webworkify/index.js'),
-        loader: 'worker'
+        test: /mapbox-gl.+\.js$/,
+        include: path.resolve(__dirname + '/node_modules/mapbox-gl-shaders/index.js'),
+        loader: 'transform/cacheable?brfs'
       },
       { test: /\.css$/, loader: 'style!css' },
+      {test: /\.less/, loader: 'css-loader!autoprefixer-loader!less-loader'},
+      { test: /\.png$/, loader: 'url-loader?limit=100000' },
+      { test: /\.jpg$/, loader: 'file-loader' }
     ],
     postLoaders: [{
       include: /node_modules\/mapbox-gl-shaders/,
       loader: 'transform',
       query: 'brfs'
-    }]    
+    }]
   },
   output: {
     path: __dirname + "/static/src/",
     filename: "client.min.js"
   },
-  plugins: debug ? [] : [
-    new webpack.optimize.DedupePlugin(),
-    new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.optimize.UglifyJsPlugin({ mangle: false, sourcemap: false }),
-  ],
-};
+  plugins: debug ?
+    [
+      new webpack.optimize.OccurenceOrderPlugin(),
+      new webpack.HotModuleReplacementPlugin(),
+      new webpack.NoErrorsPlugin()
+    ] : [
+      new webpack.optimize.DedupePlugin(),
+      new webpack.optimize.OccurenceOrderPlugin(),
+      new webpack.optimize.UglifyJsPlugin({ mangle: false, sourcemap: false })
+    ]
+}
