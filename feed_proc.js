@@ -30,6 +30,9 @@ function startProc(args){
      */
     function dbInsert(table, primary_key, values){
         values = values.map(v => {
+            if(v == null){
+                return 'NULL'
+            }
             if(typeof(v) === 'string'){
                 return `$$${v}$$`
             }else if(typeof(v) === 'object'){
