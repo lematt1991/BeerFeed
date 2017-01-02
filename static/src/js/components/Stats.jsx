@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import {SafeAnchor} from 'react-bootstrap';
 import {Table} from 'react-bootstrap';
 import * as SearchActions from 'beerfeed/actions/SearchActions';
+import Select from 'react-select';
 
 export default class Stats extends React.Component{
 
@@ -71,65 +72,111 @@ export default class Stats extends React.Component{
 		DataStore.removeListener('new-data', this.updateData)
 	}
 
+	gotoBrewery = (brewery) => {
+		SearchActions.changeSearchTerm(brewery)
+		this.context.router.push({
+			pathname : 'feed'
+		})
+	}
+
+	gotoVenue = (venue_id) => {
+		this.context.router.push({
+			pathname : '/map',
+			query : {venue : venue_id}
+		})
+	}
+
 	constructor(){
 		super();	
+
+		var options = [
+			{
+				label : 'Top Checkins',
+				value : 'topCheckins',
+				f : obj => (
+					<tr key={obj.bid + obj.venue_id}>
+						<td>
+							<div class="media">
+								<div class='media-body'>
+									<h5>Brewery: <SafeAnchor onClick={() => this.gotoBrewery(obj.brewery)}>{obj.brewery}</SafeAnchor>
+									</h5>
+									<h5>Venue: <SafeAnchor onClick={() => this.gotoVenue(obj.venue_id)}>{obj.venue}</SafeAnchor>
+									</h5>
+									<h5>Beer: <a target='_blank' href={`https://untappd.com/b/${obj.beer_slug}/${obj.bid}`}>{obj.beer}</a>
+									</h5>
+									<h5>Number of Checkins: {obj.numCheckins}</h5>
+									<h5>Rating: {obj.rating}</h5>
+									<h5>Last Checked in at: {obj.lastCheckin.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</h5>
+								</div>
+							</div>
+						</td>
+					</tr>
+				)
+			},{
+				label : 'Top Venues',
+				value : 'venues',
+				f : (obj, i) => (
+					<tr key={obj.checkins[0].venue_id}>
+						<td>
+							<div class="media">
+								<div class='media-body'>
+									<h5>Rank: {i+1}</h5>
+									<h5>Venue: <SafeAnchor onClick={() => this.gotoVenue(obj.checkins[0].venue_id)}>{obj.venue}</SafeAnchor></h5>
+									<h5>Number of Checkins: {obj.checkins.length}</h5>
+								</div>
+							</div>
+						</td>
+					</tr>
+				)
+			},{
+				label : 'Top Breweries',
+				value : 'breweries',
+				f : (obj, i) => (
+					<tr key={obj.checkins[0].brewery}>
+						<td>
+							<div class="media">
+								<div class='media-body'>
+									<h5>Rank: {i+1}</h5>
+									<h5>Brewery: <SafeAnchor onClick={() => this.gotoBrewery(obj.checkins[0].brewery)}>{obj.checkins[0].brewery}</SafeAnchor></h5>
+									<h5>Number of Checkins: {obj.checkins.length}</h5>
+								</div>
+							</div>
+						</td>
+					</tr>
+				)
+			}
+		]
+
+
 		this.state = {
 			data : DataStore.getFeedData(),
 			venues : this.getVenuesArr(),
 			breweries : this.getBreweryArr(),
-			topCheckins : DataStore.getTopCheckins()
+			topCheckins : DataStore.getTopCheckins(),
+			options : options,
+			value : options[0]
 		}
 	}
 
-	mkRow = (props) => {
-		var beerLink = `https://untappd.com/b/${props.beer_slug}/${props.bid}`
-		return(	
-			<tr key={props.bid + props.venue_id}><td>
-				<div class="media">
-					<div class="media-body">
-						<h5>Brewery: <SafeAnchor
-											onClick={() => {
-												SearchActions.changeSearchTerm(props.brewery)
-												this.context.router.push({
-													pathname : 'feed'
-												})
-											}}
-										>
-											{props.brewery}
-										</SafeAnchor>
-						</h5>
-						<h5>Venue: <SafeAnchor
-												onClick={() => {
-													this.context.router.push({
-														pathname : '/map',
-														query : {venue : props.venue_id}
-													})
-												}}
-											>
-												{props.venue}
-											</SafeAnchor>
-
-						</h5>
-						<h5>Beer: <a target="_blank" href={beerLink}>{props.beer}</a>
-						</h5>
-						<h5>Number of Checkins: {props.numCheckins}</h5>
-						<h5>Rating: {props.rating}</h5>
-						<h5>Last Checked in at: {props.lastCheckin.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</h5>
-					</div>
-				</div>
-			</td></tr>
-		);
+	handleChange = (option) => {
+		this.setState(_.extend({}, this.state, {
+			value : option
+		}))
 	}
 
 	render(){
 		return(
 			<div class="container">
 				<div class="row">
-					<h3 class="text-center">
-						Top Checkins
-					</h3>
+					<div class="col-md-4 col-md-offset-4" style={{paddingBottom : 20}}>
+						<Select
+							options={this.state.options}
+							value={this.state.value.value}
+							onChange={this.handleChange}
+							clearable={false}
+						/>
+					</div>
 				</div>
-
 
 				<div class="row">
 					<div class="col-md-8 col-md-offset-2">
@@ -138,97 +185,13 @@ export default class Stats extends React.Component{
 								<div class="table-container">
 									<table class="table table-filter">
 										<tbody>
-										{this.state.topCheckins.map(this.mkRow)}
+										{this.state[this.state.value.value].map(this.state.value.f)}
 										</tbody>
 									</table>
 								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-
-				<div class="row">
-					<h3 class="text-center">
-						Total Checkins by Venue
-					</h3>
-				</div>
-				<div class="row" style={{height : 300}}>
-					<div class="col-md-3"></div>
-					<div class="col-md-6">
-						<table class="table table-striped">
-						    <thead>
-						      	<tr style={{display : 'inline-table', width : '100%', textAlign : 'left'}}>
-						        	<th class="col-xs-2">Rank</th>
-						        	<th class="col-xs-2">Venue</th>
-						        	<th class="col-xs-2">Checkins</th>
-						      	</tr>
-						    </thead>
-						    <tbody style={{overflowY: 'scroll', height : 250, position : 'absolute', width : '100%'}}>
-						    {
-						    	this.state.venues.map((obj, i) => 
-						    		<tr key={i} style={{display : 'inline-table', width : '100%', textAlign : 'left'}}>
-						    			<td class="col-xs-2">{i+1}</td>
-										<td class="col-xs-2">
-											<SafeAnchor
-												onClick={() => {
-													this.context.router.push({
-														pathname : '/map',
-														query : {venue : obj.checkins[0].venue_id}
-													})
-												}}
-											>
-												{obj.venue}
-											</SafeAnchor>
-										</td>
-						    			<td class="col-xs-2">{obj.checkins.length}</td>
-						    		</tr>
-						    	)
-						    }
-						    </tbody>
-						</table>
-					</div>
-				</div>
-
-				<div class="row">
-					<h3 class="text-center">
-						Total Checkins by Brewery
-					</h3>
-				</div>
-				<div class="row" style={{height : 300}}>
-				<div class="col-md-3"></div>
-				<div class="col-md-6">
-					<table class="table table-striped">
-					    <thead>
-					      	<tr style={{display : 'inline-table', width : '100%', textAlign : 'left'}}>
-					        	<th class="col-xs-2">Rank</th>
-					        	<th class="col-xs-2">Brewery</th>
-					        	<th class="col-xs-2">Checkins</th>
-					      	</tr>
-					    </thead>
-					    <tbody style={{overflowY: 'scroll', height : 250, position : 'absolute', width : '100%'}}>
-					    {
-					    	this.state.breweries.map((obj, i) => 
-					    		<tr key={i} style={{display : 'inline-table', width : '100%', textAlign : 'left'}}>
-					    			<td class="col-xs-2">{i+1}</td>
-									<td class="col-xs-2">			
-										<SafeAnchor
-											onClick={() => {
-												SearchActions.changeSearchTerm(obj.brewery)
-												this.context.router.push({
-													pathname : 'feed'
-												})
-											}}
-										>
-											{obj.brewery}
-										</SafeAnchor>
-									</td>
-					    			<td class="col-xs-2">{obj.checkins.length}</td>
-					    		</tr>
-					    	)
-					    }
-					    </tbody>
-					</table>
-				</div>
 				</div>
 				<div style={{height : 100}}></div>
 			</div>
