@@ -53,6 +53,13 @@ class TwitterBot{
 	    			}else{
 	        			console.log(data3)
 	        			console.log('Success!')
+						var q = `INSERT INTO top_beers(bid, venue_id, count, rating, date) VALUES (${beer.bid}, ${beer.venue_id}, ${beer.count}, ${beer.rating}, '${beer.date}');`
+						consle.log(q)
+						db.query(q)
+							.then(console.log('inserted!'))
+							.catch(err => {
+								console.log(err)
+							})
 	        		}
 	    		})
 			}
@@ -79,18 +86,7 @@ class TwitterBot{
 						if(err){
 							console.log(err)
 						}else if(result2.rows.length == 0){
-							console.log(`INSERT INTO top_beers(bid, venue_id, count, rating, date) VALUES (${row.bid}, ${row.venue_id}, ${row.count}, ${row.rating}, '${row.date}');`)
-							db.query(`
-								INSERT INTO top_beers(bid, venue_id, count, rating, date) VALUES 
-									(${row.bid}, ${row.venue_id}, ${row.count}, ${row.rating}, '${row.date.toLocaleDateString()}');
-							`, err => {
-								if(err){
-									console.log(err)
-								}else{
-									console.log('inserted!')
-									this.tweet(row)
-								}
-							})
+							this.tweet(row)
 						}else{
 							console.log(`${row.beer} at ${row.venue_id} was already inserted and now has a count of ${row.count}`)
 						}
