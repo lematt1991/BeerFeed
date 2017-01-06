@@ -54,7 +54,7 @@ class TwitterBot{
 	        			console.log(data3)
 	        			console.log('Success!')
 						var q = `INSERT INTO top_beers(bid, venue_id, count, rating, date) VALUES (${beer.bid}, ${beer.venue_id}, ${beer.count}, ${beer.rating}, '${beer.date}');`
-						consle.log(q)
+						console.log(q)
 						db.query(q)
 							.then(console.log('inserted!'))
 							.catch(err => {
