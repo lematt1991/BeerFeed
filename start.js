@@ -46,16 +46,16 @@ if (cluster.isMaster) {
     });
   }
 
-  db.query('SELECT * FROM users WHERE twitter_secret IS NOT NULL AND twitter_token IS NOT NULL', (err, result) => {
-    if(err){
-      console.log(err)
-    }else{
-      result.rows.forEach(row => {
-        var bot = new TwitterBot(row.id, row.twitter_token, row.twitter_secret)
-        bot.check()
-      })
-    }
-  })
+  // db.query('SELECT * FROM users WHERE twitter_secret IS NOT NULL AND twitter_token IS NOT NULL', (err, result) => {
+  //   if(err){
+  //     console.log(err)
+  //   }else{
+  //     result.rows.forEach(row => {
+  //       var bot = new TwitterBot(row.id, row.twitter_token, row.twitter_secret)
+  //       bot.check()
+  //     })
+  //   }
+  // })
 
   db.query('SELECT * FROM users WHERE general_purpose=false;', (err, result) => {
     if(err){
