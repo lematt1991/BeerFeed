@@ -20,78 +20,75 @@ class TwitterBot{
 			access_token_secret : token_secret
 		});
 		this.username = username;
+		this.tweet = this.tweet.bind(this)
 	}
 
 	tweet(beer){
-		var q = `
-			SELECT beers.bid, 
-				   venues.venue_id as venue_id, 
-				   beers.name as name, 
-				   breweries.name as brewery ,
-				   beers.pic,
-				   venues.venue,
-				   venues.twitter
-			FROM checkins 
-				NATURAL JOIN beers NATURAL JOIN venues 
-				LEFT JOIN breweries on breweries.brewery_id=checkins.brewery_id
-			WHERE venues.venue_id=${beer.venue_id} AND beers.bid=${beer.bid};
-		`
-		console.log(q)
-		db.query(q, (err, result) => {
+		var url = `http://www.thebeerfeed.com/#/map/${beer.venue_id}`;
+		var loc = beer.twitter || `at ${beer.venue}`
+		var status = `${beer.count} people checked in ${beer.brewery}'s ${beer.beer} ${loc}: ${url}`
+		status += status.length <= 125 ? ' #beer #untappd' : ''
+
+		if(status.length > 140){
+			status = `${beer.count} people checked in ${beer.beer} ${loc}: ${url}`
+			if(status.length > 140){
+				status = `${beer.count} people checked in ${beer.beer}: ${url}`
+			}
+		}
+
+		console.log(status)
+
+		this.T.post('statuses/update', {status : status}, (err, data, response) => {
 			if(err){
 				console.log(err)
 			}else{
-				var info = result.rows[0]
-				var url = `http://www.thebeerfeed.com/#/map/${info.venue_id}`;
-				var loc = info.twitter || `at ${info.venue}`
-				var status = `${beer.count} people checked in ${info.brewery}'s ${info.name} ${loc}: ${url}`
-				status += status.length <= 125 ? ' #beer #untappd' : ''
-				console.log(status)
-				this.T.post('statuses/update', {status : status}, (err3, data3, response3) => {
-	    			if(err3){
-	    				console.log(err3)
-	    			}else{
-	        			console.log(data3)
-	        			console.log('Success!')
-						var q = `INSERT INTO top_beers(bid, venue_id, count, rating, date) VALUES (${beer.bid}, ${beer.venue_id}, ${beer.count}, ${beer.rating}, '${beer.date.toISOString()}');`
-						console.log(q)
-						db.query(q)
-							.then(console.log('inserted!'))
-							.catch(err => {
-								console.log(err)
-							})
-	        		}
-	    		})
-			}
+    			console.log(data)
+    			console.log('Success!')
+				var q = `INSERT INTO top_beers(bid, venue_id, count, rating, date) VALUES (${beer.bid}, ${beer.venue_id}, ${beer.count}, ${beer.rating}, '${beer.date.toISOString()}');`
+				console.log(q)
+				db.query(q)
+					.then(console.log('inserted!'))
+					.catch(err => {
+						console.log(err)
+					})
+    		}
 		})
 	}
+
 	check(){
 		var d = new Date()
 		console.log(`Checking top beers at ${d.toLocaleString()}`)
 
-		db.query(`SELECT * FROM(
-					SELECT beers.name as beer, bid, venue_id, count(*), avg(rating) as rating, max(created) as date, username
+		db.query(`SELECT q.* FROM(
+					SELECT 
+						beers.name as beer, 
+						bid, 
+						venue_id, 
+						count(*), 
+						avg(rating) as rating, 
+						max(created) as date, 
+						username,
+						breweries.name as brewery,
+						venues.venue,
+						venues.twitter
 					FROM checkins NATURAL JOIN beers NATURAL JOIN venues
-					GROUP BY bid, venue_id, username, beers.name
+					LEFT JOIN breweries ON checkins.brewery_id=breweries.brewery_id
+					GROUP BY 
+						bid, 
+						venue_id, 
+						username, 
+						beers.name,
+						breweries.name,
+						venues.venue,
+						venues.twitter
 					HAVING count(*) > 5
-				)q WHERE rating > 4.4 AND username='${this.username}'`, (err, result) => {
+				)q LEFT JOIN top_beers ON q.bid=top_beers.bid AND q.venue_id=top_beers.venue_id
+				WHERE q.rating > 4.4 AND username='${this.username}' AND top_beers.bid IS NULL;
+			`, (err, result) => {
 			if(err){
 				console.log(err);
 			}else{
-				_.forEach(result.rows, row =>{
-					db.query(`
-						SELECT * FROM top_beers WHERE bid=${row.bid} AND
-							venue_id=${row.venue_id};
-					`, (err, result2) => {
-						if(err){
-							console.log(err)
-						}else if(result2.rows.length == 0){
-							this.tweet(row)
-						}else{
-							console.log(`${row.beer} at ${row.venue_id} was already inserted and now has a count of ${row.count}`)
-						}
-					})
-				})
+				result.rows.forEach(this.tweet)
 				console.log('Setting timeout for next check')
 				setTimeout(this.check.bind(this), 1000 * 60 * 15) //15 minutes
 				this.dropOldEntries()
