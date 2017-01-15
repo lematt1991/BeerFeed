@@ -199,7 +199,11 @@ function startProc(args){
             db.query(query).then(result => {
                 var row = result.rows[0];
                 untappd.pubFeed((err, feedData) => {
-                    if(err || feedData.meta.error_type === 'invalid_limit'){
+                    if(err || 
+                        !feedData.response ||
+                        !feedData.response.checkins || 
+                        feedData.meta.error_type === 'invalid_limit')
+                    {
                         console.log(err)
                         console.log('Access %s token exhausted, recycling...', tokens[0])
                         tokens.push(untappd.getAccessToken())
