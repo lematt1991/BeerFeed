@@ -23,12 +23,9 @@ var app = express();
 
 app.use(cors());
 
-var db = new pg.Client(DEBUG ? {database : 'beerfeed'} : process.env.OPENSHIFT_POSTGRESQL_DB_URL);
+var db = new pg.Client(process.env.OPENSHIFT_POSTGRESQL_DB_URL);
 db.connect();
 
-var procs = [];
-
-//var redirectURL = 'https://untappd-feed-filter.herokuapp.com/AuthRedirect'
 var redirectURL = 'http://beerfeed-ml9951.rhcloud.com/AuthRedirect'
 
 if(DEBUG){
@@ -52,7 +49,6 @@ if(DEBUG){
 }
 
 app.use(express.static('static/src'));
-
 
 app.get('/health', function(req, res){
   res.send({})
@@ -111,10 +107,9 @@ app.get('/Feed', function(req, res){
   var lastID = req.query.lastID ? req.query.lastID : 0;
   var userPred = req.query.user ? ('AND username=$$' + req.query.user + '$$') : ''
 
-
   var query = `
       SELECT 
-        checkins.checkin_id,
+        max(checkins.checkin_id) as checkin_id,
         beers.name as name, 
         venues.venue as venue,
         breweries.name as brewery,
@@ -122,20 +117,31 @@ app.get('/Feed', function(req, res){
         ST_X(venues.geom) as lon,
         ST_Y(venues.geom) as lat,
         checkins.venue_id, 
-        beers.rating,
+        max(beers.rating) as rating,
         beers.slug as beer_slug,
-        checkins.created,
-        beers.pic 
+        max(checkins.created) as created,
+        beers.pic,
+        COUNT(checkins.checkin_id) as checkin_count
       FROM checkins 
-          NATURAL JOIN beers 
-          NATURAL JOIN venues 
-          LEFT JOIN breweries ON breweries.brewery_id=checkins.brewery_id
+        NATURAL JOIN beers 
+        NATURAL JOIN venues 
+        LEFT JOIN breweries ON breweries.brewery_id=checkins.brewery_id
       WHERE rating >= 4.0 AND 
-            checkin_id > ${lastID} AND
-            venues.category <> 'Travel & Transport' AND
-            venues.category <> 'Outdoors & Recreation'
-            ${userPred} 
-      ORDER BY checkin_id DESC
+        checkin_id > 0 AND
+        venues.category <> 'Travel & Transport' AND
+        venues.category <> 'Outdoors & Recreation'
+        AND username='${req.query.user}'
+      GROUP BY 
+        checkins.venue_id, 
+        beers.bid,
+        beers.name,
+        venues.venue,
+        breweries.name,
+        lon,
+        lat,
+        beers.slug,
+        beers.pic
+      ORDER BY checkin_id DESC;
   `
   db.query(query, function(err, result){
     if(err){
@@ -147,64 +153,6 @@ app.get('/Feed', function(req, res){
     }
   });
 });
-
-app.get('/Start/:user', function(req, resp){
-  db.query('SELECT id, access_token FROM users WHERE id=$$' + req.params.user + '$$;').then(
-    function(res){
-      for(var i = 0; i < res.rows.length; i++){
-        var username = res.rows[i].id;
-
-        feedProc.startProc({
-          username : username,
-          access_token : res.rows[i].access_token,
-          setTimeoutObj : function(obj){procs[username] = obj;}
-        });
-        console.log('Starting ' + username)
-      }
-      resp.send({})
-    }
-  ).catch(function(err){
-    console.log(err)
-  });
-});
-
-app.get('/TopBeers', (req, res) => {
-  var feed=req.query.feed
-  db.query(`
-    SELECT * FROM(
-      SELECT 
-        beers.name as beer, 
-        venues.venue as venue,
-        breweries.name as brewery,
-        breweries.brewery_id,
-        bid, 
-        venue_id, 
-        count(*), 
-        avg(rating) as rating, 
-        max(created) as date, 
-        username
-      FROM checkins 
-          NATURAL JOIN beers 
-          NATURAL JOIN venues 
-          LEFT JOIN breweries ON breweries.brewery_id=checkins.brewery_id
-      GROUP BY 
-        bid, 
-        venue_id, 
-        username, 
-        beers.name,
-        venues.venue,
-        breweries.name,
-        breweries.brewery_id
-      HAVING count(*) > 5
-    )q WHERE rating > 4.4 AND username='${feed}';`, (err, result) => {
-      if(err){
-        console.log(err)
-        res.status(500).send(err)
-      }else{
-        res.json(result.rows)
-      }
-    })
-})
 
 function dropOldEntries(){
   db.query('DELETE FROM checkins WHERE created < NOW() - INTERVAL \'2 days\';')
@@ -223,14 +171,11 @@ process.on('exit', function() {
 port = process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 8082;
 ip = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
 
-
 var server = app.listen(port, ip, function () {
-
     var host = server.address().address;
     var port = server.address().port;
 
     console.log("Beer feed listening at http://%s:%s", host, port)
-
 })
 
 setInterval(function(){request('https://untappd-feed-filter.herokuapp.com/Wakeup');}, 1000000);  //send every 16 minutes
