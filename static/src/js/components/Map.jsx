@@ -29,18 +29,14 @@ export default class BeerMap extends Component{
 	}
 
 	_genInfoWindow(beers){
-		var used = {};
 		return(
 			beers.map((beer) => {
-				if(used[beer.name] === undefined){
-					used[beer.name] = true;
-					var beerLink = `https://untappd.com/b/${beer.beer_slug}/${beer.bid}`
-					return(
-						<p style={{margin : 0}} key={beer.name}>
-							{beer.brewery}: <a target="_blank" href={beerLink}>{beer.name}</a> ({beer.rating})
-						</p>
-					)
-				}
+				var beerLink = `https://untappd.com/b/${beer.beer_slug}/${beer.bid}`
+				return(
+					<p style={{margin : 0}} key={beer.name}>
+						{beer.brewery}: <a target="_blank" href={beerLink}>{beer.name}</a> ({beer.rating})
+					</p>
+				)
 			})
 		);
 	}

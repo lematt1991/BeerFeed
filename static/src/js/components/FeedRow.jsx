@@ -44,6 +44,9 @@ export default class FeedRow extends Component{
 						Found at: <SafeAnchor 
 									onClick={() => this.toMap(this.props.venue_id)}>{this.props.venue}</SafeAnchor>
 					</h4>
+					<h4>
+						Number of checkins: {this.props.checkin_count}
+					</h4>
 				</div>
 			</div>
 		);

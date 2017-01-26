@@ -102,11 +102,11 @@ export default class Stats extends React.Component{
 									</h5>
 									<h5>Venue: <SafeAnchor onClick={() => this.gotoVenue(obj.venue_id)}>{obj.venue}</SafeAnchor>
 									</h5>
-									<h5>Beer: <a target='_blank' href={`https://untappd.com/b/${obj.beer_slug}/${obj.bid}`}>{obj.beer}</a>
+									<h5>Beer: <a target='_blank' href={`https://untappd.com/b/${obj.beer_slug}/${obj.bid}`}>{obj.name}</a>
 									</h5>
-									<h5>Number of Checkins: {obj.numCheckins}</h5>
+									<h5>Number of Checkins: {obj.checkin_count}</h5>
 									<h5>Rating: {obj.rating}</h5>
-									<h5>Last Checked in at: {obj.lastCheckin.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</h5>
+									<h5>Last Checked in at: {new Date(obj.created).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</h5>
 								</div>
 							</div>
 						</td>

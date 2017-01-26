@@ -2,17 +2,17 @@ import {EventEmitter} from 'events';
 import settingsStore from 'beerfeed/stores/SettingsStore'
 import update from 'react/lib/update';
 import $ from 'jquery'
+import dispatcher from '../Dispatcher'
 import * as _ from 'lodash'
-import {BACKEND_URL} from 'beerfeed/Constants'
 
 class DataStore extends EventEmitter{
 
 	fetchData = () => {
-		$.get(`${BACKEND_URL}/Feed?user=${this.currentFeed}&lastID=${this.lastID}`).then(
+		$.get(`/Feed?user=${this.currentFeed}&lastID=${this.lastID}`).then(
 			(data) => {
 				if(data.checkins){
 					this.lastID = data.lastID
-					this.data = data.checkins.concat(this.data);
+					this.feedData = data.checkins.concat(this.feedData);
 
 					var threshold = settingsStore.getFeeds()[this.currentFeed].topRating;
 
@@ -24,23 +24,10 @@ class DataStore extends EventEmitter{
 							this.mapData[checkin.venue_id] = [checkin]
 						}
 
-						if(checkin.rating >= threshold){
-							if(this.topBeers[checkin.venue_id]){
-								if(this.topBeers[checkin.venue_id][checkin.bid]){
-									this.topBeers[checkin.venue_id][checkin.bid].push(checkin)
-								}else{
-									this.topBeers[checkin.venue_id][checkin.bid] = [checkin];
-								}
-							}else{
-								this.topBeers[checkin.venue_id] = {
-									[checkin.bid] : [checkin]
-								}
-							}
+						if(checkin.rating >= threshold && checkin.checkin_count >= 5){
+							this.topBeers.push(checkin)
 						}
-
 					}
-					var that = this;
-
 					this.emit('new-data')
 				}
 			}
@@ -52,38 +39,11 @@ class DataStore extends EventEmitter{
 	}
 
 	getTopCheckins(){
-		var data = []
-		Object.keys(this.topBeers).forEach(vkey => {
-			Object.keys(this.topBeers[vkey]).forEach(bkey => {
-				var beers = this.topBeers[vkey][bkey]
-				if(beers.length >= 5){
-					var newestDate = _.reduce(beers, (res, beer) => {
-						var d = new Date(beer.created)
-						return res > d ? res : d;
-					}, new Date(0))
-					var beer = beers[0]
-					data.push({
-						bid : beer.bid,
-						brewery : beer.brewery,
-						brewery_id : beer.brewery_id,
-						beer : beer.name,
-						rating : beer.rating,
-						venue : beer.venue,
-						numCheckins : beers.length,
-						lastCheckin : newestDate,
-						venue_id : beer.venue_id,
-						bid : beer.bid,
-						beer_slug : beer.beer_slug
-					})
-				}
-			})
-		})
-		data.sort(this.orderByRating)
-		return data;
+		return this.topBeers.sort(this.orderByRating)
 	}
 
 	getFeedData(){
-		return this.data;
+		return this.feedData;
 	}
 
 	getMapData(){
@@ -92,21 +52,31 @@ class DataStore extends EventEmitter{
 
 	constructor(){
 		super();
-		settingsStore.on('change', () => {
-			this.lastID = 0;
-			this.data = []
-			this.currentFeed = settingsStore.getCurrentFeed()
-			this.fetchData()
-		})
 		this.lastID = 0
-		this.data = []
+		this.feedData = []
 		this.mapData = {};
-		this.topBeers = {};
+		this.topBeers = [];
 		this.currentFeed = settingsStore.getCurrentFeed()
 		this.fetchData()
 		setInterval(this.fetchData, 5000);
 	}
+
+	handleActions = action => {
+		switch(action.type){
+			case 'CHANGE_FEED':
+				this.lastID = 0;
+				this.feedData = {};
+				this.currentFeed = action.feed
+				this.topBeers = []
+				this.fetchData()
+				break;
+		}
+	}
 }
 
+const dataStore = new DataStore();
 
-export default new DataStore();
+dispatcher.register(dataStore.handleActions)
+
+export default dataStore;
+
