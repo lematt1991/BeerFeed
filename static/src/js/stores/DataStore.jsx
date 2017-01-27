@@ -37,7 +37,7 @@ class DataStore extends EventEmitter{
 							this.feedData.push(checkin)
 						}
 						var threshold = settingsStore.getFeeds()[this.currentFeed].topRating;
-						if(oldCount < threshold && checkin.checkin_count >= threshold){
+						if(oldCount < threshold && checkin.checkin_count >= 5 && checkin.rating >= threshold){
 							this.topBeers.push(checkin)
 						}
 						checkin.key = `${checkin.venue_id}${checkin.bid}${checkin.checkin_count}`
