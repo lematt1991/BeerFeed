@@ -5,7 +5,6 @@ import {Link} from 'react-router';
 export default class LinkAccount extends Component{
 
 	_handleClick(event){
-		event.target.blur()
 		console.log('clicked')
 	}
 
@@ -53,7 +52,7 @@ export default class LinkAccount extends Component{
 
 				<Row>
 					<div class="col-md-12 text-center">
-						<a class="btn btn-primary" href={`${BACKEND_URL}/Auth`} onClick={this._handleClick.bind(this)}>
+						<a id='link-account' class="btn btn-primary" href={'/Auth'} onClick={this._handleClick.bind(this)}>
 							Click Here To Link Account
 						</a>
 					</div>

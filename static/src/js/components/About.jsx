@@ -15,26 +15,23 @@ export default class About extends Component{
 		this.state = {
 			buttonMsg : 'Help Improve Beer Feed',
 			child : <QA/>,
-			id : childID.QA_ID
+			QA : true
 		}
 	}
 
 	_handleClick(event){
-		event.target.blur()
-		if(this.state.id === childID.QA_ID){
+		if(this.state.QA){
 			this.setState({
 				buttonMsg : 'FAQ',
 				child : <LinkAccount/>,
-				id : childID.LINK_ACCOUNT_ID,
+				QA : false
 			})
-		}else if(this.state.id === childID.LINK_ACCOUNT_ID){
+		}else{
 			this.setState({
 				buttonMsg : 'Help Improve Beer Feed',
 				child : <QA/>,
-				id : childID.QA_ID,
+				QA : true
 			})
-		}else{
-			console.log('ERROR!!!')
 		}
 	}
 
