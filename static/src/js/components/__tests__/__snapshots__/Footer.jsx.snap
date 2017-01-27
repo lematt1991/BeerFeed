@@ -1,0 +1,17 @@
+exports[`<Footer/> mounts 1`] = `
+<footer
+  className="site-footer">
+  <div
+    className="container">
+    <Row
+      bsClass="row"
+      componentClass="div"
+      md={8}>
+      <p
+        className="text-muted">
+        Powered by Untappd
+      </p>
+    </Row>
+  </div>
+</footer>
+`;
