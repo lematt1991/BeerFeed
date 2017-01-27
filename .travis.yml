@@ -4,6 +4,8 @@ node_js:
 script: npm run test
 env:
   - TRAVIS=travis CXX=g++-4.8
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
 addons:
   apt:
     sources:
