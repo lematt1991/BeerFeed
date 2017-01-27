@@ -6,28 +6,35 @@ import dispatcher from '../Dispatcher'
 import * as _ from 'lodash'
 
 class DataStore extends EventEmitter{
-
 	fetchData = () => {
 		$.get(`/Feed?user=${this.currentFeed}&lastID=${this.lastID}`).then(
 			(data) => {
 				if(data.checkins){
 					this.lastID = data.lastID
-					this.feedData = data.checkins.concat(this.feedData);
 
-					var threshold = settingsStore.getFeeds()[this.currentFeed].topRating;
-
-					for(var i = 0; i < data.checkins.length; i++){
-						var checkin = data.checkins[i];
-						if(this.mapData[checkin.venue_id]){
-							this.mapData[checkin.venue_id].push(checkin);
+					data.checkins.forEach((c, i) => {
+						var checkin = this.mapData[c.venue_id] && this.mapData[c.venue_id][c.bid];
+						var oldCount = 0;
+						if(checkin){
+							oldCount = checkin.checkin_count
+							checkin.checkin_count += c.checkin_count
+							checkin.checkin_id = c.checkin_id
+							checkin.created = c.created
 						}else{
-							this.mapData[checkin.venue_id] = [checkin]
+							checkin = c;
+							if(this.mapData[checkin.venue_id]){
+								this.mapData[checkin.venue_id][checkin.bid] = checkin
+							}else{
+								this.mapData[checkin.venue_id] = {[checkin.bid] : checkin}
+							}
+							this.feedData.push(checkin)
 						}
-
-						if(checkin.rating >= threshold && checkin.checkin_count >= 5){
+						var threshold = settingsStore.getFeeds()[this.currentFeed].topRating;
+						if(oldCount < threshold && checkin.checkin_count >= threshold){
 							this.topBeers.push(checkin)
 						}
-					}
+						checkin.key = `${checkin.venue_id}${checkin.bid}${checkin.checkin_count}`
+					})
 					this.emit('new-data')
 				}
 			}
@@ -65,7 +72,7 @@ class DataStore extends EventEmitter{
 		switch(action.type){
 			case 'CHANGE_FEED':
 				this.lastID = 0;
-				this.feedData = {};
+				this.feedData = [];
 				this.currentFeed = action.feed
 				this.topBeers = []
 				this.fetchData()

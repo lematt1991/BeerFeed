@@ -121,13 +121,13 @@ app.get('/Feed', function(req, res){
         beers.slug as beer_slug,
         max(checkins.created) as created,
         beers.pic,
-        COUNT(checkins.checkin_id) as checkin_count
+        COUNT(checkins.checkin_id)::int as checkin_count
       FROM checkins 
         NATURAL JOIN beers 
         NATURAL JOIN venues 
         LEFT JOIN breweries ON breweries.brewery_id=checkins.brewery_id
       WHERE rating >= 4.0 AND 
-        checkin_id > 0 AND
+        checkin_id > ${lastID} AND
         venues.category <> 'Travel & Transport' AND
         venues.category <> 'Outdoors & Recreation'
         AND username='${req.query.user}'
