@@ -4,6 +4,7 @@ exports[`<FeedRow/> Mounts 1`] = `
   <img
     className="pull-left media-photo beer-image"
     height="100"
+    onError={[Function]}
     src="https://untappd.akamaized.net/site/beer_logos/beer-1374487_e2108_sm.jpeg"
     style={
       Object {

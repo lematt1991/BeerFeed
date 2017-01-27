@@ -5,6 +5,10 @@ import {SafeAnchor} from 'react-bootstrap';
 export default class FeedRow extends Component{
 	constructor(props){
 		super(props);
+		this.state = {
+			picSrc : props.pic,
+			error : false
+		}
 	}
 
 	toMap = (venueID) => {
@@ -12,6 +16,15 @@ export default class FeedRow extends Component{
 			pathname : '/map',
 			query : {venue : venueID}
 		})
+	}
+
+	handleError = () => {
+		if(!this.state.error){
+			this.setState(_.extend({}, this.state, {
+				picSrc : 'https://untappd.akamaized.net/site/assets/images/temp/badge-beer-default.png',
+				error : true
+			}))
+		}
 	}
 
 	render(){
@@ -28,7 +41,15 @@ export default class FeedRow extends Component{
 		var beerLink = `https://untappd.com/b/${this.props.beer_slug}/${this.props.bid}`
 		return(	
 			<div class="media">
-				<img style={{marginTop : '12px'}} src={this.props.pic} width="100" height="100" class="pull-left media-photo beer-image"/>
+				
+					<img 
+						onError={this.handleError}
+						style={{marginTop : '12px'}} 
+						src={this.state.picSrc} 
+						width="100" 
+						height="100" 
+						class="pull-left media-photo beer-image"
+					/>
 				<div class="media-body">
 					<span class="media-meta pull-right">{date.toLocaleString([], dateFormat)}</span>
 					<h4 class="title">
