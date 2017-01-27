@@ -15,7 +15,7 @@ exports[`<FeedRow/> Mounts 1`] = `
     className="media-body">
     <span
       className="media-meta pull-right">
-      01/26/17, 8:02 PM
+      fake time
     </span>
     <h4
       className="title">

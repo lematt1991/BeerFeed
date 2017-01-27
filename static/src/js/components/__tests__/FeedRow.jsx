@@ -1,11 +1,21 @@
 import React from 'react'
 import {shallow} from 'enzyme'
 import toJson from 'enzyme-to-json'
+import sinon from 'sinon'
 
 import FeedRow from '../FeedRow'
 import {Checkins1} from '../../test_data/Checkins'
 
 describe('<FeedRow/>', () => {
+	var toLocaleString;
+
+	beforeAll(() => {
+		toLocaleString = sinon.stub(Date.prototype, 'toLocaleString', (a1, a2) => 'fake time')
+	})
+
+	afterAll(() => {
+		toLocaleString.restore()
+	})
 
 	it('Mounts', () => {
 		const context = {
