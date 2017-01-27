@@ -4,7 +4,7 @@
   "description": "",
   "main": "start.js",
   "scripts": {
-    "test": "./node_modules/karma/bin/karma start static/test/karma.conf.js",
+    "test": "./node_modules/.bin/jest --coverage",
     "start": "node start.js",
     "dev": "NODE_ENV=debug node server.js",
     "local": "NODE_ENV=debug node server.js"
@@ -49,6 +49,7 @@
   },
   "devDependencies": {
     "babel": "^6.5.2",
+    "babel-jest": "^18.0.0",
     "babel-loader": "^6.2.8",
     "babel-plugin-add-module-exports": "^0.1.2",
     "babel-plugin-react-html-attrs": "^2.0.0",
@@ -62,6 +63,8 @@
     "enzyme": "^2.7.0",
     "isparta": "^4.0.0",
     "istanbul-instrumenter-loader": "^1.2.0",
+    "jest": "^18.1.0",
+    "jest-cli": "^18.1.0",
     "json-loader": "^0.5.4",
     "karma": "^1.3.0",
     "karma-chai": "^0.1.0",
@@ -76,9 +79,15 @@
     "react": "^15.4.0",
     "react-addons-test-utils": "^15.4.0",
     "react-dom": "^15.4.0",
+    "sinon": "^1.17.7",
     "style-loader": "^0.13.1",
     "webpack": "^1.13.3",
     "webpack-dev-server": "^1.16.2",
     "webpack-hot-middleware": "^2.13.2"
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "^.*[.](jpg|JPG|gif|GIF|png|PNG|less|LESS|css|CSS)$": "EmptyModule"
+    }
   }
 }
