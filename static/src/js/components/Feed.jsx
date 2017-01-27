@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import settingsStore from '../stores/SettingsStore';
 import searchStore from '../stores/SearchStore';
 import dataStore from '../stores/DataStore';
-import {Button, Alert, SafeAnchor} from 'react-bootstrap';
+import {Button, Alert, SafeAnchor, FormGroup, FormControl, ControlLabel, Form} from 'react-bootstrap';
 import SearchInput, {createFilter} from 'react-search-input'
 import Select from 'react-select';
 import LocationStore from '../stores/LocationStore';
@@ -79,6 +79,7 @@ export default class Feed extends Component{
 			ordering : {value : 'date', label : 'Order by Date', f : this.orderByDate},
 			searchTerm : searchStore.getSearchTerm(),
 			location : LocationStore.getLocation(),
+			checkin_count_filter : 1,
 			options : LocationStore.haveUserLocation() ? 
 			[
 				{value : 'date', label : 'Order by Date', f : this.orderByDate},
@@ -114,9 +115,17 @@ export default class Feed extends Component{
 		}))
 	}
 
+	changeCheckinFilter = event => {
+		this.setState(_.extend({}, this.state, {
+			checkin_count_filter : event.target.value
+		}))
+	}
+
 	render(){
 		var locName = this.state.feeds[this.state.currentFeed].name
-		var items = this.state.rows.filter(createFilter(this.state.searchTerm, KEYS_TO_FILTER))
+		var filter = createFilter(this.state.searchTerm, KEYS_TO_FILTER)
+		var count_filter = this.state.checkin_count_filter || 1
+		var items = this.state.rows.filter(r => r.checkin_count >= count_filter && filter(r))
 		items.sort(this.state.ordering.f)
 		return(
 			<div class="container-fluid">
@@ -124,7 +133,7 @@ export default class Feed extends Component{
 					<section class="content">
 						<div class="col-md-8 col-md-offset-2">
 							{this._mkAlert()}
-							<div class="row" style={{display : 'flex', justifyContent : 'center'}}>
+							<div class="row" style={{display : 'flex', justifyContent : 'center', alignItems : 'center'}}>
 								<Select
 									style={{width : 150}}
 									options={this.state.options}
@@ -132,6 +141,21 @@ export default class Feed extends Component{
 									onChange={this.changeOrdering}
 									value={this.state.ordering.value}
 								/>
+								<div style={{width : 5}}></div>
+								<Form inline>
+									<FormGroup
+					          controlId="num-checkins"
+					        >
+					          <ControlLabel>Min Checkins:</ControlLabel>
+					          <FormControl
+					          	style={{width : 75, marginLeft : 5}}
+					            type="text"
+					            value={this.state.checkin_count_filter}
+					            onChange={this.changeCheckinFilter}
+					          />
+					          <FormControl.Feedback />
+					        </FormGroup>
+				        </Form>
 							</div>
 							<h1 class="text-center">Beer Feed for {locName}</h1>
 							<div class="panel panel-default">
