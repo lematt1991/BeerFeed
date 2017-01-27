@@ -11,9 +11,6 @@ module.exports = {
   },
   resolve: {
     extensions: ['', '.js', '.jsx'],
-    alias : {
-      beerfeed : path.resolve(path.join(__dirname, 'static/src/js'))
-    }
   },
   module: {
     loaders: [

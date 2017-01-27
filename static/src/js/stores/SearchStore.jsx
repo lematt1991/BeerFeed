@@ -1,5 +1,5 @@
 import {EventEmitter} from 'events';
-import dispatcher from 'beerfeed/Dispatcher';
+import dispatcher from '../Dispatcher';
 
 class SearchStore extends EventEmitter{
 	constructor(){

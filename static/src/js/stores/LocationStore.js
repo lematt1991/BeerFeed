@@ -1,7 +1,7 @@
 import {EventEmitter} from 'events';
-import dispatcher from 'beerfeed/Dispatcher';
+import dispatcher from '../Dispatcher';
 import cookie from 'react-cookie';
-import settingsStore from 'beerfeed/stores/SettingsStore';
+import settingsStore from '../stores/SettingsStore';
 
 class LocationStore extends EventEmitter{
 	constructor(){

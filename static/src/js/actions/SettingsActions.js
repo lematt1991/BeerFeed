@@ -1,4 +1,4 @@
-import dispatcher from 'beerfeed/Dispatcher';
+import dispatcher from '../Dispatcher';
 
 export function changeFeed(feed){
 	dispatcher.dispatch({

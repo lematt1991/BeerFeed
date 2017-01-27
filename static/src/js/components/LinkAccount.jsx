@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {Col, Row, Jumbotron, Button} from 'react-bootstrap';
 import {Link} from 'react-router';
-import {BACKEND_URL} from 'beerfeed/Constants'
 
 export default class LinkAccount extends Component{
 

@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
-import settingsStore from 'beerfeed/stores/SettingsStore';
-import searchStore from 'beerfeed/stores/SearchStore';
-import dataStore from 'beerfeed/stores/DataStore';
+import settingsStore from '../stores/SettingsStore';
+import searchStore from '../stores/SearchStore';
+import dataStore from '../stores/DataStore';
 import {Button, Alert, SafeAnchor} from 'react-bootstrap';
 import SearchInput, {createFilter} from 'react-search-input'
 import Select from 'react-select';
-import LocationStore from 'beerfeed/stores/LocationStore';
+import LocationStore from '../stores/LocationStore';
 import * as _ from 'lodash'
-import FeedRow from 'beerfeed/components/FeedRow'
+import FeedRow from '../components/FeedRow'
 
 const KEYS_TO_FILTER = ['brewery', 'name', 'venue']
 

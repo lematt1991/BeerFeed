@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import SettingsStore from 'beerfeed/stores/SettingsStore';
-import LocationStore from 'beerfeed/stores/LocationStore'
-import DataStore from 'beerfeed/stores/DataStore';
+import SettingsStore from '../stores/SettingsStore';
+import LocationStore from '../stores/LocationStore'
+import DataStore from '../stores/DataStore';
 import {GoogleMapLoader, GoogleMap, Marker, InfoWindow} from "react-google-maps";
 import * as _ from 'lodash'
 

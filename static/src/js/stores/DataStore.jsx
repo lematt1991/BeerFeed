@@ -1,5 +1,5 @@
 import {EventEmitter} from 'events';
-import settingsStore from 'beerfeed/stores/SettingsStore'
+import settingsStore from '../stores/SettingsStore'
 import update from 'react/lib/update';
 import $ from 'jquery'
 import dispatcher from '../Dispatcher'

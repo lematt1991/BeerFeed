@@ -1,9 +1,9 @@
 import React from 'react';
-import DataStore from 'beerfeed/stores/DataStore';
+import DataStore from '../stores/DataStore';
 import * as _ from 'lodash';
 import {SafeAnchor} from 'react-bootstrap';
 import {Table} from 'react-bootstrap';
-import * as SearchActions from 'beerfeed/actions/SearchActions';
+import * as SearchActions from '../actions/SearchActions';
 import Select from 'react-select';
 
 export default class Stats extends React.Component{
