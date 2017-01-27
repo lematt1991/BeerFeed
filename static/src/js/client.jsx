@@ -5,12 +5,12 @@ import {Router, Route, IndexRoute, hashHistory, IndexRedirect} from 'react-route
 require('react-select/dist/react-select.css');
 
 
-import Layout from "beerfeed/components/Layout";
-import BeerMap from "beerfeed/components/Map";
-import Feed from "beerfeed/components/Feed";
-import LinkAccount from 'beerfeed/components/LinkAccount';
-import About from 'beerfeed/components/About';
-import Stats from 'beerfeed/components/Stats';
+import Layout from "./components/Layout";
+import BeerMap from "./components/Map";
+import Feed from "./components/Feed";
+import LinkAccount from './components/LinkAccount';
+import About from './components/About';
+import Stats from './components/Stats';
 
 
 const app = document.getElementById('app');

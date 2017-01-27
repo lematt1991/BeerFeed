@@ -10,7 +10,7 @@ describe('<FeedRow/>', () => {
 	var toLocaleString;
 
 	beforeAll(() => {
-		toLocaleString = sinon.stub(Date.prototype, 'toLocaleString', (a1, a2) => 'fake time')
+		toLocaleString = sinon.stub(Date.prototype, 'toLocaleString', () => 'fake time')
 	})
 
 	afterAll(() => {
