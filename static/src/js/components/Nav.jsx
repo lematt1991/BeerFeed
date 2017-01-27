@@ -14,7 +14,8 @@ export default class Nav extends React.Component {
     this.state = {
       feeds : settingsStore.getFeeds(), 
       currentFeed : settingsStore.getCurrentFeed(),
-      searchTerm : ''
+      searchTerm : '',
+      navExpanded : false
     };
   }
 
@@ -24,7 +25,8 @@ export default class Nav extends React.Component {
 
   updateFeed = () => {
     this.setState(_.extend({}, this.state, {
-      currentFeed : settingsStore.getCurrentFeed()
+      currentFeed : settingsStore.getCurrentFeed(),
+      navExpanded : !this.state.navExpanded
     }))
   }
 
@@ -43,9 +45,19 @@ export default class Nav extends React.Component {
     SearchActions.changeSearchTerm(e.target.value)
   }
 
+  expandToggle = () => {
+    this.setState(_.extend({}, this.state, {
+      navExpanded : !this.state.navExpanded
+    }))
+  }
+
   render() {    
     return (
-      <BS.Navbar style={{zIndex : 3}}>
+      <BS.Navbar 
+        style={{zIndex : 3}} 
+        expanded={this.state.navExpanded} 
+        onToggle={this.expandToggle}
+      >
         <BS.Navbar.Header>
           <BS.Navbar.Toggle/>
         </BS.Navbar.Header>
@@ -66,22 +78,22 @@ export default class Nav extends React.Component {
               }
             </BS.NavDropdown>
             <LinkContainer to="/feed">
-              <BS.NavItem eventKey={2}>
+              <BS.NavItem eventKey={2} onClick={this.expandToggle}>
                 List View
               </BS.NavItem>
             </LinkContainer>
             <LinkContainer to="map">
-              <BS.NavItem eventKey={3}>
+              <BS.NavItem eventKey={3} onClick={this.expandToggle}>
                 Map View
               </BS.NavItem>
             </LinkContainer>
             <LinkContainer to="about">
-              <BS.NavItem eventKey={4}>
+              <BS.NavItem eventKey={4} onClick={this.expandToggle}>
                 About
               </BS.NavItem>
             </LinkContainer>
             <LinkContainer to="stats">
-              <BS.NavItem eventKey={5}>
+              <BS.NavItem eventKey={5} onClick={this.expandToggle}>
                 Stats
               </BS.NavItem>
             </LinkContainer>
