@@ -28,12 +28,13 @@ export default class BeerMap extends Component{
 		DataStore.removeListener('new-data', this.updateData)
 	}
 
-	_genInfoWindow(beers){
+	_genInfoWindow(venue){
 		return(
-			beers.map((beer) => {
+			Object.keys(venue.beers).map(k => {
+				var beer = venue.beers[k]
 				var beerLink = `https://untappd.com/b/${beer.beer_slug}/${beer.bid}`
 				return(
-					<p style={{margin : 0}} key={beer.name}>
+					<p style={{margin : 0}} key={k}>
 						{beer.brewery}: <a target="_blank" href={beerLink}>{beer.name}</a> ({beer.rating})
 					</p>
 				)
@@ -76,8 +77,8 @@ export default class BeerMap extends Component{
 			var rows = this.state.rows
 			if(rows[popup]){
 				var pos = {
-					lat : rows[popup][0].lat,
-					lng : rows[popup][0].lon
+					lat : rows[popup].lat,
+					lng : rows[popup].lon
 				}
 				this.refs.map.panTo(pos)
 				this.setState(_.extend({}, this.state, {
@@ -124,15 +125,15 @@ export default class BeerMap extends Component{
 			        			key={k}
 			        			visible={true}
 			        			position={{
-			        				lat : this.state.rows[k][0].lat,
-			        				lng : this.state.rows[k][0].lon
+			        				lat : this.state.rows[k].lat,
+			        				lng : this.state.rows[k].lon
 			        			}}
 			        			onClick={() => this._handleClick(k)}
 			        		>
 			        		{this.state.currentPopup === k ?
 			        			<InfoWindow onCloseclick={this._onClose.bind(this)}>
 			        				<div>
-			        				<b>{this.state.rows[k][0].venue}</b>
+			        				<b>{this.state.rows[k].venue}</b>
 			        				{
 			        					this._genInfoWindow(this.state.rows[k])
 			        				}

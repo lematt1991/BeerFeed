@@ -13,7 +13,7 @@ class DataStore extends EventEmitter{
 					this.lastID = data.lastID
 
 					data.checkins.forEach((c, i) => {
-						var checkin = this.mapData[c.venue_id] && this.mapData[c.venue_id][c.bid];
+						var checkin = this.mapData[c.venue_id] && this.mapData[c.venue_id].beers[c.bid];
 						var oldCount = 0;
 						if(checkin){
 							oldCount = checkin.checkin_count
@@ -23,9 +23,16 @@ class DataStore extends EventEmitter{
 						}else{
 							checkin = c;
 							if(this.mapData[checkin.venue_id]){
-								this.mapData[checkin.venue_id][checkin.bid] = checkin
+								this.mapData[checkin.venue_id].beers[checkin.bid] = checkin
 							}else{
-								this.mapData[checkin.venue_id] = {[checkin.bid] : checkin}
+								this.mapData[checkin.venue_id] = {
+									beers : {
+										[checkin.bid] : checkin
+									},
+									lat : checkin.lat,
+									lon : checkin.lon,
+									venue : checkin.venue
+								}
 							}
 							this.feedData.push(checkin)
 						}
