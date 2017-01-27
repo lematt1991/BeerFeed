@@ -41,7 +41,7 @@ export default class FeedRow extends Component{
 						Score: {this.props.rating}
 					</h4>
 					<h4>	
-						Found at: <SafeAnchor 
+						Found at: <SafeAnchor id='goto-map'
 									onClick={() => this.toMap(this.props.venue_id)}>{this.props.venue}</SafeAnchor>
 					</h4>
 					<h4>
