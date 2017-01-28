@@ -6,3 +6,10 @@ export function changeFeed(feed){
 		feed : feed
 	})
 }
+
+export function changeCheckinCountThreshold(threshold){
+	dispatcher.dispatch({
+		type : 'CHANGE_CHECKIN_COUNT_THRESHOLD',
+		threshold : threshold
+	})
+}

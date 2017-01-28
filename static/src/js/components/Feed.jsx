@@ -8,6 +8,7 @@ import Select from 'react-select';
 import LocationStore from '../stores/LocationStore';
 import * as _ from 'lodash'
 import FeedRow from '../components/FeedRow'
+import * as SettingsActions from '../actions/SettingsActions'
 
 const KEYS_TO_FILTER = ['brewery', 'name', 'venue']
 
@@ -18,23 +19,30 @@ export default class Feed extends Component{
 		}))
   	}
 
-  	updateData = () => {
-  		this.setState(_.extend({}, this.state, {
-  			rows : dataStore.getFeedData()
-  		}))
-  	}
+	updateData = () => {
+		this.setState(_.extend({}, this.state, {
+			rows : dataStore.getFeedData()
+		}))
+	}
 
-  	updateSearchTerm = () => {
-  		this.setState(_.extend({}, this.state, {
-  			searchTerm : searchStore.getSearchTerm(),
-  		}))
-  	}
+	updateSearchTerm = () => {
+		this.setState(_.extend({}, this.state, {
+			searchTerm : searchStore.getSearchTerm(),
+		}))
+	}
+
+  updateCountThreshold = () => {
+  	this.setState(_.extend({}, this.state, {
+  		checkin_count_filter : settingsStore.getCheckinCountThreshold()
+  	}))
+  }
 
 	componentWillMount() {
 	    settingsStore.on('change', this.updateFeed);
 	    dataStore.on('new-data', this.updateData);
 	    searchStore.on('change', this.updateSearchTerm);
 	    LocationStore.on('got-location', this.getUserLocation);
+	    settingsStore.on('change-checkin-count-threshold', this.updateCountThreshold)
 	}
 
 	getUserLocation = () => {
@@ -51,6 +59,7 @@ export default class Feed extends Component{
 	    dataStore.removeListener('new-data', this.updateData)
 	    searchStore.removeListener('change', this.updateSearchTerm)
 	    LocationStore.removeListener('got-location', this.getUserLocation)
+	    settingsStore.removeListener('change-checkin-count-threshold', this.updateCountThreshold)
 	}
 
 	orderByDate = (x, y) => {
@@ -79,7 +88,7 @@ export default class Feed extends Component{
 			ordering : {value : 'date', label : 'Order by Date', f : this.orderByDate},
 			searchTerm : searchStore.getSearchTerm(),
 			location : LocationStore.getLocation(),
-			checkin_count_filter : 1,
+			checkin_count_filter : settingsStore.getCheckinCountThreshold(),
 			options : LocationStore.haveUserLocation() ? 
 			[
 				{value : 'date', label : 'Order by Date', f : this.orderByDate},
@@ -116,9 +125,7 @@ export default class Feed extends Component{
 	}
 
 	changeCheckinFilter = event => {
-		this.setState(_.extend({}, this.state, {
-			checkin_count_filter : event.target.value
-		}))
+		SettingsActions.changeCheckinCountThreshold(event.target.value)
 	}
 
 	render(){

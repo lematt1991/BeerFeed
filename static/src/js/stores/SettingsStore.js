@@ -41,6 +41,7 @@ class SettingsStore extends EventEmitter{
 		if(!storedLoc){
 			cookie.save('beerFeedLocation', this.whichFeed)
 		}
+		this.checkin_count_threshold = 1;
 	}
 
 	getCurrentLoc(){
@@ -60,10 +61,18 @@ class SettingsStore extends EventEmitter{
 		return this.whichFeed;
 	}
 
+	getCheckinCountThreshold(){
+		return this.checkin_count_threshold
+	}
+
 	handleActions(action){
 		switch(action.type){
 			case 'CHANGE_FEED':
 				this.setFeed(action.feed);
+				break;
+			case 'CHANGE_CHECKIN_COUNT_THRESHOLD':
+				this.checkin_count_threshold = action.threshold;
+				this.emit('change-checkin-count-threshold')
 				break;
 		}
 	}
