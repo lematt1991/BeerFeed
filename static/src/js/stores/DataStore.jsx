@@ -7,7 +7,7 @@ import * as _ from 'lodash'
 
 class DataStore extends EventEmitter{
 	fetchData = () => {
-		$.get(`/Feed?user=${this.currentFeed}&lastID=${this.lastID}`).then(
+		$.get(`/Feed?user=${this.currentFeed}&lastID=${this.lastID}`).done(
 			(data) => {
 				if(data.checkins){
 					this.lastID = data.lastID

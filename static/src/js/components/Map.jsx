@@ -151,7 +151,3 @@ export default class BeerMap extends Component{
 	}
 }
 
-BeerMap.contextTypes = {
-	router: React.PropTypes.object.isRequired
-}
-
