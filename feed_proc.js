@@ -1,6 +1,5 @@
 require('dotenv').config({silent : true})
 var pg = require('pg');
-var util = require('util');
 var fs = require('fs');
 var UntappdClient = require('node-untappd');
 

@@ -1,10 +1,8 @@
 var express = require('express');
 var pg = require('pg');
-var cors = require('cors');
 var UntappdClient = require('node-untappd');
 var request = require('request');
 var feedProc = require('./feed_proc');
-var util = require('util');
 var sched = require('node-schedule');
 var cluster = require('cluster')
 require('dotenv').config({silent : true})
@@ -20,8 +18,6 @@ untappd.setClientId(clientID);
 untappd.setClientSecret(clientSecret);
 
 var app = express();
-
-app.use(cors());
 
 var db = new pg.Client(process.env.OPENSHIFT_POSTGRESQL_DB_URL);
 db.connect();
@@ -55,15 +51,14 @@ app.get('/health', function(req, res){
 })
 
 app.get('/Auth', function(req, res){
-    var url = util.format('https://untappd.com/oauth/authenticate/?client_id=%s&client_secret=%s&response_type=code&redirect_url=%s',
-                          clientID, clientSecret, redirectURL);
-    console.log('redirecting to ' + url)
-    res.redirect(url);
+  const base = 'https://untappd.com/oauth/authenticate'
+  const url = `${base}?client_id=${clientID}&client_secret=${clientSecret}&response_type=code&redirect_url=${redirectURL}`
+  res.redirect(url);
 });
 
 app.get('/AuthRedirect', function(req, res){
-  var url = util.format('https://untappd.com/oauth/authorize/?client_id=%s&client_secret=%s&response_type=code&redirect_url=%s&code=%s',
-                        clientID, clientSecret, redirectURL, req.query.code);
+  var base = 'https://untappd.com/oauth/authorize'
+  var url = `${base}?client_id=${clientID}&client_secret=${clientSecret}&response_type=code&redirect_url=${redirectURL}&code=${req.query.code}`
   console.log('requesting ' + url)
   request(url, function(err, response, body){
     if(!err){
@@ -89,10 +84,12 @@ app.get('/AuthRedirect', function(req, res){
     	  var username = data.response.user.user_name;
         
         console.log('inserting ' + username)
+        var q = `
+          INSERT INTO users(id, access_token, lat, lon, general_purpose, last_id)
+          SELECT $$${username}$$, $$${token}$$, 0.0, 0.0, true, 0 
+          WHERE NOT EXISTS (SELECT 1 FROM users WHERE id=$$${username}$$)
 
-        var q = util.format('INSERT INTO users (id, access_token, lat, lon, general_purpose, last_id)' + 
-                            ' SELECT $$%s$$, $$%s$$, 0.0, 0.0, true, 0 WHERE NOT ' + 
-                            'EXISTS(SELECT 1 FROM users WHERE id=$$%s$$);', username, token, username)
+        `
     	  db.query(q, function(err, result){
           res.redirect('http://beerfeed-ml9951.rhcloud.com/#/feed?thanks=true')
     		});
