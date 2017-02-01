@@ -2,8 +2,9 @@ import React from 'react'
 import {shallow} from 'enzyme'
 import toJson from 'enzyme-to-json'
 import sinon from 'sinon'
+import * as _ from 'lodash'
 
-import {Checkins1} from '../../test_data/Checkins'
+import {Checkins1, WithTopCheckins} from '../../test_data/Checkins'
 
 describe('DataStore', () => {
 	var server;
@@ -17,6 +18,7 @@ describe('DataStore', () => {
 	}
 
 	beforeEach(() => {
+		jest.resetModules()
 		server = sinon.fakeServer.create()
 		server.respondImmediately = true;
 	})
@@ -66,4 +68,43 @@ describe('DataStore', () => {
 		expect(found).toBeTruthy()
 	})
 
+	it('Map Data is accounted for', () => {
+		reply(Checkins1)
+		var DataStore = require('../DataStore').default
+
+		var mapData = DataStore.getMapData()
+
+		Checkins1.checkins.forEach(checkin => {
+			delete mapData[checkin.venue_id].beers[checkin.bid]
+			if(Object.keys(mapData[checkin.venue_id].beers).length === 0){
+				delete mapData[checkin.venue_id]
+			}
+		})
+
+		expect(Object.keys(mapData).length).toBe(0)
+	})
+
+	it('Adds to top checkins', () => {
+		reply(WithTopCheckins)
+		var DataStore = require('../DataStore').default
+		expect(DataStore.getTopCheckins().length).toBe(0)
+		reply({checkins : WithTopCheckins.checkins.slice(0, 2), lastID : WithTopCheckins.lastID + 1})
+		DataStore.fetchData()
+		var topCheckins = DataStore.getTopCheckins()
+		expect(topCheckins.length).toBe(2)
+		expect(topCheckins[0].rating).toBeGreaterThan(topCheckins[1].rating)
+	})
+
+	it('Resets when the feed changes', () => {
+		reply(WithTopCheckins)
+		var DataStore = require('../DataStore').default
+		var SettingsActions = require('../../actions/SettingsActions')
+
+		var stub = sinon.stub(DataStore, 'fetchData')
+
+		SettingsActions.changeFeed('fake_feed')
+
+		expect(DataStore.getFeedData().length).toBe(0)
+		sinon.assert.called(stub)
+	})
 })
