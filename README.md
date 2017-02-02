@@ -15,7 +15,7 @@ The live version can be found [here](http://www.thebeerfeed.com)
 
 #### Map View
 
-![](http://i.imgur.com/XvFKUXH.png)
+![Imgur](http://i.imgur.com/dcIIgfm.png)
 
 #### Map View With Popup
 ![](http://i.imgur.com/oQwlkEw.png)
