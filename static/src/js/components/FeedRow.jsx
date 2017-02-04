@@ -41,15 +41,16 @@ export default class FeedRow extends Component{
 		var beerLink = `https://untappd.com/b/${this.props.beer_slug}/${this.props.bid}`
 		return(	
 			<div class="media">
-				
+				<div class="media-left media-middle">
 					<img 
 						onError={this.handleError}
 						style={{marginTop : '12px'}} 
 						src={this.state.picSrc} 
 						width="100" 
 						height="100" 
-						class="pull-left media-photo beer-image"
+						class="media-photo"
 					/>
+				</div>
 				<div class="media-body">
 					<span class="media-meta pull-right">{date.toLocaleString([], dateFormat)}</span>
 					<h4 class="title">
@@ -67,6 +68,9 @@ export default class FeedRow extends Component{
 					</h4>
 					<h4>
 						Number of checkins: {this.props.checkin_count}
+					</h4>
+					<h4>
+						Style: {this.props.style}
 					</h4>
 				</div>
 			</div>

@@ -118,7 +118,8 @@ app.get('/Feed', function(req, res){
         beers.slug as beer_slug,
         max(checkins.created) as created,
         beers.pic,
-        COUNT(checkins.checkin_id)::int as checkin_count
+        COUNT(checkins.checkin_id)::int as checkin_count,
+        style
       FROM checkins 
         NATURAL JOIN beers 
         NATURAL JOIN venues 
@@ -137,7 +138,8 @@ app.get('/Feed', function(req, res){
         lon,
         lat,
         beers.slug,
-        beers.pic
+        beers.pic,
+        style
       ORDER BY checkin_id DESC;
   `
   db.query(query, function(err, result){

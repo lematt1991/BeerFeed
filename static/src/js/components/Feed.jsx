@@ -10,7 +10,7 @@ import * as _ from 'lodash'
 import FeedRow from '../components/FeedRow'
 import * as SettingsActions from '../actions/SettingsActions'
 
-const KEYS_TO_FILTER = ['brewery', 'name', 'venue']
+const KEYS_TO_FILTER = ['brewery', 'name', 'venue', 'style']
 
 export default class Feed extends Component{
 	updateFeed = () => {

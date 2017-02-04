@@ -1,17 +1,20 @@
 exports[`<FeedRow/> Mounts 1`] = `
 <div
   className="media">
-  <img
-    className="pull-left media-photo beer-image"
-    height="100"
-    onError={[Function]}
-    src="https://untappd.akamaized.net/site/beer_logos/beer-1374487_e2108_sm.jpeg"
-    style={
-      Object {
-        "marginTop": "12px",
+  <div
+    className="media-left media-middle">
+    <img
+      className="media-photo"
+      height="100"
+      onError={[Function]}
+      src="https://untappd.akamaized.net/site/beer_logos/beer-1374487_e2108_sm.jpeg"
+      style={
+        Object {
+          "marginTop": "12px",
+        }
       }
-    }
-    width="100" />
+      width="100" />
+  </div>
   <div
     className="media-body">
     <span
@@ -47,6 +50,10 @@ exports[`<FeedRow/> Mounts 1`] = `
     <h4>
       Number of checkins: 
       1
+    </h4>
+    <h4>
+      Style: 
+      Stout - American Imperial / Double
     </h4>
   </div>
 </div>

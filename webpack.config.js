@@ -1,60 +1,59 @@
-var debug = process.env.NODE_ENV !== 'production'
-var webpack = require('webpack')
-var path = require('path')
+var debug = process.env.NODE_ENV !== "production";
+var webpack = require('webpack');
+var path = require('path');
 
 module.exports = {
-  context: path.resolve(__dirname + '/static/src'),
-  devtool: debug ? 'inline-sourcemap' : null,
-  entry: './js/client.jsx',
+  context: path.resolve(__dirname + '/'),
+  devtool: debug ? "inline-sourcemap" : false,
+  entry: "./static/src/js/client.jsx",
   resolveLoader: {
-    root: path.join(__dirname, 'node_modules')
+    modules : ['node_modules']
   },
   resolve: {
-    extensions: ['', '.js', '.jsx'],
+    extensions: ['.js', '.jsx']
   },
   module: {
-    loaders: [
+    rules : [
       {
-        test: /\.jsx?$/,
-        exclude: /(node_modules|bower_components)/,
-        loader: 'babel-loader',
-        query: {
-          presets: ['react', 'es2015', 'stage-0'],
-          plugins: ['react-html-attrs', 'transform-class-properties', 'transform-decorators-legacy']
+        test : /\.jsx?$/,
+        exclude : /node_modules/,
+        use : {
+          loader : 'babel-loader',
+          query : {
+            presets: ['react', 'es2015', 'stage-0'],
+            plugins: ['react-html-attrs', 'transform-class-properties', 'transform-decorators-legacy'],
+          }
         }
       },
       {
         test: /\.json$/,
         loader: 'json-loader'
       },
-      {
-        test: /mapbox-gl.+\.js$/,
-        include: path.resolve(__dirname + '/node_modules/mapbox-gl-shaders/index.js'),
-        loader: 'transform/cacheable?brfs'
+      { 
+        test: /\.css$/, 
+        loader: ['style-loader', 'css-loader']
       },
-      { test: /\.css$/, loader: 'style!css' },
-      {test: /\.less/, loader: 'css-loader!autoprefixer-loader!less-loader'},
-      { test: /\.png$/, loader: 'url-loader?limit=100000' },
-      { test: /\.jpg$/, loader: 'file-loader' }
-    ],
-    postLoaders: [{
-      include: /node_modules\/mapbox-gl-shaders/,
-      loader: 'transform',
-      query: 'brfs'
-    }]
+      { 
+        test: /\.png$/, 
+        loader: "url-loader?mimetype=image/png" 
+      }
+    ]
   },
   output: {
-    path: __dirname + "/static/src/",
-    filename: "client.min.js"
+    path: __dirname + '/static/src/',
+    filename: 'client.min.js',
+    publicPath: '/',
   },
-  plugins: debug ?
+  plugins: debug ? 
     [
-      new webpack.optimize.OccurenceOrderPlugin(),
-      new webpack.HotModuleReplacementPlugin(),
-      new webpack.NoErrorsPlugin()
+    new webpack.optimize.OccurrenceOrderPlugin(),
+    new webpack.HotModuleReplacementPlugin()
     ] : [
-      new webpack.optimize.DedupePlugin(),
-      new webpack.optimize.OccurenceOrderPlugin(),
-      new webpack.optimize.UglifyJsPlugin({ mangle: false, sourcemap: false })
-    ]
-}
+    new webpack.DefinePlugin({
+      'process.env' : {'NODE_ENV' : JSON.stringify('production')}
+    }),
+    new webpack.optimize.DedupePlugin(),
+    new webpack.optimize.OccurrenceOrderPlugin(),
+    new webpack.optimize.UglifyJsPlugin({ mangle: false, sourcemap: false }),
+  ],
+};
