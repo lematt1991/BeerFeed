@@ -75,7 +75,7 @@ export default class Stats extends React.Component{
 	gotoBrewery = (brewery) => {
 		SearchActions.changeSearchTerm(brewery)
 		this.context.router.push({
-			pathname : 'feed'
+			pathname : 'the_feed'
 		})
 	}
 

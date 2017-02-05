@@ -18,9 +18,9 @@ const app = document.getElementById('app');
 ReactDOM.render(
 	<Router history={browserHistory}>
 		<Route path="/" component={Layout}>
-			<IndexRedirect to="/feed"/>
+			<IndexRedirect to="/the_feed"/>
 			<Route path="map(/:brewery)" component={BeerMap}/>
-			<Route path="feed" component={Feed}/>
+			<Route path="the_feed" component={Feed}/>
 			<Route path="linkAccount" component={LinkAccount}/>
 			<Route path="about" component={About}/>
 			<Route path="stats" component={Stats}/>
