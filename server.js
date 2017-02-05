@@ -184,3 +184,7 @@ app.get('/Wakeup', function(req, res){
   res.send('')
 });
 
+app.get('*', function (req, res) {
+  res.sendFile(__dirname + '/static/src/index.html');
+});
+

@@ -1,10 +1,12 @@
 import {EventEmitter} from 'events';
 import dispatcher from '../Dispatcher';
 import cookie from 'react-cookie';
+import {browserHistory} from 'react-router'
 
 class SettingsStore extends EventEmitter{
 	constructor(){
 		super();
+		var h = browserHistory;
 		this.feeds = {
 			rochester_feed : {
 				coordinates : [43.1558, -77.5909], 
@@ -32,11 +34,11 @@ class SettingsStore extends EventEmitter{
 				topRating : 4.4
 			}
 		}
+
 		var storedLoc = cookie.load('beerFeedLocation')
-		this.whichFeed = storedLoc ? storedLoc : 'nyc_feed';
-		if(this.feeds[this.whichFeed] === undefined){
-			console.log('Error, cookie feed error')
-			this.whichFeed = 'nyc_feed';
+		this.whichFeed = browserHistory.getCurrentLocation().query.feed || storedLoc || 'nyc_feed'
+		if(this.feeds[this.whichFeed] == null){
+			this.whichFeed = 'nyc_feed'
 		}
 		if(!storedLoc){
 			cookie.save('beerFeedLocation', this.whichFeed)
