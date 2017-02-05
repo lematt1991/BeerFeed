@@ -77,7 +77,7 @@ export default class Nav extends React.Component {
                 )
               }
             </BS.NavDropdown>
-            <LinkContainer to="/feed">
+            <LinkContainer to="/the_feed">
               <BS.NavItem eventKey={2} onClick={this.expandToggle}>
                 List View
               </BS.NavItem>
@@ -99,7 +99,7 @@ export default class Nav extends React.Component {
             </LinkContainer>
           </BS.Nav>
           {
-            this.props.location.pathname === '/feed' ? 
+            this.props.location.pathname === '/the_feed' ? 
               <BS.Navbar.Form>
                 <BS.FormControl
                   type="text"
