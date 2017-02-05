@@ -5,7 +5,7 @@ Object {
   },
   "query": "
 					INSERT INTO top_beers(bid, venue_id, count, rating, date) 
-					VALUES (77322, 3803461, 9, 4.44918012619019, \'2017-02-04T05:07:28.000Z\');
+					VALUES (77322, 3803461, 9, 4.44918012619019, \'fake-time\');
 				",
 }
 `;

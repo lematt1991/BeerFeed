@@ -24,6 +24,7 @@ describe('twitter-bot', () => {
 
 	it('Tweets about good beers', done => {
 		var bot = new TwitterBot('username', 'token', 'token_secret')
+		var toISOStub = sinon.stub(Date.prototype, 'toISOString', () => 'fake-time')
 
 		var queryStub = sinon.stub(Client.prototype, 'query', query => new Promise((resolve, reject) => {
 			resolve({
@@ -49,6 +50,7 @@ describe('twitter-bot', () => {
 				query : queryStub.getCall(2).args[0],
 				post : bot.T.post.mock.calls[0][1]
 			}).toMatchSnapshot()
+			toISOStub.restore()
 			done()
 		})
 		.catch(err => {
