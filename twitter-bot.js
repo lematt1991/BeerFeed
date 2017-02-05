@@ -24,7 +24,7 @@ class TwitterBot{
 	}
 
 	tweet(beer){
-		var url = `http://www.thebeerfeed.com/map/${beer.venue_id}?feed=${this.username}`;
+		var url = `http://www.thebeerfeed.com/map?feed=${this.username}&venue=${beer.venue_id}`;
 		var loc = beer.twitter || `at ${beer.venue}`
 		var status = `${beer.count} people checked in ${beer.brewery}'s ${beer.beer} ${loc}: ${url}`
 		status += status.length <= 125 ? ' #beer #untappd' : ''
