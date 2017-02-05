@@ -65,7 +65,7 @@
     "react-dom": "^15.4.2",
     "sinon": "^1.17.7",
     "style-loader": "^0.13.1",
-    "webpack-dev-server": "^1.16.2",
+    "webpack-dev-server": "^2.3.0",
     "webpack-hot-middleware": "^2.16.1"
   },
   "jest": {

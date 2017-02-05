@@ -38,61 +38,65 @@ class TwitterBot{
 
 		console.log(status)
 
-		this.T.post('statuses/update', {status : status}, (err, data, response) => {
-			if(err){
-				console.log(err)
-			}else{
-    			console.log(data)
-    			console.log('Success!')
-				var q = `INSERT INTO top_beers(bid, venue_id, count, rating, date) VALUES (${beer.bid}, ${beer.venue_id}, ${beer.count}, ${beer.rating}, '${beer.date.toISOString()}');`
+		return this.T.post('statuses/update', {status : status})
+			.then(data => {
+				console.log(data)
+				var date = new Date(beer.date)
+				var q = `
+					INSERT INTO top_beers(bid, venue_id, count, rating, date) 
+					VALUES (${beer.bid}, ${beer.venue_id}, ${beer.count}, ${beer.rating}, '${date.toISOString()}');
+				`
 				console.log(q)
-				db.query(q)
-					.then(console.log('inserted!'))
+				return db.query(q)
+					.then(() => console.log('inserted!'))
 					.catch(err => {
 						console.log(err)
 					})
-    		}
-		})
+			})
+			.catch(err => {
+				console.log(err)
+  		})
 	}
 
 	check(){
 		var d = new Date()
 		console.log(`Checking top beers at ${d.toLocaleString()}`)
 
-		db.query(`SELECT q.* FROM(
-					SELECT 
-						beers.name as beer, 
-						bid, 
-						venue_id, 
-						count(*), 
-						avg(rating) as rating, 
-						max(created) as date, 
-						username,
-						breweries.name as brewery,
-						venues.venue,
-						venues.twitter
-					FROM checkins NATURAL JOIN beers NATURAL JOIN venues
-					LEFT JOIN breweries ON checkins.brewery_id=breweries.brewery_id
-					GROUP BY 
-						bid, 
-						venue_id, 
-						username, 
-						beers.name,
-						breweries.name,
-						venues.venue,
-						venues.twitter
-					HAVING count(*) > 5
-				)q LEFT JOIN top_beers ON q.bid=top_beers.bid AND q.venue_id=top_beers.venue_id
-				WHERE q.rating > 4.4 AND username='${this.username}' AND top_beers.bid IS NULL;
-			`, (err, result) => {
-			if(err){
-				console.log(err);
-			}else{
-				result.rows.forEach(this.tweet)
-				console.log('Setting timeout for next check')
-				setTimeout(this.check.bind(this), 1000 * 60 * 15) //15 minutes
-				this.dropOldEntries()
-			}
+		return db.query(`
+			SELECT q.* FROM(
+				SELECT 
+					beers.name as beer, 
+					bid, 
+					venue_id, 
+					count(*), 
+					avg(rating) as rating, 
+					max(created) as date, 
+					username,
+					breweries.name as brewery,
+					venues.venue,
+					venues.twitter
+				FROM checkins NATURAL JOIN beers NATURAL JOIN venues
+				LEFT JOIN breweries ON checkins.brewery_id=breweries.brewery_id
+				GROUP BY 
+					bid, 
+					venue_id, 
+					username, 
+					beers.name,
+					breweries.name,
+					venues.venue,
+					venues.twitter
+				HAVING count(*) > 5
+			)q LEFT JOIN top_beers ON q.bid=top_beers.bid AND q.venue_id=top_beers.venue_id
+			WHERE q.rating > 4.4 AND username='${this.username}' AND top_beers.bid IS NULL;
+		`)
+		.then(result => {
+			var promises = result.rows.map(this.tweet)
+			console.log('Setting timeout for next check')
+			setTimeout(this.check.bind(this), 1000 * 60 * 15) //15 minutes
+			this.dropOldEntries()
+			return Promise.all(promises)
+		}).catch(err => {
+			console.log(err)
 		})
 	}
 }
