@@ -1,22 +1,28 @@
-import {EventEmitter} from 'events';
+/**
+ * @flow
+ */
+import EventEmitter from 'events';
 import dispatcher from '../Dispatcher';
+import type {Action} from '../actions/Types'
 
 class SearchStore extends EventEmitter{
+	searchTerm : string
+
 	constructor(){
 		super();
 		this.searchTerm = '';
 	}
 
-	setSearchTerm = (term) => {
+	setSearchTerm = (term : string) => {
 		this.searchTerm = term;
 		this.emit('change')
 	}
 
-	getSearchTerm = () => {
+	getSearchTerm = () : string => {
 		return this.searchTerm;
 	}
 
-	handleActions = (action) => {
+	handleActions = (action : Action) : void => {
 		switch(action.type){
 			case 'CHANGE_SEARCH_TERM':
 				this.setSearchTerm(action.term);

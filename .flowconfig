@@ -1,0 +1,24 @@
+[ignore]
+.*/__tests__/.*
+.*/node_modules/.*
+flow-typed/*
+
+[include]
+./static/src/js
+./static/src/js/stores/
+./static/src/js/pages/
+./static/src/js/actions/
+
+[libs]
+flow-typed/npm
+
+[options]
+module.name_mapper='\(react-flux\)' -> '<PROJECT_ROOT>/flow-typed/GeneralStub.js'
+module.name_mapper='\(flux\)' -> '<PROJECT_ROOT>/flow-typed/GeneralStub.js'
+module.name_mapper='.*\(.scss\|.png\|.md\)' -> '<PROJECT_ROOT>/flow-typed/GeneralStub.js'
+module.name_mapper='^stores\/\(.*\)$' -> '<PROJECT_ROOT>/static/src/js/stores/\1'
+module.name_mapper='^stores$' -> '<PROJECT_ROOT>/static/src/js/stores'
+module.name_mapper='^components\/\(.*\)$' -> '<PROJECT_ROOT>/static/src/js/components/\1'
+module.name_mapper='^components$' -> '<PROJECT_ROOT>/static/src/js/components'
+module.name_mapper='^actions\/\(.*\)$' -> '<PROJECT_ROOT>/static/src/js/actions/\1'
+module.name_mapper='^actions$' -> '<PROJECT_ROOT>/static/src/js/actions'
