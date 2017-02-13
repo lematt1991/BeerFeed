@@ -1,12 +1,38 @@
-import {EventEmitter} from 'events';
+/**
+ * Settings Store
+ * @flow
+ */
+import EventEmitter from 'events';
 import dispatcher from '../Dispatcher';
 import cookie from 'react-cookie';
 import {browserHistory} from 'react-router'
 
+import type {Action} from '../actions/Types'
+import type {Location} from './LocationStore'
+
+type Feed = {
+	coordinates : Array<number>,
+	name : string,
+	topRating : number
+}
+
+export type Feeds = {
+	rochester_feed : Feed,
+	nyc_feed : Feed,
+	worker1234 : Feed,
+	lexxx320 : Feed,
+	lematt1991 : Feed
+}
+
+export type FeedName = $Keys<Feeds>
+
 class SettingsStore extends EventEmitter{
+	feeds : Feeds;
+	whichFeed : FeedName;
+	checkin_count_threshold : number;
+
 	constructor(){
 		super();
-		var h = browserHistory;
 		this.feeds = {
 			rochester_feed : {
 				coordinates : [43.1558, -77.5909], 
@@ -46,28 +72,29 @@ class SettingsStore extends EventEmitter{
 		this.checkin_count_threshold = 1;
 	}
 
-	getCurrentLoc(){
+	getCurrentLoc() : Array<number> {
 		return this.feeds[this.whichFeed].coordinates;
 	}
 
-	setFeed(feed){
+	setFeed(feed : FeedName) : void {
 		this.whichFeed = feed;
 		cookie.save('beerFeedLocation', feed)
 		this.emit('change')
 	}
 
-	getFeeds(){
+	getFeeds() : Feeds {
 		return this.feeds;
 	}
-	getCurrentFeed(){
+
+	getCurrentFeed() : FeedName{
 		return this.whichFeed;
 	}
 
-	getCheckinCountThreshold(){
+	getCheckinCountThreshold() : number{
 		return this.checkin_count_threshold
 	}
 
-	handleActions(action){
+	handleActions(action : Action) : void{
 		switch(action.type){
 			case 'CHANGE_FEED':
 				this.setFeed(action.feed);
