@@ -165,7 +165,11 @@ function startProc(args){
                     sevenDaysAgo = new Date().getTime() - (7 * 24 * 60 * 60 * 1000)
                     if(datestr == null || new Date(datestr).getTime() < sevenDaysAgo){
                         console.log(`Updating beer rating, last_updated = ${datestr}`)
-                        getBeer(checkin, true)
+                        try{
+                            getBeer(checkin, true)
+                        }catch(e){
+                            console.log(e);
+                        }
                     }else{
                         console.log(`Found cached beer in database.  Last updated on ${datestr}`)
                         // Insert checkin
