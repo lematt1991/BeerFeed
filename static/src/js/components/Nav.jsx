@@ -1,6 +1,5 @@
 import React from "react";
 import settingsStore from '../stores/SettingsStore';
-import searchStore from '../stores/SearchStore';
 import * as SearchActions from '../actions/SearchActions';
 import * as SettingsActions from '../actions/SettingsActions';
 import * as BS from 'react-bootstrap';

@@ -5,7 +5,7 @@ process.env.NODE_ENV='production'; //To suppress the logger
 import {shallow} from 'enzyme'
 import {Checkins1} from '../../test_data/Checkins'
 
-describe('SearchStore', () => {
+describe('SearchActions', () => {
 	var store;
 	var SearchActions;
 
