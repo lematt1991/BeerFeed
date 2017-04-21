@@ -16,4 +16,7 @@ export type Action = {
 	threshold : number
 }
 
-export const CHANGE_SEARCH_TERM = 'CHANGE_SEARCH_TERM'
+export const CHANGE_SEARCH_TERM = 'CHANGE_SEARCH_TERM';
+export const FETCH_FEEDS = 'FETCH_FEEDS';
+export const CHANGE_FEED = 'CHANGE_FEED';
+export const CHANGE_CHECKIN_COUNT_THRESHOLD = 'CHANGE_CHECKIN_COUNT_THRESHOLD';

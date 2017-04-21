@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import settingsStore from '../stores/SettingsStore';
 import dataStore from '../stores/DataStore';
 import {Button, Alert, SafeAnchor, FormGroup, FormControl, ControlLabel, Form} from 'react-bootstrap';
 import SearchInput, {createFilter} from 'react-search-input'
@@ -10,33 +9,18 @@ import FeedRow from '../components/FeedRow'
 import * as SettingsActions from '../actions/SettingsActions'
 import {connect} from 'react-redux'
 
-
 const KEYS_TO_FILTER = ['brewery', 'name', 'venue', 'style']
 
 class Feed extends Component{
-	updateFeed = () => {
-		this.setState(_.extend({}, this.state, {
-			currentFeed : settingsStore.getCurrentFeed()
-		}))
-  	}
-
 	updateData = () => {
 		this.setState(_.extend({}, this.state, {
 			rows : dataStore.getFeedData()
 		}))
 	}
 
-  updateCountThreshold = () => {
-  	this.setState(_.extend({}, this.state, {
-  		checkin_count_filter : settingsStore.getCheckinCountThreshold()
-  	}))
-  }
-
 	componentWillMount() {
-	    settingsStore.on('change', this.updateFeed);
 	    dataStore.on('new-data', this.updateData);
 	    LocationStore.on('got-location', this.getUserLocation);
-	    settingsStore.on('change-checkin-count-threshold', this.updateCountThreshold)
 	}
 
 	getUserLocation = () => {
@@ -49,10 +33,8 @@ class Feed extends Component{
 	}
 
 	componentWillUnmount () {
-	    settingsStore.removeListener('change', this.updateFeed)
 	    dataStore.removeListener('new-data', this.updateData)
 	    LocationStore.removeListener('got-location', this.getUserLocation)
-	    settingsStore.removeListener('change-checkin-count-threshold', this.updateCountThreshold)
 	}
 
 	orderByDate = (x, y) => {
@@ -71,16 +53,12 @@ class Feed extends Component{
 
 	constructor(props){
 		super(props)
-		var feeds = settingsStore.getFeeds();
 		this.state = {
 			rows : dataStore.getFeedData(), 
-			currentFeed : settingsStore.getCurrentFeed(),
-			feeds : feeds,
 			showAlert : props.location.query.thanks === 'true',
 			numRows : 40,
 			ordering : {value : 'date', label : 'Order by Date', f : this.orderByDate},
 			location : LocationStore.getLocation(),
-			checkin_count_filter : settingsStore.getCheckinCountThreshold(),
 			options : LocationStore.haveUserLocation() ? 
 			[
 				{value : 'date', label : 'Order by Date', f : this.orderByDate},
@@ -117,13 +95,14 @@ class Feed extends Component{
 	}
 
 	changeCheckinFilter = event => {
-		SettingsActions.changeCheckinCountThreshold(event.target.value)
+		this.props.changeCheckinCountThreshold(event.target.value);
 	}
 
 	render(){
-		var locName = this.state.feeds[this.state.currentFeed].name
+		const feed = this.props.feeds[this.props.currentFeed] || {}
+		var locName = feed.city
 		var filter = createFilter(this.props.searchTerm, KEYS_TO_FILTER)
-		var count_filter = this.state.checkin_count_filter || 1
+		var count_filter = this.props.checkin_count_threshold || 1
 		var items = this.state.rows.filter(r => r.checkin_count >= count_filter && filter(r))
 		items.sort(this.state.ordering.f)
 		return(
@@ -149,7 +128,7 @@ class Feed extends Component{
 					          <FormControl
 					          	style={{width : 75, marginLeft : 5}}
 					            type="text"
-					            value={this.state.checkin_count_filter}
+					            value={this.props.checkin_count_threshold}
 					            onChange={this.changeCheckinFilter}
 					          />
 					          <FormControl.Feedback />
@@ -196,10 +175,15 @@ class Feed extends Component{
 } 
 
 const mapStateToProps = state => ({
-	searchTerm : state.search.searchTerm
+	searchTerm : state.search.searchTerm,
+	feeds : state.settings.feeds,
+	currentFeed : state.settings.currentFeed,
+	checkin_count_threshold : state.settings.checkin_count_threshold
 });
 
-const mapDispatchToProps = dispatch => ({});
+const mapDispatchToProps = dispatch => ({
+	changeCheckinCountThreshold : thresh => dispatch(SettingsActions.changeCheckinCountThreshold(thresh))
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Feed);
 

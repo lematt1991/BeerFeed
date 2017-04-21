@@ -1,21 +1,20 @@
 import React, {Component} from 'react';
-import SettingsStore from '../stores/SettingsStore';
 import LocationStore from '../stores/LocationStore'
 import DataStore from '../stores/DataStore';
 import {GoogleMapLoader, GoogleMap, Marker, InfoWindow} from "react-google-maps";
 import * as _ from 'lodash'
+import {connect} from 'react-redux'
 
-export default class BeerMap extends Component{
+class BeerMap extends Component{
 	updateData = () => {
-		var feed = SettingsStore.getCurrentFeed()
-		var feeds = this.state.feeds
+		const dflt = {lat : 40.789, lon : -73.9479}
+		const feed = this.props.feeds[this.props.currentFeed] || dflt
 		this.setState(_.extend({}, this.state, {
 			rows : DataStore.getMapData(),
 			currentPopup : feed === this.state.currentFeed ? this.state.currentPopup : undefined,
-			currentFeed : feed,
 			position : {
-				lat : feeds[feed].coordinates[0],
-				lng : feeds[feed].coordinates[1]
+				lat : feed.lat,
+				lng : feed.lon
 			}
 		}))
 	}
@@ -45,11 +44,12 @@ export default class BeerMap extends Component{
 	constructor(props){
 		super(props);
 		var state = this.props.location.state;
-		var feeds = SettingsStore.getFeeds()
-		var currentFeed = SettingsStore.getCurrentFeed()
+		const dflt = {lat : 40.789, lon : -73.9479}
+		const feed = this.props.feeds[this.props.currentFeed] || dflt
+
 		var initPos = state ? state.pos : 
-					  {lat : feeds[currentFeed].coordinates[0],	
-					   lng : feeds[currentFeed].coordinates[1]};
+					  {lat : feed.lat,	
+					   lng : feed.lon};
 
 		var popup = null
 
@@ -66,8 +66,6 @@ export default class BeerMap extends Component{
 		this.state = {
 			rows : rows, 
 			position : initPos, 
-			currentFeed : currentFeed,
-			feeds : feeds,
 			currentPopup : popup
 		};
 	}
@@ -151,3 +149,11 @@ export default class BeerMap extends Component{
 	}
 }
 
+const mapStateToProps = state => ({
+	feeds : state.settings.feeds,
+	currentFeed : state.settings.currentFeed
+})
+
+const mapDispatchToProps = dispatch => ({})
+
+export default connect(mapStateToProps, mapDispatchToProps)(BeerMap)
