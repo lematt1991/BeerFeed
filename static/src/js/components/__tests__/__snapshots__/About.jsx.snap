@@ -1,12 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
 exports[`<About/> mounts 1`] = `
 <div
-  className="container">
+  className="container"
+>
   <Row
     bsClass="row"
-    componentClass="div">
+    componentClass="div"
+  >
     <Jumbotron
       bsClass="jumbotron"
-      componentClass="div">
+      componentClass="div"
+    >
       <h1>
         Find better beer.
       </h1>
@@ -24,7 +29,8 @@ exports[`<About/> mounts 1`] = `
         bsStyle="default"
         className="btn btn-primary"
         disabled={false}
-        onClick={[Function]}>
+        onClick={[Function]}
+      >
         Help Improve Beer Feed
       </Button>
     </Jumbotron>

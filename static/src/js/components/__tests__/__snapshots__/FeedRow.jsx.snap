@@ -1,8 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
 exports[`<FeedRow/> Mounts 1`] = `
 <div
-  className="media">
+  className="media"
+>
   <div
-    className="media-left media-middle">
+    className="media-left media-middle"
+  >
     <img
       className="media-photo"
       height="100"
@@ -13,24 +17,29 @@ exports[`<FeedRow/> Mounts 1`] = `
           "marginTop": "12px",
         }
       }
-      width="100" />
+      width="100"
+    />
   </div>
   <div
-    className="media-body">
+    className="media-body"
+  >
     <span
-      className="media-meta pull-right">
+      className="media-meta pull-right"
+    >
       fake time
     </span>
     <h4
-      className="title">
+      className="title"
+    >
       Brewery: 
-      Jack\'s Abby
+      Jack's Abby
     </h4>
     <h4>
       Beer: 
       <a
         href="https://untappd.com/b/jack-s-abby-barrel-aged-framinghammer-mole/1374487"
-        target="_blank">
+        target="_blank"
+      >
         Barrel-Aged Framinghammer Mole
       </a>
     </h4>
@@ -43,7 +52,8 @@ exports[`<FeedRow/> Mounts 1`] = `
       <SafeAnchor
         componentClass="a"
         id="goto-map"
-        onClick={[Function]}>
+        onClick={[Function]}
+      >
         Beer Noggin
       </SafeAnchor>
     </h4>

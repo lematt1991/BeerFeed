@@ -6,15 +6,14 @@ import * as SettingsActions from '../actions/SettingsActions';
 import * as BS from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import * as _ from 'lodash'
+import {connect} from 'react-redux'
 
-export default class Nav extends React.Component {
-
+class Nav extends React.Component {
   constructor(){
     super();
     this.state = {
       feeds : settingsStore.getFeeds(), 
       currentFeed : settingsStore.getCurrentFeed(),
-      searchTerm : '',
       navExpanded : false
     };
   }
@@ -30,19 +29,12 @@ export default class Nav extends React.Component {
     }))
   }
 
-  updateSearchTerm = () => {
-    this.setState(_.extend({}, this.state, {
-      searchTerm : searchStore.getSearchTerm(),
-    }))
-  }
-
   componentWillMount(){
     settingsStore.on('change', this.updateFeed);
-    searchStore.on('change', this.updateSearchTerm)
   }
 
   updateSearch = (e) => {
-    SearchActions.changeSearchTerm(e.target.value)
+    this.props.changeSearchTerm(e.target.value)
   }
 
   expandToggle = () => {
@@ -103,7 +95,7 @@ export default class Nav extends React.Component {
               <BS.Navbar.Form>
                 <BS.FormControl
                   type="text"
-                  value={this.state.searchTerm}
+                  value={this.props.searchTerm}
                   placeholder="Filter"
                   onChange={this.updateSearch}
                 />
@@ -114,3 +106,16 @@ export default class Nav extends React.Component {
     );
   }
 }
+
+const mapStateToProps = state => ({
+  searchTerm : state.search.searchTerm
+});
+
+const mapDispatchToProps = dispatch => ({
+  changeSearchTerm : term => dispatch(SearchActions.changeSearchTerm(term))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Nav);
+
+
+

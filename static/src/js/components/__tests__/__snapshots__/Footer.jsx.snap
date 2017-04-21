@@ -1,14 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
 exports[`<Footer/> mounts 1`] = `
 <footer
-  className="site-footer">
+  className="site-footer"
+>
   <div
-    className="container">
+    className="container"
+  >
     <Row
       bsClass="row"
       componentClass="div"
-      md={8}>
+      md={8}
+    >
       <p
-        className="text-muted">
+        className="text-muted"
+      >
         Powered by Untappd
       </p>
     </Row>

@@ -15,3 +15,5 @@ export type Action = {
 	type : 'CHANGE_CHECKIN_COUNT_THRESHOLD',
 	threshold : number
 }
+
+export const CHANGE_SEARCH_TERM = 'CHANGE_SEARCH_TERM'
