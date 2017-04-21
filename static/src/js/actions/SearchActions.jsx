@@ -1,8 +1,5 @@
-import dispatcher from '../Dispatcher';
-
-export function changeSearchTerm(term){
-	dispatcher.dispatch({
-		type: 'CHANGE_SEARCH_TERM',
-		term : term
-	})
-}
+import {CHANGE_SEARCH_TERM} from './Types'
+export const changeSearchTerm = term => ({
+	type: CHANGE_SEARCH_TERM,
+	payload : term
+})

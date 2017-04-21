@@ -9,10 +9,12 @@ import LocationStore from '../stores/LocationStore';
 import * as _ from 'lodash'
 import FeedRow from '../components/FeedRow'
 import * as SettingsActions from '../actions/SettingsActions'
+import {connect} from 'react-redux'
+
 
 const KEYS_TO_FILTER = ['brewery', 'name', 'venue', 'style']
 
-export default class Feed extends Component{
+class Feed extends Component{
 	updateFeed = () => {
 		this.setState(_.extend({}, this.state, {
 			currentFeed : settingsStore.getCurrentFeed()
@@ -25,12 +27,6 @@ export default class Feed extends Component{
 		}))
 	}
 
-	updateSearchTerm = () => {
-		this.setState(_.extend({}, this.state, {
-			searchTerm : searchStore.getSearchTerm(),
-		}))
-	}
-
   updateCountThreshold = () => {
   	this.setState(_.extend({}, this.state, {
   		checkin_count_filter : settingsStore.getCheckinCountThreshold()
@@ -40,7 +36,6 @@ export default class Feed extends Component{
 	componentWillMount() {
 	    settingsStore.on('change', this.updateFeed);
 	    dataStore.on('new-data', this.updateData);
-	    searchStore.on('change', this.updateSearchTerm);
 	    LocationStore.on('got-location', this.getUserLocation);
 	    settingsStore.on('change-checkin-count-threshold', this.updateCountThreshold)
 	}
@@ -57,7 +52,6 @@ export default class Feed extends Component{
 	componentWillUnmount () {
 	    settingsStore.removeListener('change', this.updateFeed)
 	    dataStore.removeListener('new-data', this.updateData)
-	    searchStore.removeListener('change', this.updateSearchTerm)
 	    LocationStore.removeListener('got-location', this.getUserLocation)
 	    settingsStore.removeListener('change-checkin-count-threshold', this.updateCountThreshold)
 	}
@@ -86,7 +80,6 @@ export default class Feed extends Component{
 			showAlert : props.location.query.thanks === 'true',
 			numRows : 40,
 			ordering : {value : 'date', label : 'Order by Date', f : this.orderByDate},
-			searchTerm : searchStore.getSearchTerm(),
 			location : LocationStore.getLocation(),
 			checkin_count_filter : settingsStore.getCheckinCountThreshold(),
 			options : LocationStore.haveUserLocation() ? 
@@ -130,7 +123,7 @@ export default class Feed extends Component{
 
 	render(){
 		var locName = this.state.feeds[this.state.currentFeed].name
-		var filter = createFilter(this.state.searchTerm, KEYS_TO_FILTER)
+		var filter = createFilter(this.props.searchTerm, KEYS_TO_FILTER)
 		var count_filter = this.state.checkin_count_filter || 1
 		var items = this.state.rows.filter(r => r.checkin_count >= count_filter && filter(r))
 		items.sort(this.state.ordering.f)
@@ -202,3 +195,14 @@ export default class Feed extends Component{
 		);
 	}
 } 
+
+const mapStateToProps = state => ({
+	searchTerm : state.search.searchTerm
+});
+
+const mapDispatchToProps = dispatch => ({});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Feed);
+
+
+

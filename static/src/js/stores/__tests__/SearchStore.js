@@ -1,28 +1,25 @@
 import React from 'react'
-import {shallow} from 'enzyme'
-import toJson from 'enzyme-to-json'
-import sinon from 'sinon'
 
+process.env.NODE_ENV='production'; //To suppress the logger
+
+import {shallow} from 'enzyme'
 import {Checkins1} from '../../test_data/Checkins'
 
 describe('SearchStore', () => {
+	var store;
 	var SearchActions;
-	var SearchStore;
 
 	beforeEach(() => {
 		jest.resetModules()
-
-		SearchStore = require('../SearchStore').default
+		store = require('../../Store').default;
 		SearchActions = require('../../actions/SearchActions')
 	})
 
-	it('Changes the search term', done => {
-		expect(SearchStore.getSearchTerm()).toBe('')
-		
-		SearchStore.on('change', () => {
-			expect(SearchStore.getSearchTerm()).toBe('search term')
-			done()
-		})
-		SearchActions.changeSearchTerm('search term')
+	it('Changes the search term', () => {
+		expect(store.getState().search.searchTerm).toBe('')
+
+		store.dispatch(SearchActions.changeSearchTerm('search term'))
+
+		expect(store.getState().search.searchTerm).toBe('search term')
 	})
 })
