@@ -95,16 +95,16 @@ describe('DataStore', () => {
 		expect(topCheckins[0].rating).toBeGreaterThan(topCheckins[1].rating)
 	})
 
-	it('Resets when the feed changes', () => {
-		reply(WithTopCheckins)
-		var DataStore = require('../DataStore').default
-		var SettingsActions = require('../../actions/SettingsActions')
+	// it('Resets when the feed changes', () => {
+	// 	reply(WithTopCheckins)
+	// 	var DataStore = require('../DataStore').default
+	// 	var SettingsActions = require('../../actions/SettingsActions')
 
-		var stub = sinon.stub(DataStore, 'fetchData')
+	// 	var stub = sinon.stub(DataStore, 'fetchData')
 
-		SettingsActions.changeFeed('fake_feed')
+	// 	SettingsActions.changeFeed('fake_feed')
 
-		expect(DataStore.getFeedData().length).toBe(0)
-		sinon.assert.called(stub)
-	})
+	// 	expect(DataStore.getFeedData().length).toBe(0)
+	// 	sinon.assert.called(stub)
+	// })
 })

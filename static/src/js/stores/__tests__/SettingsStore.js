@@ -1,44 +1,26 @@
-import React from 'react'
-import {shallow} from 'enzyme'
-import toJson from 'enzyme-to-json'
-import sinon from 'sinon'
-
 import {Checkins1} from '../../test_data/Checkins'
+
+process.env.NODE_ENV='production'
 
 describe('SettingsStore', () => {
 	var SettingsActions;
-	var SettingsStore;
+	var store;
 
 	beforeEach(() => {
 		jest.resetModules()
-
-		SettingsStore = require('../SettingsStore').default
+		store = require('../../Store').default
 		SettingsActions = require('../../actions/SettingsActions')
 	})
 
-	it('Changes feeds', done => {
-		expect(SettingsStore.getCurrentFeed()).toBe('nyc_feed')
-
-		SettingsStore.on('change', () => {
-			expect(SettingsStore.getCurrentFeed()).toBe('rochester_feed')
-			expect(Math.round(SettingsStore.getCurrentLoc()[0])).toBe(43)
-			expect(Math.round(SettingsStore.getCurrentLoc()[1])).toBe(-78)
-			done()
-		})
-
-		SettingsActions.changeFeed('rochester_feed')
+	it('Changes feeds', () => {
+		expect(store.getState().settings.currentFeed).toBe('nyc_feed')
+		store.dispatch(SettingsActions.changeFeed('rochester_feed'))
+		expect(store.getState().settings.currentFeed).toBe('rochester_feed')
 	})
 
-	it('Changes the checkin count threshold', done => {
-		expect(SettingsStore.getCheckinCountThreshold()).toBe(1)
-
-		SettingsStore.on('change-checkin-count-threshold', () => {
-			expect(SettingsStore.getCheckinCountThreshold()).toBe(5)
-			done()
-		})
-
-		SettingsActions.changeCheckinCountThreshold(5)
+	it('Changes the checkin count threshold', () => {
+		const thresh = store.getState().settings.checkin_count_threshold;
+		store.dispatch(SettingsActions.changeCheckinCountThreshold(thresh+1))
+		expect(store.getState().settings.checkin_count_threshold).toBe(thresh+1)
 	})
-
-
 })

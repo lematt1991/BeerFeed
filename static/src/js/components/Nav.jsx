@@ -1,5 +1,4 @@
 import React from "react";
-import settingsStore from '../stores/SettingsStore';
 import * as SearchActions from '../actions/SearchActions';
 import * as SettingsActions from '../actions/SettingsActions';
 import * as BS from 'react-bootstrap';
@@ -11,25 +10,12 @@ class Nav extends React.Component {
   constructor(){
     super();
     this.state = {
-      feeds : settingsStore.getFeeds(), 
-      currentFeed : settingsStore.getCurrentFeed(),
       navExpanded : false
     };
   }
 
   _changeLoc = (event) => {
-    SettingsActions.changeFeed(event.target.id);
-  }
-
-  updateFeed = () => {
-    this.setState(_.extend({}, this.state, {
-      currentFeed : settingsStore.getCurrentFeed(),
-      navExpanded : !this.state.navExpanded
-    }))
-  }
-
-  componentWillMount(){
-    settingsStore.on('change', this.updateFeed);
+    this.props.changeFeed(event.target.id);
   }
 
   updateSearch = (e) => {
@@ -42,7 +28,7 @@ class Nav extends React.Component {
     }))
   }
 
-  render() {    
+  render() {   
     return (
       <BS.Navbar 
         style={{zIndex : 3}} 
@@ -56,14 +42,14 @@ class Nav extends React.Component {
           <BS.Nav>
             <BS.NavDropdown eventKey={1} title="Choose Location" id="loc-dropdown">
               {
-                Object.keys(this.state.feeds).map((feed) => 
+                Object.keys(this.props.feeds).map((feed) => 
                   <BS.MenuItem 
-                                id={feed} 
-                                key={feed} 
-                                onClick={this._changeLoc} 
-                                active={feed == this.state.currentFeed}
+                    id={feed} 
+                    key={feed} 
+                    onClick={this._changeLoc} 
+                    active={feed === this.props.currentFeed}
                   >
-                    {this.state.feeds[feed].name}
+                    {this.props.feeds[feed].city}
                   </BS.MenuItem>
                 )
               }
@@ -107,11 +93,14 @@ class Nav extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  searchTerm : state.search.searchTerm
+  searchTerm : state.search.searchTerm,
+  feeds : state.settings.feeds,
+  currentFeed : state.settings.currentFeed
 });
 
 const mapDispatchToProps = dispatch => ({
-  changeSearchTerm : term => dispatch(SearchActions.changeSearchTerm(term))
+  changeSearchTerm : term => dispatch(SearchActions.changeSearchTerm(term)),
+  changeFeed : feed => dispatch(SettingsActions.changeFeed(feed))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Nav);

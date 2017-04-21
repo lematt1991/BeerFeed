@@ -1,10 +1,12 @@
 import search from './reducers/SearchReducer'
+import settings from './reducers/SettingsReducer'
 import {createStore, combineReducers, applyMiddleware} from 'redux'
 import {createLogger} from 'redux-logger'
 import API from './middleware/API'
 
 const reducer = combineReducers({
-  search
+  search,
+  settings
 })
 
 var store;
