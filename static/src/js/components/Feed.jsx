@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import settingsStore from '../stores/SettingsStore';
-import searchStore from '../stores/SearchStore';
 import dataStore from '../stores/DataStore';
 import {Button, Alert, SafeAnchor, FormGroup, FormControl, ControlLabel, Form} from 'react-bootstrap';
 import SearchInput, {createFilter} from 'react-search-input'
