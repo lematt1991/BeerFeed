@@ -153,6 +153,12 @@ app.get('/Feed', function(req, res){
   });
 });
 
+app.get('/Feeds', function(req, res){
+  db.query('SELECT id, lat, lon, city FROM users WHERE general_purpose=false;')
+    .then(result => res.json(result.rows))
+    .catch(err => res.status(500).send(err))
+})
+
 function dropOldEntries(){
   db.query('DELETE FROM checkins WHERE created < NOW() - INTERVAL \'2 days\';')
 }
