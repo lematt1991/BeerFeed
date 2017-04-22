@@ -160,7 +160,7 @@ app.get('/Feeds', function(req, res){
 })
 
 function dropOldEntries(){
-  db.query('DELETE FROM checkins WHERE created < NOW() - INTERVAL \'2 days\';')
+  db.query('DELETE FROM checkins WHERE created < NOW() - INTERVAL \'1 days\';')
 }
 
 var rule = new sched.RecurrenceRule();
@@ -182,13 +182,6 @@ var server = app.listen(port, ip, function () {
 
     console.log("Beer feed listening at http://%s:%s", host, port)
 })
-
-setInterval(function(){request('https://untappd-feed-filter.herokuapp.com/Wakeup');}, 1000000);  //send every 16 minutes
-
-app.get('/Wakeup', function(req, res){
-  console.log('handling wakeup')
-  res.send('')
-});
 
 app.get('*', function (req, res) {
   res.sendFile(__dirname + '/static/src/index.html');
