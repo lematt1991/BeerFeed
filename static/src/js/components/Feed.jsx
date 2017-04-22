@@ -12,14 +12,7 @@ import {connect} from 'react-redux'
 const KEYS_TO_FILTER = ['brewery', 'name', 'venue', 'style']
 
 class Feed extends Component{
-	updateData = () => {
-		this.setState(_.extend({}, this.state, {
-			rows : dataStore.getFeedData()
-		}))
-	}
-
 	componentWillMount() {
-	    dataStore.on('new-data', this.updateData);
 	    LocationStore.on('got-location', this.getUserLocation);
 	}
 
@@ -33,7 +26,6 @@ class Feed extends Component{
 	}
 
 	componentWillUnmount () {
-	    dataStore.removeListener('new-data', this.updateData)
 	    LocationStore.removeListener('got-location', this.getUserLocation)
 	}
 
@@ -54,7 +46,6 @@ class Feed extends Component{
 	constructor(props){
 		super(props)
 		this.state = {
-			rows : dataStore.getFeedData(), 
 			showAlert : props.location.query.thanks === 'true',
 			numRows : 40,
 			ordering : {value : 'date', label : 'Order by Date', f : this.orderByDate},
@@ -103,7 +94,7 @@ class Feed extends Component{
 		var locName = feed.city
 		var filter = createFilter(this.props.searchTerm, KEYS_TO_FILTER)
 		var count_filter = this.props.checkin_count_threshold || 1
-		var items = this.state.rows.filter(r => r.checkin_count >= count_filter && filter(r))
+		var items = this.props.rows.filter(r => r.checkin_count >= count_filter && filter(r))
 		items.sort(this.state.ordering.f)
 		return(
 			<div class="container-fluid">
@@ -178,7 +169,8 @@ const mapStateToProps = state => ({
 	searchTerm : state.search.searchTerm,
 	feeds : state.settings.feeds,
 	currentFeed : state.settings.currentFeed,
-	checkin_count_threshold : state.settings.checkin_count_threshold
+	checkin_count_threshold : state.settings.checkin_count_threshold,
+	rows : state.data.feedData
 });
 
 const mapDispatchToProps = dispatch => ({

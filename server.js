@@ -100,9 +100,9 @@ app.get('/AuthRedirect', function(req, res){
   });
 });
 
-app.get('/Feed', function(req, res){
-  var lastID = req.query.lastID ? req.query.lastID : 0;
-  var userPred = req.query.user ? ('AND username=$$' + req.query.user + '$$') : ''
+app.get('/Feed/:user/:lastID?', function(req, res){
+  var lastID = req.params.lastID ? req.params.lastID : 0;
+  var userPred = req.params.user ? ('AND username=$$' + req.params.user + '$$') : ''
 
   var query = `
       SELECT 
@@ -128,7 +128,7 @@ app.get('/Feed', function(req, res){
         checkin_id > ${lastID} AND
         venues.category <> 'Travel & Transport' AND
         venues.category <> 'Outdoors & Recreation'
-        AND username='${req.query.user}'
+        AND username='${req.params.user}'
       GROUP BY 
         checkins.venue_id, 
         beers.bid,
