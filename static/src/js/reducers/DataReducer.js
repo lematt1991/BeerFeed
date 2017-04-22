@@ -69,14 +69,14 @@ const updateData = (state, data) => {
 					[row.venue_id] : {
 						beers : {
 							[row.bid] : {
-								checkin_count : {
-									$set : entry.checkin_count + row.checkin_count
-								}
+								checkin_count : {$set : entry.checkin_count + row.checkin_count},
+								created : {$set : row.created}
 							}
 						}
 					}
 				})
 				feedData[entry.index].checkin_count += row.checkin_count;
+				feedData[entry.index].created = row.created;
 			}else{
 				//bid doesn't exist for this venue.
 				row.index = feedData.length;
