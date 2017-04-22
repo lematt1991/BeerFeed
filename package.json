@@ -29,7 +29,7 @@
     "jquery": "^3.2.1",
     "lodash": "^4.17.4",
     "node-schedule": "^1.2.1",
-    "node-untappd": "^0.4.1",
+    "node-untappd": "git+https://github.com/ml9951/node-untappd.git",
     "pg": "^6.1.5",
     "react-bootstrap": "^0.30.10",
     "react-cookie": "^1.0.5",
