@@ -62,9 +62,7 @@ class BeerMap extends Component{
 			}
 		}
 
-		var rows = DataStore.getMapData()
 		this.state = {
-			rows : rows, 
 			position : initPos, 
 			currentPopup : popup
 		};
@@ -72,11 +70,10 @@ class BeerMap extends Component{
 
 	_handleClick(popup){
 		if(this.state.currentPopup !== popup){
-			var rows = this.state.rows
-			if(rows[popup]){
+			if(this.props.data[popup]){
 				var pos = {
-					lat : rows[popup].lat,
-					lng : rows[popup].lon
+					lat : this.props.data[popup].lat,
+					lng : this.props.data[popup].lon
 				}
 				this.refs.map.panTo(pos)
 				this.setState(_.extend({}, this.state, {
@@ -118,22 +115,22 @@ class BeerMap extends Component{
 			        	{...mapProps}
 			        >
 			        {
-			        	Object.keys(this.state.rows).map(k => 
+			        	Object.keys(this.props.data).map(k => 
 			        		<Marker
 			        			key={k}
 			        			visible={true}
 			        			position={{
-			        				lat : this.state.rows[k].lat,
-			        				lng : this.state.rows[k].lon
+			        				lat : this.props.data[k].lat,
+			        				lng : this.props.data[k].lon
 			        			}}
 			        			onClick={() => this._handleClick(k)}
 			        		>
 			        		{this.state.currentPopup === k ?
 			        			<InfoWindow onCloseclick={this._onClose.bind(this)}>
 			        				<div>
-			        				<b>{this.state.rows[k].venue}</b>
+			        				<b>{this.props.data[k].venue}</b>
 			        				{
-			        					this._genInfoWindow(this.state.rows[k])
+			        					this._genInfoWindow(this.props.data[k])
 			        				}
 			        				</div>
 			        			</InfoWindow> : 
@@ -151,7 +148,8 @@ class BeerMap extends Component{
 
 const mapStateToProps = state => ({
 	feeds : state.settings.feeds,
-	currentFeed : state.settings.currentFeed
+	currentFeed : state.settings.currentFeed,
+	data : state.data.mapData
 })
 
 const mapDispatchToProps = dispatch => ({})
