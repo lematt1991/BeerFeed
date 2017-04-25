@@ -4,6 +4,7 @@ import settings from './reducers/SettingsReducer'
 import {createStore, combineReducers, applyMiddleware} from 'redux'
 import {createLogger} from 'redux-logger'
 import API from './middleware/API'
+import ChangeFeed from './middleware/ChangeFeed'
 
 const reducer = combineReducers({
   search,
@@ -13,9 +14,9 @@ const reducer = combineReducers({
 
 var store;
 if(process.env.NODE_ENV === 'production'){
-  store = createStore(reducer, {}, applyMiddleware(API))
+  store = createStore(reducer, {}, applyMiddleware(API, ChangeFeed))
 }else{
-  store = createStore(reducer, {}, applyMiddleware(createLogger(), API))
+  store = createStore(reducer, {}, applyMiddleware(API, ChangeFeed, createLogger()))
 }
 
 export default store;
