@@ -181,6 +181,19 @@ function startProc(args){
                             new Date(checkin.created_at).toISOString(),
                             username
                         ])
+                        //Insert venue
+                        dbInsert('venues', {name : 'venue_id', value : checkin.venue.venue_id}, [
+                            checkin.venue.venue_id,
+                            checkin.venue.venue_name,
+                            checkin.venue.venue_slug,
+                            checkin.venue.contact.twitter,
+                            checkin.venue.contact.venue_url,
+                            checkin.venue.primary_category,
+                            checkin.venue.is_verified,
+                            {
+                                val : `ST_GeomFromText('POINT(${checkin.venue.location.lng} ${checkin.venue.location.lat})', 4326)`
+                            }
+                        ])
                     }
                 }else{
                     console.log('Beer not found in database')
