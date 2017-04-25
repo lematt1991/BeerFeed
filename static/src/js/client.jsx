@@ -10,7 +10,7 @@ import BeerMap from "./components/Map";
 import Feed from "./components/Feed";
 import LinkAccount from './components/LinkAccount';
 import About from './components/About';
-import Stats from './components/Stats';
+// import Stats from './components/Stats';
 import {Provider} from 'react-redux';
 
 const app = document.getElementById('app');
@@ -24,7 +24,6 @@ ReactDOM.render(
 				<Route path="the_feed" component={Feed}/>
 				<Route path="linkAccount" component={LinkAccount}/>
 				<Route path="about" component={About}/>
-				<Route path="stats" component={Stats}/>
 			</Route>
 		</Router>
 	</Provider>,

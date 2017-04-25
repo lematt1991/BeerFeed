@@ -1,10 +1,8 @@
 import React, {Component} from 'react';
-import dataStore from '../stores/DataStore';
 import {Button, Alert, SafeAnchor, FormGroup, FormControl, ControlLabel, Form} from 'react-bootstrap';
 import SearchInput, {createFilter} from 'react-search-input'
 import Select from 'react-select';
 import LocationStore from '../stores/LocationStore';
-import * as _ from 'lodash'
 import FeedRow from '../components/FeedRow'
 import * as SettingsActions from '../actions/SettingsActions'
 import {connect} from 'react-redux'
@@ -19,10 +17,11 @@ class Feed extends Component{
 	getUserLocation = () => {
 		var options = this.state.options.slice()
 		options.push({value : 'distance', label : 'Order by Distance', f : this.orderByDistance})
-		this.setState(_.extend({}, this.state, {
+		this.setState({
+			...this.state, 
 			options : options,
 			location : LocationStore.getLocation()
-		}))
+		})
 	}
 
 	componentWillUnmount () {
@@ -64,15 +63,13 @@ class Feed extends Component{
 
 	showMore = (event) => {
 		event.target.blur()
-		this.setState(_.extend({}, this.state, {
-			numRows : this.state.numRows + 40,
-		}))
+		this.setState({...this.state, numRows : this.state.numRows + 40})
 	}
 
 	_mkAlert(){
 		if(this.state.showAlert){
 			return(
-				<Alert bsStyle="warning" onDismiss={() => this.setState(_.extend({}, this.state, {showAlert : false}))}>
+				<Alert bsStyle="warning" onDismiss={() => this.setState({...this.state, showAlert : false})}>
 		    		<strong>Thanks for linking your Untappd account!</strong>
 				</Alert>
 			)
@@ -80,9 +77,7 @@ class Feed extends Component{
 	}
 
 	changeOrdering = (order) => {
-		this.setState(_.extend({}, this.state, {
-			ordering : order
-		}))
+		this.setState({...this.state, ordering : order})
 	}
 
 	changeCheckinFilter = event => {

@@ -1,32 +1,9 @@
 import React, {Component} from 'react';
 import LocationStore from '../stores/LocationStore'
-import DataStore from '../stores/DataStore';
 import {GoogleMapLoader, GoogleMap, Marker, InfoWindow} from "react-google-maps";
-import * as _ from 'lodash'
 import {connect} from 'react-redux'
 
 class BeerMap extends Component{
-	updateData = () => {
-		const dflt = {lat : 40.789, lon : -73.9479}
-		const feed = this.props.feeds[this.props.currentFeed] || dflt
-		this.setState(_.extend({}, this.state, {
-			rows : DataStore.getMapData(),
-			currentPopup : feed === this.state.currentFeed ? this.state.currentPopup : undefined,
-			position : {
-				lat : feed.lat,
-				lng : feed.lon
-			}
-		}))
-	}
-
-	componentWillMount(){
-		DataStore.on('new-data', this.updateData);
-	}
-
-	componentWillUnmount(){
-		DataStore.removeListener('new-data', this.updateData)
-	}
-
 	_genInfoWindow(venue){
 		return(
 			Object.keys(venue.beers).map(k => {
@@ -76,22 +53,15 @@ class BeerMap extends Component{
 					lng : this.props.data[popup].lon
 				}
 				this.refs.map.panTo(pos)
-				this.setState(_.extend({}, this.state, {
-					position : pos,
-					currentPopup : popup
-				}))
+				this.setState({...this.state, position : pos, currentPopup : popup})
 			}
 		}else{
-			this.setState(_.extend({}, this.state, {
-				currentPopup: undefined
-			}))
+			this.setState({...this.state, currentPopup : null})
 		}
 	}
 
 	_onClose(){	
-		this.setState(_.extend({}, this.state, {
-			currentPopup : undefined,
-		}))
+		this.setState({...this.state, currentPopup : null})
 	}
 
 	render(){

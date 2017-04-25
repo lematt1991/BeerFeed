@@ -1,5 +1,4 @@
 import React from 'react';
-import DataStore from '../stores/DataStore';
 import * as _ from 'lodash';
 import {SafeAnchor} from 'react-bootstrap';
 import {Table} from 'react-bootstrap';
@@ -57,11 +56,12 @@ export default class Stats extends React.Component{
 	}
 
 	updateData = () => {
-		this.setState(_.extend({}, this.state, {
+		this.setState({
+			...this.state, 
 			venues : this.getVenuesArr(),
 			breweries : this.getBreweryArr(),
 			topCheckins : DataStore.getTopCheckins()
-		}))
+		})
 	}
 
 	componentWillMount(){
@@ -159,9 +159,7 @@ export default class Stats extends React.Component{
 	}
 
 	handleChange = (option) => {
-		this.setState(_.extend({}, this.state, {
-			value : option
-		}))
+		this.setState({...this.state, value : options})
 	}
 
 	render(){
