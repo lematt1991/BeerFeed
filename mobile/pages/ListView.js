@@ -1,5 +1,13 @@
 import React from 'react'
-import {View, Text, StyleSheet, Image} from 'react-native'
+import {
+	View, 
+	Text, 
+	StyleSheet, 
+	Image,
+	FlatList
+} from 'react-native'
+import {connect} from 'react-redux'
+import FeedRow from '../components/FeedRow'
 
 class ListView extends React.Component{
 	static navigationOptions = {
@@ -12,20 +20,61 @@ class ListView extends React.Component{
 		)
 	}
 
+	constructor(props){
+		super(props);
+		this.state = {
+			numRows : 20
+		}
+	}
+
+	renderItem = ({item}) => {
+		return(
+			<FeedRow {...item} />
+		)
+	}
+	
+
 	render(){
+		var rows = this.props.data.feedData.slice(0, this.state.numRows)
+		const feed = this.props.settings.feeds[this.props.settings.currentFeed] || {};
 		return(
 			<View style={styles.container}>
-        <Text>Open up App.js to start working on your app!</Text>
-        <Text>Changes you make will automatically reload.</Text>
-        <Text>Shake your phone to open the developer menu.</Text>
+				<View style={styles.textContainer}>
+					<Text style={styles.titleText}>
+	          The Beer Feed {feed.city}
+	        </Text>
+        </View>
+        <View style={styles.listContainer}>
+	        <FlatList
+	        	data={rows}
+	        	renderItem={this.renderItem}
+	        	removeClippedSubviews={false}
+	        />
+        </View>
       </View>
 		)
 	}
 }
 
-export default ListView;
+const mapStateToProps = state => state
+const mapDispatchToProps = dispatch => ({})
+
+export default connect(mapStateToProps, mapDispatchToProps)(ListView);
 
 const styles = StyleSheet.create({
+	listContainer : {
+		flex : 9,
+		marginBottom : 20
+	},
+	textContainer : {
+		flex : 1,
+		marginTop : 50
+	},
+	titleText : {
+		fontSize : 20,
+		fontWeight : 'bold',
+		textDecorationLine : 'underline',
+	},
   container: {
     flex: 1,
     backgroundColor: '#fff',

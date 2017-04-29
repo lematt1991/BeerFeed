@@ -6,6 +6,9 @@ import { connect, Provider as ReduxProvider } from 'react-redux';
 import store from './Store'
 import { persistStore } from 'redux-persist'
 import AppNavigator from './navigation/AppNavigator'
+import * as DataActions from './actions/DataActions'
+import * as SettingsActions from './actions/SettingsActions'
+import './Init'
 
 export default class AppContainer extends React.Component {
   render() {
@@ -17,7 +20,7 @@ export default class AppContainer extends React.Component {
   }
 }
 
-class App extends React.Component{
+class AppRaw extends React.Component{
   constructor(props){
     super(props);
     this.state = {
@@ -25,18 +28,46 @@ class App extends React.Component{
     }
   }
 
+  fetchData = () => {
+    const lastID = store.getState().data.lastID;
+    const feed = store.getState().settings.currentFeed;
+    if(store.getState().data.feedData.length === 0){
+      this.props.fetchData(feed)
+    }else{
+      this.props.updateData(feed, lastID);
+    }
+  }
+
   componentWillMount(){
     persistStore(store, {storage: AsyncStorage}, () => {
       this.setState({rehydrating : false})
+      this.fetchData()
+      this.interval = setInterval(this.fetchData, 5000)
+      this.props.fetchFeeds()
     })
   }
 
   render(){
-    if(this.state.rehydrating){
-      return(<Text>Rehydrating...</Text>)
-    }
+    // if(this.state.rehydrating){
+    //   return(<Text>Rehydrating...</Text>)
+    // }
     return(
       <AppNavigator ref={nav => {this.navigator = nav;}} />
     )
   }
 }
+
+const mapStateToProps = state => ({})
+const mapDispatchToProps = dispatch => ({
+  updateData : (feed, lastID) => dispatch(DataActions.updateData(feed, lastID)),
+  fetchData : feed => dispatch(DataActions.fetchData(feed)),
+  fetchFeeds : () => dispatch(SettingsActions.fetchFeeds)
+})
+
+const App = connect(mapStateToProps, mapDispatchToProps)(AppRaw);
+
+
+
+
+
+

@@ -1,5 +1,7 @@
 import React from 'react'
 import {View, Text, StyleSheet, Image} from 'react-native'
+import { MapView as RNMapView } from 'expo';
+import { connect } from 'react-redux'
 
 class MapView extends React.Component{
 	static navigationOptions = {
@@ -13,18 +15,48 @@ class MapView extends React.Component{
 	}
 
 	render(){
+		var region;
+		if(this.props.location){
+			region = {
+				latitude: this.props.location.latitude,
+	      longitude: this.props.location.longitude,
+	      latitudeDelta: 0.022,
+	      longitudeDelta: 0.0121,
+			}
+		}
+
+		var keys = Object.keys(this.props.mapData);
+		console.log(`Creating ${keys.length} markers`)
 		return(
-			<View style={styles.container}>
-				<Text> This is the map view</Text>
-        <Text>Open up App.js to start working on your app!</Text>
-        <Text>Changes you make will automatically reload.</Text>
-        <Text>Shake your phone to open the developer menu.</Text>
-      </View>
+				<RNMapView
+					style={{flex : 1}}
+					showsUserLocation={true}
+					initialRegion={region}
+				>
+				{
+					keys.map(venue_id => 
+						<RNMapView.Marker
+							key={venue_id}
+							coordinate={{
+								latitude : this.props.mapData[venue_id].lat, 
+								longitude : this.props.mapData[venue_id].lon
+							}}
+						/>
+					)
+				}
+				</RNMapView>
 		)
 	}
 }
 
-export default MapView;
+const mapStateToProps = state => ({
+	location : state.location,
+	mapData : state.data.mapData
+})
+
+const mapDispatchToProps = dispatch => ({})
+
+export default connect(mapStateToProps, mapDispatchToProps)(MapView);
 
 const styles = StyleSheet.create({
   container: {

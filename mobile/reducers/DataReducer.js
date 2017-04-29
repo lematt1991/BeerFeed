@@ -80,6 +80,8 @@ const updateData = (state, data) => {
 			}else{
 				//bid doesn't exist for this venue.
 				row.index = feedData.length;
+				row.key = `${row.venue_id}-${row.bid}-${row.checkin_count}`;
+				
 				feedData.push(row)
 				mapData = update(mapData, {
 					[row.venue_id] : {
