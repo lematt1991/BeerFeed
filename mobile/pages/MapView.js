@@ -1,16 +1,21 @@
 import React from 'react'
-import {View, Text, StyleSheet} from 'react-native'
+import {View, Text, StyleSheet, Image} from 'react-native'
 
 class MapView extends React.Component{
-	static route = {
-		navigationBar : {
-			title : 'Map'
-		}
+	static navigationOptions = {
+		tabBarLabel: 'Map',
+		tabBarIcon: ({tintColor}) => (
+			<Image
+				source={require('../assets/icon_map-o.png')}
+				style={styles.icon}
+			/>
+		)
 	}
 
 	render(){
 		return(
 			<View style={styles.container}>
+				<Text> This is the map view</Text>
         <Text>Open up App.js to start working on your app!</Text>
         <Text>Changes you make will automatically reload.</Text>
         <Text>Shake your phone to open the developer menu.</Text>
@@ -28,4 +33,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  icon : {
+  	height : 26,
+  	width : 26
+  }
 });
