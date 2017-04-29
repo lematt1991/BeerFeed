@@ -1,27 +1,42 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import {
-  createRouter,
-  NavigationProvider,
-  StackNavigation,
-} from '@expo/ex-navigation';
+import { StyleSheet, Text, View, StatusBar, AsyncStorage } from 'react-native';
 import ListView from './pages/ListView'
+import MapView from './pages/MapView'
+import { connect, Provider as ReduxProvider } from 'react-redux';
+import store from './Store'
+import { persistStore } from 'redux-persist'
+import AppNavigator from './navigation/AppNavigator'
 
-/**
-  * This is where we map route names to route components. Any React
-  * component can be a route, it only needs to have a static `route`
-  * property defined on it, as in HomeScreen below
-  */
-const Router = createRouter(() => ({
-  home: () => ListView,
-}));
-
-export default class App extends React.Component {
+export default class AppContainer extends React.Component {
   render() {
     return (
-      <NavigationProvider router={Router}>
-        <StackNavigation initialRoute={Router.getRoute('home')} />
-      </NavigationProvider>
+      <ReduxProvider store={store}>
+        <App/>
+      </ReduxProvider>
     );
+  }
+}
+
+class App extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = {
+      rehydrating : true
+    }
+  }
+
+  componentWillMount(){
+    persistStore(store, {storage: AsyncStorage}, () => {
+      this.setState({rehydrating : false})
+    })
+  }
+
+  render(){
+    if(this.state.rehydrating){
+      return(<Text>Rehydrating...</Text>)
+    }
+    return(
+      <AppNavigator ref={nav => {this.navigator = nav;}} />
+    )
   }
 }

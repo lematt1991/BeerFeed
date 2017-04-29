@@ -1,14 +1,11 @@
 import React from 'react'
-import {View, Text, StyleSheet, Image} from 'react-native'
+import {View, Text, StyleSheet} from 'react-native'
 
-class ListView extends React.Component{
-	static navigationOptions = {
-		tabBarLabel: 'Feed',
-		tabBarIcon: ({tintColor}) => (
-			<Image
-				source={require('../assets/Beer.png')}
-			/>
-		)
+class MapView extends React.Component{
+	static route = {
+		navigationBar : {
+			title : 'Map'
+		}
 	}
 
 	render(){
@@ -22,7 +19,7 @@ class ListView extends React.Component{
 	}
 }
 
-export default ListView;
+export default MapView;
 
 const styles = StyleSheet.create({
   container: {
