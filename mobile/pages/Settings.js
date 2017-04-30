@@ -44,7 +44,7 @@ class Settings extends React.Component{
 				</View>
 				<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 					<View style={styles.container}>
-						<Text style={{fontSize : 30, fontWeight : 'bold', marginTop : 50, marginBottom : 30}}>
+						<Text style={{fontSize : 30, fontWeight : 'bold', marginTop : 30, marginBottom : 30}}>
 							Settings
 						</Text>
 
