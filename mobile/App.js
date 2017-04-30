@@ -44,7 +44,6 @@ class AppRaw extends React.Component{
       console.log('Done rehydrating')
       this.setState({rehydrating : false})
       this.fetchData()
-      this.interval = setInterval(this.fetchData, 5000)
       this.props.fetchFeeds()
     })
   }

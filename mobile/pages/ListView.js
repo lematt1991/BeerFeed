@@ -10,7 +10,7 @@ import {
 import {connect} from 'react-redux'
 import FeedRow from '../components/FeedRow'
 import { List, ListItem, SearchBar } from "react-native-elements";
-
+import * as DataActions from '../actions/DataActions'
 
 class ListView extends React.Component{
 	static navigationOptions = {
@@ -26,7 +26,8 @@ class ListView extends React.Component{
 	constructor(props){
 		super(props);
 		this.state = {
-			numRows : 20
+			numRows : 20,
+			refreshing : false,
 		}
 	}
 
@@ -62,10 +63,28 @@ class ListView extends React.Component{
     );
   };
 
+  fetchData = () => {
+    const lastID = this.props.data.lastID;
+    const feed = this.props.settings.currentFeed;
+    this.setState({...this.state, refreshing : true})
+    console.log('Refreshing')
+    this.props.updateData(feed, lastID)
+    	.then(() => {
+    		this.setState({...this.state, refreshing : false})
+    		console.log('Done refreshing')
+    	})  
+  }
+
 	render(){
 		const threshold = this.props.settings.checkin_count_threshold;
 		var rows = this.props.data.feedData.filter(r => r.checkin_count >= threshold);
-		rows.sort(this.orderByDate);
+
+		if(this.props.settings.ordering === 'date'){
+			rows.sort(this.orderByDate);
+		}else if (this.props.settings.ordering === 'rating'){
+			rows.sort(this.orderByRating);
+		}
+
 		rows = rows.slice(0, this.state.numRows)
 
 		const feed = this.props.settings.feeds[this.props.settings.currentFeed] || {};
@@ -79,6 +98,8 @@ class ListView extends React.Component{
 	        </View>
 	        <View style={styles.listContainer}>
 		        <FlatList
+		        	onRefresh={this.fetchData}
+		        	refreshing={this.state.refreshing}
 		        	style={styles.flatList}
 		        	onEndReachedThreshold={5}
 		        	onEndReached={() => this.setState({...this.state, numRows : this.state.numRows + 20})}
@@ -94,7 +115,9 @@ class ListView extends React.Component{
 }
 
 const mapStateToProps = state => state
-const mapDispatchToProps = dispatch => ({})
+const mapDispatchToProps = dispatch => ({
+	updateData : (feed, lastID) => dispatch(DataActions.updateData(feed, lastID))
+})
 
 export default connect(mapStateToProps, mapDispatchToProps)(ListView);
 
