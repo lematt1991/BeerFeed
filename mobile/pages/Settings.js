@@ -1,6 +1,16 @@
 import React from 'react'
-import {View, Text, StyleSheet, Picker, Image, Dimensions} from 'react-native'
+import {
+	View, 
+	Text, 
+	StyleSheet, 
+	Picker, 
+	Image, 
+	Dimensions,
+	Keyboard,
+	TouchableWithoutFeedback
+} from 'react-native'
 import {connect} from 'react-redux'
+import t from 'tcomb-form-native'
 
 class Settings extends React.Component{
 	static navigationOptions = {
@@ -13,20 +23,46 @@ class Settings extends React.Component{
 		)
 	}
 
-	render(){
-		console.log(this.props.settings)
-		return(
-			<View style={styles.container}>
-				<Text style={{fontSize : 30, fontWeight : 'bold', marginTop : 50}}>
-					Settings
-				</Text>
+	clickView = () => {
+		console.log('Settings view clicked!	')
+	}
 
-      </View>
+	render(){
+		const feeds = {};
+		Object.keys(this.props.feeds).forEach(key => {
+			feeds[key] = this.props.feeds[key].city
+		})
+
+		const Settings_t = t.struct({
+			selectedFeed : t.enums(feeds),
+			minNumberOfCheckins : t.Number,
+		})
+
+		return(
+			<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+				<View style={styles.container}>
+					<Text style={{fontSize : 30, fontWeight : 'bold', marginTop : 50, marginBottom : 30}}>
+						Settings
+					</Text>
+
+					<t.form.Form
+						ref='form'
+						type={Settings_t}
+						value={this.props.formValues}
+					/>
+	      </View>
+      </TouchableWithoutFeedback>
 		)
 	}
 }
 
-const mapStateToProps = state => state
+const mapStateToProps = state => ({
+	formValues : {
+		selectedFeed : state.settings.currentFeed,
+		minNumberOfCheckins : state.settings.checkin_count_threshold
+	},
+	feeds : state.settings.feeds
+})
 const mapDispatchToProps = dispatch => ({
 
 })
@@ -40,7 +76,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
+    padding: 30
   },
   icon : {
   	height : 26,

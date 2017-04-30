@@ -23,9 +23,9 @@ const setData = (state, data) => {
 		var row = data.checkins[i];
 
 		row.index = i;
-		row.key = `${row.venue_id}-${row.bid}-${row.checkin_count}`;
+		row.key = `${row.venue_id}-${row.bid}`;
 
-		if(data[row.venue_id]){
+		if(mapData[row.venue_id]){
 			mapData[row.venue_id].beers[row.bid] = row;
 		}else{
 			mapData[row.venue_id] = {
@@ -46,6 +46,20 @@ const setData = (state, data) => {
 	};
 }
 
+function validate(feedData, mapData){
+	for(let row of feedData){
+		const venue = mapData[row.venue_id];
+		if(venue == null){
+			console.log(`Venue ${row.venue_id} is NULL in mapData`)
+		}
+		const beer = venue.beers[row.bid]
+		if(beer == null){
+			console.log(venue)
+			console.log(`Beer ${row.bid} is NULL in mapData`)
+		}
+	}
+}
+
 /**
  * Update the existing data in `state`.  This should be
  * called when we are incrementally adding more data
@@ -60,8 +74,10 @@ const updateData = (state, data) => {
 	}
 	var feedData = state.feedData.slice();
 	var mapData = state.mapData;
+
 	for(let row of data.checkins){
 		if(mapData[row.venue_id]){
+			//The venue exists
 			const entry = mapData[row.venue_id].beers[row.bid];
 			if(entry){
 				//This beer exists at this venue.
@@ -70,17 +86,27 @@ const updateData = (state, data) => {
 						beers : {
 							[row.bid] : {
 								checkin_count : {$set : entry.checkin_count + row.checkin_count},
-								created : {$set : row.created}
+								created : {$set : row.created},
+								checkin_id : {$set : row.checkin_id}
 							}
 						}
 					}
 				})
+
+				console.log(row.name)
+				console.log(`${feedData[entry.index].bid} vs. ${row.bid}`)
+				if(feedData[entry.index].bid !== row.bid){
+					console.log('Impossible!!!!')
+				}
+
 				feedData[entry.index].checkin_count += row.checkin_count;
 				feedData[entry.index].created = row.created;
+				feedData[entry.index].checkin_id = row.checkin_id
+
 			}else{
 				//bid doesn't exist for this venue.
 				row.index = feedData.length;
-				row.key = `${row.venue_id}-${row.bid}-${row.checkin_count}`;
+				row.key = `${row.venue_id}-${row.bid}`;
 				
 				feedData.push(row)
 				mapData = update(mapData, {
@@ -108,6 +134,7 @@ const updateData = (state, data) => {
 				}
 			})
 			row.index = feedData.length;
+			row.key = `${row.venue_id}-${row.bid}`;
 			feedData.push(row);
 		}
 	}

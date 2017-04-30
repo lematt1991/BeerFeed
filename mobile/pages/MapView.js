@@ -1,7 +1,8 @@
 import React from 'react'
-import {View, Text, StyleSheet, Image} from 'react-native'
+import {View, Text, StyleSheet, Image, Button} from 'react-native'
 import { MapView } from 'expo';
 import { connect } from 'react-redux'
+import * as LocationActions from '../actions/LocationActions'
 
 class BeerMap extends React.Component{
 	static navigationOptions = {
@@ -23,6 +24,10 @@ class BeerMap extends React.Component{
 		)
 	}
 
+	onButtonPress = () => {
+
+	}
+
 	render(){
 		var region;
 		if(this.props.location){
@@ -40,7 +45,18 @@ class BeerMap extends React.Component{
 					showsUserLocation={true}
 					initialRegion={region}
 					provider='google'
+					onRegionChangeComplete={this.props.setLocation}
 				>
+					<View style={styles.button}>
+						<Button
+							style={{justifyContent : 'center', alignItems : 'center', borderRadius : 10}}
+	            onPress={this.onButtonPress}
+	            title="My Location"
+	            color="#841584"
+	            accessibilityLabel="My Location"
+	          />
+          </View>
+
 				{
 					/*TODO: determinate color based on quality of venue*/
 					Object.keys(this.props.mapData).map(venue_id => 
@@ -66,11 +82,19 @@ const mapStateToProps = state => ({
 	mapData : state.data.mapData
 })
 
-const mapDispatchToProps = dispatch => ({})
+const mapDispatchToProps = dispatch => ({
+	setLocation : location => dispatch(LocationActions.setLocation(location))
+})
 
 export default connect(mapStateToProps, mapDispatchToProps)(BeerMap);
 
 const styles = StyleSheet.create({
+	button : {
+		width : 125,
+		marginLeft : 10,
+		marginTop : 25,
+		flex : 1
+	},
   container: {
     flex: 1,
     backgroundColor: '#fff',

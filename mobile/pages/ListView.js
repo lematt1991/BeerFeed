@@ -63,7 +63,7 @@ class ListView extends React.Component{
   };
 
 	render(){
-		var rows = this.props.data.feedData;
+		var rows = this.props.data.feedData.slice();
 		rows.sort(this.orderByDate);
 		rows = rows.slice(0, this.state.numRows)
 

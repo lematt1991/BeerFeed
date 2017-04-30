@@ -1,6 +1,6 @@
 import {SET_LOCATION} from '../actions/Types'
 
-const initialState = null
+const initialState = {}
 
 export default (state = initialState, action) => {
 	switch(action.type){
