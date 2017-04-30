@@ -14,6 +14,15 @@ class BeerMap extends React.Component{
 		)
 	}
 
+	renderDescription = venue => {
+		return(
+			Object.keys(venue.beers).map(k => {
+				var beer = venue.beers[k]
+				return `${beer.brewery}: ${beer.name} (${beer.rating})`
+			}).join('\n')
+		)
+	}
+
 	render(){
 		var region;
 		if(this.props.location){
@@ -36,8 +45,8 @@ class BeerMap extends React.Component{
 					Object.keys(this.props.mapData).map(venue_id => 
 						<MapView.Marker
 							key={venue_id}
-							title = 'title'
-							description ={`lat=${this.props.mapData[venue_id].lat}, lon=${this.props.mapData[venue_id].lon}`}
+							title={this.props.mapData[venue_id].venue}
+							description={this.renderDescription(this.props.mapData[venue_id])}
 							coordinate = {{
 								latitude : this.props.mapData[venue_id].lat, 
 								longitude : this.props.mapData[venue_id].lon
