@@ -59,27 +59,21 @@ export default class FeedRow extends React.Component{
 				<View>
 					<Text style={styles.text}>
 						Beer: {this.props.name}
-					}
 					</Text>
 					<Text style={styles.text}>
 						Brewery: {this.props.brewery}
-					}
 					</Text>
 					<Text style={styles.text}>
 						Found at: {this.props.venue}
-					}
 					</Text>
 					<Text style={styles.text}>
 						Rating: {this.props.rating}
-					}
 					</Text>
 					<Text style={styles.text}>
 						Number of checkins: {this.props.checkin_count}
-					}
 					</Text>
 					<Text style={styles.text}>
 						Last checked in: {date.toLocaleString([], dateFormat)}
-					}
 					</Text>
 				</View>
 			</View>
