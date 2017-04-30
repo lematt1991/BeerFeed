@@ -11,6 +11,7 @@ import {
 } from 'react-native'
 import {connect} from 'react-redux'
 import t from 'tcomb-form-native'
+import * as SettingsActions from '../actions/SettingsActions'
 
 class Settings extends React.Component{
 	static navigationOptions = {
@@ -23,8 +24,10 @@ class Settings extends React.Component{
 		)
 	}
 
-	clickView = () => {
-		console.log('Settings view clicked!	')
+	changeValue = ({minNumberOfCheckins}) => {
+		if(minNumberOfCheckins !== this.props.formValues.minNumberOfCheckins){
+			this.props.changeCheckinCountThreshold(minNumberOfCheckins)
+		}
 	}
 
 	render(){
@@ -39,9 +42,6 @@ class Settings extends React.Component{
 		})
 
 		return(
-			<View style={{flex : 1}}>
-				<View style={{height : 20, backgroundColor : '#000'}}>
-				</View>
 				<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 					<View style={styles.container}>
 						<Text style={{fontSize : 30, fontWeight : 'bold', marginTop : 30, marginBottom : 30}}>
@@ -50,12 +50,12 @@ class Settings extends React.Component{
 
 						<t.form.Form
 							ref='form'
+							onChange={this.changeValue}
 							type={Settings_t}
 							value={this.props.formValues}
 						/>
 		      </View>
 	      </TouchableWithoutFeedback>
-	    </View>
 		)
 	}
 }
@@ -68,7 +68,7 @@ const mapStateToProps = state => ({
 	feeds : state.settings.feeds
 })
 const mapDispatchToProps = dispatch => ({
-
+	changeCheckinCountThreshold : thresh => dispatch(SettingsActions.changeCheckinCountThreshold(thresh))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Settings);

@@ -27,9 +27,6 @@ class BeerMap extends React.Component{
 
 	render(){
 		return(
-			<View style={{flex : 1}}>
-				<View style={{height : 20, backgroundColor : '#000'}}>
-				</View>
 				<MapView
 					style={{flex : 1}}
 					showsUserLocation={true}
@@ -63,7 +60,6 @@ class BeerMap extends React.Component{
 					)
 				}
 				</MapView>
-			</View>
 		)
 	}
 }

@@ -63,16 +63,14 @@ class ListView extends React.Component{
   };
 
 	render(){
-		var rows = this.props.data.feedData.slice();
+		const threshold = this.props.settings.checkin_count_threshold;
+		var rows = this.props.data.feedData.filter(r => r.checkin_count >= threshold);
 		rows.sort(this.orderByDate);
 		rows = rows.slice(0, this.state.numRows)
 
 		const feed = this.props.settings.feeds[this.props.settings.currentFeed] || {};
 
 		return(
-			<View style={{flex : 1}}>
-				<View style={{height : 20, backgroundColor : '#000'}}>
-				</View>
 				<View style={styles.container}>
 					<View style={styles.textContainer}>
 						<Text style={styles.titleText}>
@@ -91,7 +89,6 @@ class ListView extends React.Component{
 		        />
 	        </View>
 	      </View>
-      </View>
 		)
 	}
 }
