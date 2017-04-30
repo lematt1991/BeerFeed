@@ -26,16 +26,6 @@ class BeerMap extends React.Component{
 	}
 
 	render(){
-		var region;
-		if(this.props.location){
-			region = {
-				latitude: this.props.location.latitude,
-	      longitude: this.props.location.longitude,
-	      latitudeDelta: 0.022,
-	      longitudeDelta: 0.0121,
-			}
-		}
-
 		return(
 			<View style={{flex : 1}}>
 				<View style={{height : 20, backgroundColor : '#000'}}>
@@ -43,7 +33,7 @@ class BeerMap extends React.Component{
 				<MapView
 					style={{flex : 1}}
 					showsUserLocation={true}
-					initialRegion={region}
+					region={this.props.location}
 					provider='google'
 					onRegionChangeComplete={this.props.setLocation}
 				>
