@@ -9,6 +9,7 @@ import AppNavigator from './navigation/AppNavigator'
 import * as DataActions from './actions/DataActions'
 import * as SettingsActions from './actions/SettingsActions'
 import './Init'
+import InitializingPage from './pages/InitializingPage'
 
 export default class AppContainer extends React.Component {
   render() {
@@ -49,11 +50,10 @@ class AppRaw extends React.Component{
   }
 
   render(){
-    // if(this.state.rehydrating){
-    //   return(<Text>Rehydrating...</Text>)
-    // }
     return(
-      <AppNavigator ref={nav => {this.navigator = nav;}} />
+      this.state.rehydrating ? 
+        <InitializingPage/> :
+        <AppNavigator ref={nav => {this.navigator = nav;}} />
     )
   }
 }

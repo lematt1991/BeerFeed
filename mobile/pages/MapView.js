@@ -42,9 +42,11 @@ class BeerMap extends React.Component{
 					provider='google'
 				>
 				{
+					/*TODO: determinate color based on quality of venue*/
 					Object.keys(this.props.mapData).map(venue_id => 
 						<MapView.Marker
 							key={venue_id}
+							pinColor='red' 
 							title={this.props.mapData[venue_id].venue}
 							description={this.renderDescription(this.props.mapData[venue_id])}
 							coordinate = {{
