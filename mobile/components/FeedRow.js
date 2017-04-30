@@ -11,6 +11,7 @@ const styles = StyleSheet.create({
 		flex : 1,
 		flexDirection : 'row',
 		alignItems : 'center',
+		justifyContent: 'flex-start',
 		marginBottom : 10
 	},
 	imageContainer : {

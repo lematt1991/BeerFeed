@@ -79,6 +79,8 @@ class ListView extends React.Component{
         <View style={styles.listContainer}>
 	        <FlatList
 	        	style={styles.flatList}
+	        	onEndReachedThreshold={5}
+	        	onEndReached={() => this.setState({...this.state, numRows : this.state.numRows + 20})}
 	        	data={rows}
 	        	renderItem={this.renderItem}
 	        	removeClippedSubviews={false}
@@ -97,7 +99,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(ListView);
 
 const styles = StyleSheet.create({
 	flatList : {
-		height : 200
+		flex: 1
 	},
 	listContainer : {
 		flex : 9

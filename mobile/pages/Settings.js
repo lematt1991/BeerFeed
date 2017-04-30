@@ -1,7 +1,8 @@
 import React from 'react'
-import {View, Text, StyleSheet, Image} from 'react-native'
+import {View, Text, StyleSheet, Picker, Image, Dimensions} from 'react-native'
+import {connect} from 'react-redux'
 
-class MapView extends React.Component{
+class Settings extends React.Component{
 	static navigationOptions = {
 		tabBarLabel: 'Settings',
 		tabBarIcon: ({tintColor}) => (
@@ -13,22 +14,33 @@ class MapView extends React.Component{
 	}
 
 	render(){
+		console.log(this.props.settings)
 		return(
 			<View style={styles.container}>
-				<Text> This is the settings page</Text>
+				<Text style={{fontSize : 30, fontWeight : 'bold', marginTop : 50}}>
+					Settings
+				</Text>
+
       </View>
 		)
 	}
 }
 
-export default MapView;
+const mapStateToProps = state => state
+const mapDispatchToProps = dispatch => ({
+
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Settings);
 
 const styles = StyleSheet.create({
+	picker : {
+		width : Dimensions.get('window').width
+	},
   container: {
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
   },
   icon : {
   	height : 26,
