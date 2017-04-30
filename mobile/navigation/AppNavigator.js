@@ -5,13 +5,12 @@ import MapView from '../pages/MapView'
 import Settings from '../pages/Settings'
 
 export default TabNavigator({
+	Feed : {
+		screen : ListView
+	},
 	Map : {
 		screen : MapView
 	},
-		Feed : {
-		screen : ListView
-	},
-
 	Settings : {
 		screen : Settings
 	}

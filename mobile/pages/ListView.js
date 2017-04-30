@@ -4,10 +4,13 @@ import {
 	Text, 
 	StyleSheet, 
 	Image,
-	FlatList
+	FlatList,
+	ScrollView
 } from 'react-native'
 import {connect} from 'react-redux'
 import FeedRow from '../components/FeedRow'
+import { List, ListItem, SearchBar } from "react-native-elements";
+
 
 class ListView extends React.Component{
 	static navigationOptions = {
@@ -27,16 +30,45 @@ class ListView extends React.Component{
 		}
 	}
 
+	orderByDate = (x, y) => {
+		return x.checkin_id > y.checkin_id ? -1 : 1
+	}
+
+	orderByRating = (x, y) => {
+		return x.rating > y.rating ? -1 : 1
+	}
+
+	orderByDistance = (x, y) => {
+		var d1 = Math.pow(x.lat - this.state.location.lat, 2) + Math.pow(x.lon - this.state.location.lng, 2)
+		var d2 = Math.pow(y.lat - this.state.location.lat, 2) + Math.pow(y.lon - this.state.location.lng, 2)
+		return d1 < d2 ? -1 : 1
+	}
+
 	renderItem = ({item}) => {
 		return(
 			<FeedRow {...item} />
 		)
 	}
 	
+	renderSeparator = () => {
+    return (
+      <View
+        style={{
+          height: 1,
+          width: "100%",
+          backgroundColor: "#CED0CE"
+        }}
+      />
+    );
+  };
 
 	render(){
-		var rows = this.props.data.feedData.slice(0, this.state.numRows)
+		var rows = this.props.data.feedData;
+		rows.sort(this.orderByDate);
+		rows = rows.slice(0, this.state.numRows)
+
 		const feed = this.props.settings.feeds[this.props.settings.currentFeed] || {};
+
 		return(
 			<View style={styles.container}>
 				<View style={styles.textContainer}>
@@ -46,9 +78,11 @@ class ListView extends React.Component{
         </View>
         <View style={styles.listContainer}>
 	        <FlatList
+	        	style={styles.flatList}
 	        	data={rows}
 	        	renderItem={this.renderItem}
 	        	removeClippedSubviews={false}
+	        	ItemSeparatorComponent={this.renderSeparator}
 	        />
         </View>
       </View>
@@ -62,9 +96,11 @@ const mapDispatchToProps = dispatch => ({})
 export default connect(mapStateToProps, mapDispatchToProps)(ListView);
 
 const styles = StyleSheet.create({
+	flatList : {
+		height : 200
+	},
 	listContainer : {
-		flex : 9,
-		marginBottom : 20
+		flex : 9
 	},
 	textContainer : {
 		flex : 1,
@@ -73,10 +109,11 @@ const styles = StyleSheet.create({
 	titleText : {
 		fontSize : 20,
 		fontWeight : 'bold',
-		textDecorationLine : 'underline',
 	},
   container: {
     flex: 1,
+    marginLeft : 20,
+    marginRight : 20,
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
