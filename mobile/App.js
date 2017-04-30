@@ -40,6 +40,7 @@ class AppRaw extends React.Component{
 
   componentWillMount(){
     persistStore(store, {storage: AsyncStorage}, () => {
+      console.log('Done rehydrating')
       this.setState({rehydrating : false})
       this.fetchData()
       this.interval = setInterval(this.fetchData, 5000)

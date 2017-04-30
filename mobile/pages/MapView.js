@@ -1,9 +1,9 @@
 import React from 'react'
 import {View, Text, StyleSheet, Image} from 'react-native'
-import { MapView as RNMapView } from 'expo';
+import { MapView } from 'expo';
 import { connect } from 'react-redux'
 
-class MapView extends React.Component{
+class BeerMap extends React.Component{
 	static navigationOptions = {
 		tabBarLabel: 'Map',
 		tabBarIcon: ({tintColor}) => (
@@ -25,26 +25,27 @@ class MapView extends React.Component{
 			}
 		}
 
-		var keys = Object.keys(this.props.mapData);
-		console.log(`Creating ${keys.length} markers`)
 		return(
-				<RNMapView
+				<MapView
 					style={{flex : 1}}
 					showsUserLocation={true}
 					initialRegion={region}
+					provider='google'
 				>
 				{
-					keys.map(venue_id => 
-						<RNMapView.Marker
+					Object.keys(this.props.mapData).map(venue_id => 
+						<MapView.Marker
 							key={venue_id}
-							coordinate={{
+							title = 'title'
+							description ={`lat=${this.props.mapData[venue_id].lat}, lon=${this.props.mapData[venue_id].lon}`}
+							coordinate = {{
 								latitude : this.props.mapData[venue_id].lat, 
 								longitude : this.props.mapData[venue_id].lon
 							}}
 						/>
 					)
 				}
-				</RNMapView>
+				</MapView>
 		)
 	}
 }
@@ -56,7 +57,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({})
 
-export default connect(mapStateToProps, mapDispatchToProps)(MapView);
+export default connect(mapStateToProps, mapDispatchToProps)(BeerMap);
 
 const styles = StyleSheet.create({
   container: {
