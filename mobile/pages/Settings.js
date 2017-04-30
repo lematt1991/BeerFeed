@@ -39,19 +39,23 @@ class Settings extends React.Component{
 		})
 
 		return(
-			<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-				<View style={styles.container}>
-					<Text style={{fontSize : 30, fontWeight : 'bold', marginTop : 50, marginBottom : 30}}>
-						Settings
-					</Text>
+			<View style={{flex : 1}}>
+				<View style={{height : 20, backgroundColor : '#000'}}>
+				</View>
+				<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+					<View style={styles.container}>
+						<Text style={{fontSize : 30, fontWeight : 'bold', marginTop : 50, marginBottom : 30}}>
+							Settings
+						</Text>
 
-					<t.form.Form
-						ref='form'
-						type={Settings_t}
-						value={this.props.formValues}
-					/>
-	      </View>
-      </TouchableWithoutFeedback>
+						<t.form.Form
+							ref='form'
+							type={Settings_t}
+							value={this.props.formValues}
+						/>
+		      </View>
+	      </TouchableWithoutFeedback>
+	    </View>
 		)
 	}
 }

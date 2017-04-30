@@ -20,7 +20,8 @@ const styles = StyleSheet.create({
 	image : {
 		width : 50,
 		height : 50
-	}
+	},
+	text : {}
 })
 
 export default class FeedRow extends React.Component{
@@ -56,23 +57,29 @@ export default class FeedRow extends React.Component{
 					/>
 				</View>
 				<View>
-					<Text>
+					<Text style={styles.text}>
 						Beer: {this.props.name}
+					}
 					</Text>
-					<Text>
+					<Text style={styles.text}>
 						Brewery: {this.props.brewery}
+					}
 					</Text>
-					<Text>
+					<Text style={styles.text}>
 						Found at: {this.props.venue}
+					}
 					</Text>
-					<Text>
+					<Text style={styles.text}>
 						Rating: {this.props.rating}
+					}
 					</Text>
-					<Text>
+					<Text style={styles.text}>
 						Number of checkins: {this.props.checkin_count}
+					}
 					</Text>
-					<Text>
+					<Text style={styles.text}>
 						Last checked in: {date.toLocaleString([], dateFormat)}
+					}
 					</Text>
 				</View>
 			</View>

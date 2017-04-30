@@ -3,7 +3,7 @@ import store from './Store'
 import * as LocationActions from './actions/LocationActions'
 import {AppState} from 'react-native'
 
-function getLocation(){
+export function getLocation(){
 	//Get the users location
 	Permissions.askAsync(Permissions.LOCATION)
 	.then(({status}) => {

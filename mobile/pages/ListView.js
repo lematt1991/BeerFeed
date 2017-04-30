@@ -70,23 +70,27 @@ class ListView extends React.Component{
 		const feed = this.props.settings.feeds[this.props.settings.currentFeed] || {};
 
 		return(
-			<View style={styles.container}>
-				<View style={styles.textContainer}>
-					<Text style={styles.titleText}>
-	          The Beer Feed {feed.city}
-	        </Text>
-        </View>
-        <View style={styles.listContainer}>
-	        <FlatList
-	        	style={styles.flatList}
-	        	onEndReachedThreshold={5}
-	        	onEndReached={() => this.setState({...this.state, numRows : this.state.numRows + 20})}
-	        	data={rows}
-	        	renderItem={this.renderItem}
-	        	removeClippedSubviews={false}
-	        	ItemSeparatorComponent={this.renderSeparator}
-	        />
-        </View>
+			<View style={{flex : 1}}>
+				<View style={{height : 20, backgroundColor : '#000'}}>
+				</View>
+				<View style={styles.container}>
+					<View style={styles.textContainer}>
+						<Text style={styles.titleText}>
+		          The Beer Feed {feed.city}
+		        </Text>
+	        </View>
+	        <View style={styles.listContainer}>
+		        <FlatList
+		        	style={styles.flatList}
+		        	onEndReachedThreshold={5}
+		        	onEndReached={() => this.setState({...this.state, numRows : this.state.numRows + 20})}
+		        	data={rows}
+		        	renderItem={this.renderItem}
+		        	removeClippedSubviews={false}
+		        	ItemSeparatorComponent={this.renderSeparator}
+		        />
+	        </View>
+	      </View>
       </View>
 		)
 	}
@@ -106,7 +110,8 @@ const styles = StyleSheet.create({
 	},
 	textContainer : {
 		flex : 1,
-		marginTop : 50
+		marginTop : 30,
+		alignItems : 'center'
 	},
 	titleText : {
 		fontSize : 20,
@@ -114,11 +119,10 @@ const styles = StyleSheet.create({
 	},
   container: {
     flex: 1,
+    zIndex : 2,
     marginLeft : 20,
     marginRight : 20,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   icon : {
   	height : 26,

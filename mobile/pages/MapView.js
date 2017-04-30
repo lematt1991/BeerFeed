@@ -3,6 +3,7 @@ import {View, Text, StyleSheet, Image, Button} from 'react-native'
 import { MapView } from 'expo';
 import { connect } from 'react-redux'
 import * as LocationActions from '../actions/LocationActions'
+import {getLocation} from '../Init'
 
 class BeerMap extends React.Component{
 	static navigationOptions = {
@@ -24,10 +25,6 @@ class BeerMap extends React.Component{
 		)
 	}
 
-	onButtonPress = () => {
-
-	}
-
 	render(){
 		var region;
 		if(this.props.location){
@@ -40,6 +37,9 @@ class BeerMap extends React.Component{
 		}
 
 		return(
+			<View style={{flex : 1}}>
+				<View style={{height : 20, backgroundColor : '#000'}}>
+				</View>
 				<MapView
 					style={{flex : 1}}
 					showsUserLocation={true}
@@ -50,7 +50,7 @@ class BeerMap extends React.Component{
 					<View style={styles.button}>
 						<Button
 							style={{justifyContent : 'center', alignItems : 'center', borderRadius : 10}}
-	            onPress={this.onButtonPress}
+	            onPress={getLocation}
 	            title="My Location"
 	            color="#841584"
 	            accessibilityLabel="My Location"
@@ -73,6 +73,7 @@ class BeerMap extends React.Component{
 					)
 				}
 				</MapView>
+			</View>
 		)
 	}
 }
