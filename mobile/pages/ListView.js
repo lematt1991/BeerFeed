@@ -4,6 +4,7 @@ import {
 	Text, 
 	StyleSheet, 
 	Image,
+	TextInput,
 	FlatList,
 	ScrollView
 } from 'react-native'
@@ -11,6 +12,10 @@ import {connect} from 'react-redux'
 import FeedRow from '../components/FeedRow'
 import { List, ListItem, SearchBar } from "react-native-elements";
 import * as DataActions from '../actions/DataActions'
+import SearchInput, {createFilter} from 'react-search-input'
+
+const KEYS_TO_FILTER = ['brewery', 'name', 'venue']
+
 
 class ListView extends React.Component{
 	static navigationOptions = {
@@ -28,6 +33,7 @@ class ListView extends React.Component{
 		this.state = {
 			numRows : 20,
 			refreshing : false,
+			searchTerm : '',
 		}
 	}
 
@@ -77,7 +83,8 @@ class ListView extends React.Component{
 
 	render(){
 		const threshold = this.props.settings.checkin_count_threshold;
-		var rows = this.props.data.feedData.filter(r => r.checkin_count >= threshold);
+		var filter = createFilter(this.state.searchTerm, KEYS_TO_FILTER)
+		var rows = this.props.data.feedData.filter(r => r.checkin_count >= threshold && filter(r))
 
 		if(this.props.settings.ordering === 'date'){
 			rows.sort(this.orderByDate);
@@ -95,6 +102,14 @@ class ListView extends React.Component{
 						<Text style={styles.titleText}>
 		          The Beer Feed {feed.city}
 		        </Text>
+	        </View>
+	        <View style={{marginBottom : 10, backgroundColor : '#e1e8ee'}}>
+		        <TextInput
+		        	onChangeText={term => this.setState({searchTerm : term})}
+		        	style={styles.input}
+		        	clearButtonMode='always'
+		        	placeholder='Beers, breweries, or venues'
+		        />
 	        </View>
 	        <View style={styles.listContainer}>
 		        <FlatList
@@ -122,26 +137,38 @@ const mapDispatchToProps = dispatch => ({
 export default connect(mapStateToProps, mapDispatchToProps)(ListView);
 
 const styles = StyleSheet.create({
+	input : {
+		height : 30, 
+		backgroundColor : 'white', 
+		marginLeft : 10, 
+		marginRight : 10, 
+		marginBottom : 5, 
+		marginTop : 5, 
+		borderRadius : 3, 
+		paddingLeft : 5
+	},
 	flatList : {
 		flex: 1
 	},
 	listContainer : {
-		flex : 9
+		flex : 9,
+		marginLeft : 20,
+		marginRight : 20
 	},
 	textContainer : {
 		flex : 1,
-		marginTop : 30,
-		alignItems : 'center'
+		backgroundColor : '#e1e8ee',
+		alignItems : 'center',
 	},
 	titleText : {
+		marginBottom : 10,
+		marginTop : 30,
 		fontSize : 20,
 		fontWeight : 'bold',
 	},
   container: {
     flex: 1,
     zIndex : 2,
-    marginLeft : 20,
-    marginRight : 20,
     backgroundColor: '#fff',
   },
   icon : {

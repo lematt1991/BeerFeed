@@ -30,6 +30,7 @@
     "react-native-vector-icons": "^4.0.1",
     "react-navigation": "^1.0.0-beta.9",
     "react-redux": "^5.0.4",
+    "react-search-input": "^0.10.4",
     "redux": "^3.6.0",
     "redux-persist": "^4.7.1",
     "tcomb-form-native": "^0.6.7"
