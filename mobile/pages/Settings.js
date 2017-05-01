@@ -24,9 +24,11 @@ class Settings extends React.Component{
 		)
 	}
 
-	changeValue = ({minNumberOfCheckins}) => {
+	changeValue = ({minNumberOfCheckins, feedOrdering}) => {
 		if(minNumberOfCheckins !== this.props.formValues.minNumberOfCheckins){
 			this.props.changeCheckinCountThreshold(minNumberOfCheckins)
+		}else if(feedOrdering !== this.props.formValues.feedOrdering){
+			this.props.changeFeedOrdering(feedOrdering)
 		}
 	}
 
@@ -37,8 +39,12 @@ class Settings extends React.Component{
 		})
 
 		const Settings_t = t.struct({
-			selectedFeed : t.enums(feeds),
+			// selectedFeed : t.enums(feeds),
 			minNumberOfCheckins : t.Number,
+			feedOrdering : t.enums({
+				date : 'By Date',
+				rating : 'By Rating'
+			})
 		})
 
 		return(
@@ -62,13 +68,15 @@ class Settings extends React.Component{
 
 const mapStateToProps = state => ({
 	formValues : {
-		selectedFeed : state.settings.currentFeed,
-		minNumberOfCheckins : state.settings.checkin_count_threshold
+		// selectedFeed : state.settings.currentFeed,
+		minNumberOfCheckins : state.settings.checkin_count_threshold,
+		feedOrdering : state.settings.ordering,
 	},
 	feeds : state.settings.feeds
 })
 const mapDispatchToProps = dispatch => ({
-	changeCheckinCountThreshold : thresh => dispatch(SettingsActions.changeCheckinCountThreshold(thresh))
+	changeCheckinCountThreshold : thresh => dispatch(SettingsActions.changeCheckinCountThreshold(thresh)),
+	changeFeedOrdering : ordering => dispatch(SettingsActions.changeFeedOrdering(ordering))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Settings);

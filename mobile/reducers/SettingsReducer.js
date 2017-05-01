@@ -1,11 +1,16 @@
-import {CHANGE_FEED, CHANGE_CHECKIN_COUNT_THRESHOLD, FETCH_FEEDS} from '../actions/Types'
+import {
+	CHANGE_FEED, 
+	CHANGE_CHECKIN_COUNT_THRESHOLD, 
+	FETCH_FEEDS,
+	CHANGE_FEED_ORDERING
+} from '../actions/Types'
 
 const initialState = {
 	feeds : {},
 	currentFeed : 'nyc_feed',
-	checkin_count_threshold : 3
+	checkin_count_threshold : 3,
+	ordering : 'date'
 }
-
 
 export default (state=initialState, action) => {
 	switch(action.type){
@@ -19,6 +24,8 @@ export default (state=initialState, action) => {
 				feeds[feed.id] = feed;
 			}
 			return {...state, feeds : feeds}
+		case CHANGE_FEED_ORDERING:
+			return {...state, ordering : action.payload}
 		default:
 			return state;
 	}
