@@ -16,7 +16,6 @@ import SearchInput, {createFilter} from 'react-search-input'
 
 const KEYS_TO_FILTER = ['brewery', 'name', 'venue']
 
-
 class ListView extends React.Component{
 	static navigationOptions = {
 		tabBarLabel: 'Feed',

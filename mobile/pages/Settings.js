@@ -12,6 +12,8 @@ import {
 import {connect} from 'react-redux'
 import t from 'tcomb-form-native'
 import * as SettingsActions from '../actions/SettingsActions'
+import * as DataActions from '../actions/DataActions'
+import {Button} from 'react-native-elements'
 
 class Settings extends React.Component{
 	static navigationOptions = {
@@ -30,6 +32,11 @@ class Settings extends React.Component{
 		}else if(feedOrdering !== this.props.formValues.feedOrdering){
 			this.props.changeFeedOrdering(feedOrdering)
 		}
+	}
+
+	resetCache = () => {
+		const feed = this.props.currentFeed;
+		this.props.fetchData(feed)
 	}
 
 	render(){
@@ -60,6 +67,14 @@ class Settings extends React.Component{
 							type={Settings_t}
 							value={this.props.formValues}
 						/>
+
+						<Button
+							style={{marginTop : 50}}
+						  icon={{name: 'warning'}}
+						  title='Reset Cache' 
+						  backgroundColor='red'
+						  onPress={this.resetCache}
+						 />
 		      </View>
 	      </TouchableWithoutFeedback>
 		)
@@ -72,11 +87,13 @@ const mapStateToProps = state => ({
 		minNumberOfCheckins : state.settings.checkin_count_threshold,
 		feedOrdering : state.settings.ordering,
 	},
-	feeds : state.settings.feeds
+	feeds : state.settings.feeds,
+	currentFeed : state.settings.currentFeed
 })
 const mapDispatchToProps = dispatch => ({
 	changeCheckinCountThreshold : thresh => dispatch(SettingsActions.changeCheckinCountThreshold(thresh)),
-	changeFeedOrdering : ordering => dispatch(SettingsActions.changeFeedOrdering(ordering))
+	changeFeedOrdering : ordering => dispatch(SettingsActions.changeFeedOrdering(ordering)),
+	fetchData : feed => dispatch(DataActions.fetchData(feed))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Settings);
