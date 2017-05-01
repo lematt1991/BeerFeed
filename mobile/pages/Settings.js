@@ -7,7 +7,8 @@ import {
 	Image, 
 	Dimensions,
 	Keyboard,
-	TouchableWithoutFeedback
+	TouchableWithoutFeedback,
+	ActivityIndicator
 } from 'react-native'
 import {connect} from 'react-redux'
 import t from 'tcomb-form-native'
@@ -26,6 +27,13 @@ class Settings extends React.Component{
 		)
 	}
 
+	constructor(props){
+		super(props);
+		this.state = {
+			fetching : false
+		}
+	}
+
 	changeValue = ({minNumberOfCheckins, feedOrdering}) => {
 		if(minNumberOfCheckins !== this.props.formValues.minNumberOfCheckins){
 			this.props.changeCheckinCountThreshold(minNumberOfCheckins)
@@ -36,7 +44,9 @@ class Settings extends React.Component{
 
 	resetCache = () => {
 		const feed = this.props.currentFeed;
+		this.setState({fetching : true})
 		this.props.fetchData(feed)
+			.then(() => this.setState({fetching : false}))
 	}
 
 	render(){
@@ -69,11 +79,16 @@ class Settings extends React.Component{
 						/>
 
 						<Button
-							style={{marginTop : 50}}
+							style={{marginTop : 50, marginBottom : 20}}
 						  icon={{name: 'warning'}}
 						  title='Reset Cache' 
 						  backgroundColor='red'
 						  onPress={this.resetCache}
+						 />
+
+						 <ActivityIndicator
+						 	animating={this.state.fetching}
+						 	size="large"
 						 />
 		      </View>
 	      </TouchableWithoutFeedback>
