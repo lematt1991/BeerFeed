@@ -3,6 +3,7 @@ import search from './reducers/SearchReducer'
 import data from './reducers/DataReducer'
 import settings from './reducers/SettingsReducer'
 import location from './reducers/LocationReducer'
+import user from './reducers/UserReduer'
 import {persistStore, autoRehydrate, getStoredState, createPersistor} from 'redux-persist'
 import {createStore, combineReducers, applyMiddleware, compose} from 'redux'
 import API from './middleware/API'
@@ -13,7 +14,8 @@ const reducer = combineReducers({
   search,
   settings,
   data,
-  location
+  location,
+  user
 })
 
 const middleware = applyMiddleware(
