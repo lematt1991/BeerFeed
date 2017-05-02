@@ -17,7 +17,7 @@ export default store => next => action => {
     })
     const {method, body, url, json} = action.payload
 
-    transform = action.meta.transform || id;
+    let transform = action.meta.transform || id;
 
     return axios.request({
       url : `${BACKEND}/${url}`,

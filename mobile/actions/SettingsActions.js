@@ -28,7 +28,9 @@ export const fetchFeeds = {
 		method : 'GET',
 		url : '/Feeds'
 	},
-	meta : 'API'
+	meta : {
+		api : true
+	}
 }
 
 export const changeFeedOrdering = ordering => ({
