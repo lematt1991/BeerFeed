@@ -20,7 +20,7 @@ const tabNavigator = TabNavigator({
 
 export default StackNavigator({
 	InitializingPage : {screen : InitializingPage},
-	AuthScreen : {screen : Auth},
+//	AuthScreen : {screen : Auth},
 	MainNavigator : {screen : tabNavigator}
 }, {
 	headerMode : 'none'
