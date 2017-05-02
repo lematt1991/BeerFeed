@@ -21,20 +21,20 @@ class InitializingPage extends React.Component{
     const lastID = store.getState().data.lastID;
     const feed = store.getState().settings.currentFeed;
     if(store.getState().data.feedData.length === 0){
-      this.props.fetchData(feed)
+      return this.props.fetchData(feed)
     }else{
-      this.props.updateData(feed, lastID);
+      return this.props.updateData(feed, lastID);
     }
   }
 
 	componentWillMount(){
     persistStore(store, {storage: AsyncStorage}, () => {
       console.log('Done rehydrating')
-      this.fetchData()
-      this.props.fetchFeeds()
+      Promise.all([this.fetchData(), this.props.fetchFeeds()])
       	.then(() => {
       		const {username} = store.getState().user;
-      		const routeName = username ? 'MainNavigator' : 'AuthScreen';
+      		const routeName = 'MainNavigator';
+          //const routeName = username ? 'MainNavigator' : 'AuthScreen';
       		this.props.navigation.dispatch(NavigationActions.reset({
       			index : 0,
       			actions: [NavigationActions.navigate({routeName})]
