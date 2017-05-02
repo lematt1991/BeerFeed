@@ -24,29 +24,23 @@ const styles = StyleSheet.create({
 	text : {}
 })
 
-export default class FeedRow extends React.Component{
+const dateFormat = {
+	year : '2-digit',
+	month : '2-digit',
+	day : '2-digit',
+	hour : '2-digit',
+	minute : '2-digit'
+}
+
+export default class FeedRow extends React.PureComponent{
+
+	componentDidUpdate(){
+		console.log('feed row updated')
+	}
+
 	render(){
-		var dateFormat = {
-			year : '2-digit',
-			month : '2-digit',
-			day : '2-digit',
-			hour : '2-digit',
-			minute : '2-digit'
-		}
 		var date = new Date(this.props.created)
 		date.setMinutes(date.getMinutes() - date.getTimezoneOffset()) //convert from UTC to local timezone
-		date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-		var beerLink = `https://untappd.com/b/${this.props.beer_slug}/${this.props.bid}`
-		var dateFormat = {
-			year : '2-digit',
-			month : '2-digit',
-			day : '2-digit',
-			hour : '2-digit',
-			minute : '2-digit'
-		}
-		var date = new Date(this.props.created)
-		date.setMinutes(date.getMinutes() - date.getTimezoneOffset()) //convert from UTC to local timezone
-		date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 		return(
 			<View style={styles.container}>
 				<View style={styles.imageContainer}>	
@@ -80,4 +74,3 @@ export default class FeedRow extends React.Component{
 		)
 	}
 }
-

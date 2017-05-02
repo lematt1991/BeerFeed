@@ -8,7 +8,8 @@ import {
 	FETCH_FEEDS, 
 	CHANGE_FEED, 
 	CHANGE_CHECKIN_COUNT_THRESHOLD,
-	CHANGE_FEED_ORDERING
+	CHANGE_FEED_ORDERING,
+	SET_SEARCH_TERM
 } from './Types'
 
 export const changeFeed = (feed : FeedName) => ({
@@ -33,4 +34,9 @@ export const fetchFeeds = {
 export const changeFeedOrdering = ordering => ({
 	type : CHANGE_FEED_ORDERING,
 	payload : ordering
+})
+
+export const setSearchTerm = term => ({
+	type : SET_SEARCH_TERM,
+	payload : term
 })

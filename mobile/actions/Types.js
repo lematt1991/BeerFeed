@@ -26,3 +26,4 @@ export const SET_LOCATION = 'SET_LOCATION';
 export const CHANGE_FEED_ORDERING = 'CHANGE_FEED_ORDERING';
 export const LOGIN_USER = 'LOGIN_USER';
 export const LOGOUT_USER = 'LOGOUT_USER';
+export const SET_SEARCH_TERM = 'SET_SEARCH_TERM';

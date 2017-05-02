@@ -10,11 +10,10 @@ import {
 } from 'react-native'
 import {connect} from 'react-redux'
 import FeedRow from '../components/FeedRow'
-import { List, ListItem, SearchBar } from "react-native-elements";
+import { List, ListItem, SearchBar, Button } from "react-native-elements";
 import * as DataActions from '../actions/DataActions'
+import * as SettingsActions from '../actions/SettingsActions';
 import SearchInput, {createFilter} from 'react-search-input'
-
-const KEYS_TO_FILTER = ['brewery', 'name', 'venue']
 
 class ListView extends React.Component{
 	static navigationOptions = {
@@ -31,23 +30,8 @@ class ListView extends React.Component{
 		super(props);
 		this.state = {
 			numRows : 20,
-			refreshing : false,
-			searchTerm : '',
+			refreshing : false
 		}
-	}
-
-	orderByDate = (x, y) => {
-		return x.checkin_id > y.checkin_id ? -1 : 1
-	}
-
-	orderByRating = (x, y) => {
-		return x.rating > y.rating ? -1 : 1
-	}
-
-	orderByDistance = (x, y) => {
-		var d1 = Math.pow(x.lat - this.state.location.lat, 2) + Math.pow(x.lon - this.state.location.lng, 2)
-		var d2 = Math.pow(y.lat - this.state.location.lat, 2) + Math.pow(y.lon - this.state.location.lng, 2)
-		return d1 < d2 ? -1 : 1
 	}
 
 	renderItem = ({item}) => {
@@ -81,20 +65,9 @@ class ListView extends React.Component{
   }
 
 	render(){
-		const threshold = this.props.settings.checkin_count_threshold;
-		var filter = createFilter(this.state.searchTerm, KEYS_TO_FILTER)
-		var rows = this.props.data.feedData.filter(r => r.checkin_count >= threshold && filter(r))
-
-		if(this.props.settings.ordering === 'date'){
-			rows.sort(this.orderByDate);
-		}else if (this.props.settings.ordering === 'rating'){
-			rows.sort(this.orderByRating);
-		}
-
-		rows = rows.slice(0, this.state.numRows)
+		console.log(`Rendering ${this.props.data.visibleRows.length} items`)
 
 		const feed = this.props.settings.feeds[this.props.settings.currentFeed] || {};
-
 		return(
 				<View style={styles.container}>
 					<View style={styles.textContainer}>
@@ -104,7 +77,7 @@ class ListView extends React.Component{
 	        </View>
 	        <View style={{marginBottom : 10, backgroundColor : '#e1e8ee'}}>
 		        <TextInput
-		        	onChangeText={term => this.setState({searchTerm : term})}
+		        	onChangeText={this.props.setSearchTerm}
 		        	style={styles.input}
 		        	clearButtonMode='always'
 		        	placeholder='Beers, breweries, or venues'
@@ -112,15 +85,15 @@ class ListView extends React.Component{
 	        </View>
 	        <View style={styles.listContainer}>
 		        <FlatList
-		        	onRefresh={this.fetchData}
+			       	onRefresh={this.fetchData}
+							initialNumToRender={10}
 		        	refreshing={this.state.refreshing}
 		        	style={styles.flatList}
-		        	onEndReachedThreshold={5}
-		        	onEndReached={() => this.setState({...this.state, numRows : this.state.numRows + 20})}
-		        	data={rows}
+		        	data={this.props.data.visibleRows}
 		        	renderItem={this.renderItem}
 		        	removeClippedSubviews={false}
 		        	ItemSeparatorComponent={this.renderSeparator}
+		        	onEndReached={() => this.setState({numRows : this.state.numRows + 10})}
 		        />
 	        </View>
 	      </View>
@@ -130,7 +103,8 @@ class ListView extends React.Component{
 
 const mapStateToProps = state => state
 const mapDispatchToProps = dispatch => ({
-	updateData : (feed, lastID) => dispatch(DataActions.updateData(feed, lastID))
+	updateData : (feed, lastID) => dispatch(DataActions.updateData(feed, lastID)),
+	setSearchTerm : term => dispatch(SettingsActions.setSearchTerm(term))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ListView);

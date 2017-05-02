@@ -8,6 +8,7 @@ import {
 	Dimensions,
 	Keyboard,
 	TouchableWithoutFeedback,
+	Linking,
 	ActivityIndicator
 } from 'react-native'
 import {connect} from 'react-redux'
@@ -15,6 +16,8 @@ import t from 'tcomb-form-native'
 import * as SettingsActions from '../actions/SettingsActions'
 import * as DataActions from '../actions/DataActions'
 import {Button} from 'react-native-elements'
+import { NavigationActions } from 'react-navigation'
+import axios from 'axios'
 
 class Auth extends React.Component{
 	static navigationOptions = {
@@ -27,6 +30,12 @@ class Auth extends React.Component{
 		)
 	}
 
+	componentDidMount(){
+		//TODO: use linking to implement OAuth2 signin
+		// Linking.openURL('https://www.google.com')
+			// .catch(console.log)
+	}
+
 	constructor(props){
 		super(props);
 		this.state = {
@@ -35,7 +44,10 @@ class Auth extends React.Component{
 	}
 
 	login = () => {
-		//TODO: login
+		this.props.navigation.dispatch(NavigationActions.reset({
+			index : 0,
+			actions: [NavigationActions.navigate({routeName : 'MainNavigator'})]
+		}))
 	}
 
 	render(){
