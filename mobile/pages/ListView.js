@@ -6,6 +6,7 @@ import {
 	Image,
 	TextInput,
 	FlatList,
+	ListView as RListView,
 	ScrollView
 } from 'react-native'
 import {connect} from 'react-redux'
@@ -50,7 +51,7 @@ class ListView extends React.Component{
 		return d1 < d2 ? -1 : 1
 	}
 
-	renderItem = ({item}) => {
+	renderItem = (item) => {
 		return(
 			<FeedRow {...item} />
 		)
@@ -95,6 +96,8 @@ class ListView extends React.Component{
 
 		const feed = this.props.settings.feeds[this.props.settings.currentFeed] || {};
 
+		const ds = new RListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+
 		return(
 				<View style={styles.container}>
 					<View style={styles.textContainer}>
@@ -111,14 +114,13 @@ class ListView extends React.Component{
 		        />
 	        </View>
 	        <View style={styles.listContainer}>
-		        <FlatList
+		        <RListView
 		        	onRefresh={this.fetchData}
 		        	refreshing={this.state.refreshing}
 		        	style={styles.flatList}
-		        	onEndReachedThreshold={5}
-		        	onEndReached={() => this.setState({...this.state, numRows : this.state.numRows + 20})}
-		        	data={rows}
-		        	renderItem={this.renderItem}
+		        	onEndReached={() => this.setState({numRows : this.state.numRows + 10})}
+		        	dataSource={ds.cloneWithRows(rows)}
+		        	renderRow={this.renderItem}
 		        	removeClippedSubviews={false}
 		        	ItemSeparatorComponent={this.renderSeparator}
 		        />
