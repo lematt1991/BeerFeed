@@ -5,6 +5,7 @@ import {
 	StyleSheet, 
 	Image,
 	TextInput,
+	ListView as RListView,	
 	FlatList,
 	ScrollView
 } from 'react-native'
@@ -34,7 +35,7 @@ class ListView extends React.Component{
 		}
 	}
 
-	renderItem = ({item}) => {
+	renderItem = (item) => {
 		return(
 			<FeedRow {...item} />
 		)
@@ -66,8 +67,10 @@ class ListView extends React.Component{
 
 	render(){
 		console.log(`Rendering ${this.props.data.visibleRows.length} items`)
-
+		const ds = new RListView.DataSource({rowHasChanged : (r1, r2) => r1 !== r2});
 		const feed = this.props.settings.feeds[this.props.settings.currentFeed] || {};
+
+
 		return(
 				<View style={styles.container}>
 					<View style={styles.textContainer}>
@@ -84,16 +87,12 @@ class ListView extends React.Component{
 		        />
 	        </View>
 	        <View style={styles.listContainer}>
-		        <FlatList
-			       	onRefresh={this.fetchData}
-							initialNumToRender={10}
-		        	refreshing={this.state.refreshing}
-		        	style={styles.flatList}
-		        	data={this.props.data.visibleRows}
-		        	renderItem={this.renderItem}
-		        	removeClippedSubviews={false}
+		        <RListView
+		        	initialListSize={20}
+			       	style={styles.flatList}
+		        	dataSource={ds.cloneWithRows(this.props.data.visibleRows)}
+		        	renderRow={this.renderItem}
 		        	ItemSeparatorComponent={this.renderSeparator}
-		        	onEndReached={() => this.setState({numRows : this.state.numRows + 10})}
 		        />
 	        </View>
 	      </View>
