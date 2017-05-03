@@ -7,7 +7,8 @@ import {
 	TextInput,
 	FlatList,
 	ListView as RListView,
-	ScrollView
+	ScrollView,
+	RefreshControl
 } from 'react-native'
 import {connect} from 'react-redux'
 import FeedRow from '../components/FeedRow'
@@ -97,7 +98,7 @@ class ListView extends React.Component{
 		const feed = this.props.settings.feeds[this.props.settings.currentFeed] || {};
 
 		const ds = new RListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-
+		console.log('Rendering list')
 		return(
 				<View style={styles.container}>
 					<View style={styles.textContainer}>
@@ -122,7 +123,13 @@ class ListView extends React.Component{
 		        	dataSource={ds.cloneWithRows(rows)}
 		        	renderRow={this.renderItem}
 		        	removeClippedSubviews={false}
-		        	ItemSeparatorComponent={this.renderSeparator}
+		        	renderSeparator={this.renderSeparator}
+		        	refreshControl={
+			          <RefreshControl
+			            refreshing={this.state.refreshing}
+			            onRefresh={this.fetchData}
+			          />
+			        }
 		        />
 	        </View>
 	      </View>
