@@ -17,17 +17,17 @@ export function getLocation(){
 		if(location){
 			const latitudeDelta = store.getState().location.latitudeDelta || 0.022;
 			const longitudeDelta = store.getState().location.longitudeDelta || 0.121;
-			store.dispatch(LocationActions.setLocation({
+			const region = {
 				latitude : location.coords.latitude,
 				longitude : location.coords.longitude,
 				latitudeDelta,
 				longitudeDelta
-			}))
+			}
+			store.dispatch(LocationActions.setLocation(region))
+			return region
 		}
 	})	
 }
-
-getLocation()
 
 var currentState = AppState.currentState;
 function handleAppStateChange(nextAppState){

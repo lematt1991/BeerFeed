@@ -1,9 +1,10 @@
 import React from 'react'
-import {View, Text, StyleSheet, Image, Button} from 'react-native'
+import {View, Text, StyleSheet, Image} from 'react-native'
 import { MapView } from 'expo';
 import { connect } from 'react-redux'
 import * as LocationActions from '../actions/LocationActions'
 import {getLocation} from '../Init'
+import {Button} from 'react-native-elements'
 
 class BeerMap extends React.Component{
 	static navigationOptions = {
@@ -25,22 +26,27 @@ class BeerMap extends React.Component{
 		)
 	}
 
+	moveToLocation = () => {
+		var that = this;
+		const {latitude, longitude} = this.props.location;
+		this.map.animateToRegion(this.props.location)
+	}
+
 	render(){
 		return(
 				<MapView
 					style={{flex : 1}}
 					showsUserLocation={true}
-					region={this.props.location}
+					ref={map => {this.map = map;}}
 					provider='google'
-					onRegionChangeComplete={this.props.setLocation}
+					initialRegion={this.props.location}
 				>
 					<View style={styles.button}>
 						<Button
-							style={{justifyContent : 'center', alignItems : 'center', borderRadius : 10}}
-	            onPress={getLocation}
+							buttonStyle={{borderRadius : 10, backgroundColor : '#fff'}}
+	            onPress={this.moveToLocation}
 	            title="My Location"
-	            color="#841584"
-	            accessibilityLabel="My Location"
+	            textStyle={{textAlign : 'center', color : 'black'}}
 	          />
           </View>
 
@@ -50,8 +56,8 @@ class BeerMap extends React.Component{
 						<MapView.Marker
 							key={venue_id}
 							pinColor='red' 
-							title={this.props.mapData[venue_id].venue}
-							description={this.renderDescription(this.props.mapData[venue_id])}
+							title={this.props.mapData[venue_id].venue || 'Missing Title!'}
+							description={this.renderDescription(this.props.mapData[venue_id]) || 'Missing description'}
 							coordinate = {{
 								latitude : this.props.mapData[venue_id].lat, 
 								longitude : this.props.mapData[venue_id].lon
@@ -77,7 +83,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(BeerMap);
 
 const styles = StyleSheet.create({
 	button : {
-		width : 125,
+		width : 150,
 		marginLeft : 10,
 		marginTop : 25,
 		flex : 1

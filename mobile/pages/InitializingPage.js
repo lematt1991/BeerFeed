@@ -14,7 +14,12 @@ import {connect} from 'react-redux'
 import * as DataActions from '../actions/DataActions'
 import * as SettingsActions from '../actions/SettingsActions'
 import { NavigationActions } from 'react-navigation'
+import {getLocation} from '../Init'
 
+function getDistance(c1, c2){
+  return (c1.lat - c2.lat) * (c1.lat - c2.lat) + 
+         (c1.lon - c2.lon) * (c1.lon - c2.lon);
+}
 
 class InitializingPage extends React.Component{
 	fetchData = () => {
@@ -30,15 +35,40 @@ class InitializingPage extends React.Component{
 	componentWillMount(){
     persistStore(store, {storage: AsyncStorage}, () => {
       console.log('Done rehydrating')
-      Promise.all([this.fetchData(), this.props.fetchFeeds()])
+      Promise.all([getLocation(), this.fetchData(), this.props.fetchFeeds()])
       	.then(() => {
       		const {username} = store.getState().user;
       		const routeName = 'MainNavigator';
-          //const routeName = username ? 'MainNavigator' : 'AuthScreen';
-      		this.props.navigation.dispatch(NavigationActions.reset({
-      			index : 0,
-      			actions: [NavigationActions.navigate({routeName})]
-      		}))
+
+          const {feeds, currentFeed} = store.getState().settings;
+          const {latitude, longitude} = store.getState().location;
+          const myPosition = {lat : latitude, lon : longitude};
+
+          var nearestDistance = Number.MAX_SAFE_INTEGER;
+          var nearestFeed;
+          for(const key in feeds){
+            var feed = feeds[key]
+            const distance = getDistance(feed, myPosition);
+            if(distance < nearestDistance){
+              nearestDistance = distance;
+              nearestFeed = feed
+            }
+          }
+
+          const nextPage = () => {
+            this.props.navigation.dispatch(NavigationActions.reset({
+              index : 0,
+              actions: [NavigationActions.navigate({routeName})]
+            }))
+          }
+
+          var p = Promise;
+          if(nearestFeed.distance !== currentFeed){
+            store.dispatch(SettingsActions.changeFeed(nearestFeed.id));
+            store.dispatch(DataActions.fetchData(nearestFeed.id)).then(nextPage)
+          }else{
+            nextPage()
+          }
       	})
     })
   }
