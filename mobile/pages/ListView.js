@@ -54,7 +54,7 @@ class ListView extends React.Component{
 
 	renderItem = (item) => {
 		return(
-			<FeedRow {...item} />
+			<FeedRow {...item} navigation={this.props.navigation} />
 		)
 	}
 	
@@ -74,11 +74,9 @@ class ListView extends React.Component{
     const lastID = this.props.data.lastID;
     const feed = this.props.settings.currentFeed;
     this.setState({...this.state, refreshing : true})
-    console.log('Refreshing')
     this.props.updateData(feed, lastID)
     	.then(() => {
     		this.setState({...this.state, refreshing : false})
-    		console.log('Done refreshing')
     	})  
   }
 
@@ -122,7 +120,6 @@ class ListView extends React.Component{
 		        	onEndReached={() => this.setState({numRows : this.state.numRows + 10})}
 		        	dataSource={ds.cloneWithRows(rows)}
 		        	renderRow={this.renderItem}
-		        	removeClippedSubviews={false}
 		        	renderSeparator={this.renderSeparator}
 		        	refreshControl={
 			          <RefreshControl

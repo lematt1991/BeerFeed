@@ -32,6 +32,18 @@ class BeerMap extends React.Component{
 		this.map.animateToRegion(this.props.location)
 	}
 
+	componentWillReceiveProps(nextProps){
+		const {location} = nextProps.navigation.state.params || {};
+		if(location){
+			nextProps.navigation.setParams({location : null})
+			const action = {
+				...nextProps.location,
+				...location
+			};
+			this.map.animateToRegion(action)
+		}
+	}
+
 	render(){
 		return(
 				<MapView

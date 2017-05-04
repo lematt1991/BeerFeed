@@ -62,7 +62,6 @@ class InitializingPage extends React.Component{
             }))
           }
 
-          var p = Promise;
           if(nearestFeed.distance !== currentFeed){
             store.dispatch(SettingsActions.changeFeed(nearestFeed.id));
             store.dispatch(DataActions.fetchData(nearestFeed.id)).then(nextPage)
