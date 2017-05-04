@@ -81,28 +81,23 @@ const updateData = (state, data) => {
 			const entry = mapData[row.venue_id].beers[row.bid];
 			if(entry){
 				//This beer exists at this venue.
+				const newEntry = {
+					...entry,
+					checkin_count : entry.checkin_count + row.checkin_count,
+					created : row.created,
+					checkin_id : row.checkin_id
+				}
+
+
 				mapData = update(mapData, {
 					[row.venue_id] : {
 						beers : {
-							[row.bid] : {
-								checkin_count : {$set : entry.checkin_count + row.checkin_count},
-								created : {$set : row.created},
-								checkin_id : {$set : row.checkin_id}
-							}
+							[row.bid] : {$set : newEntry}
 						}
 					}
 				})
 
-				console.log(row.name)
-				console.log(`${feedData[entry.index].bid} vs. ${row.bid}`)
-				if(feedData[entry.index].bid !== row.bid){
-					console.log('Impossible!!!!')
-				}
-
-				feedData[entry.index].checkin_count += row.checkin_count;
-				feedData[entry.index].created = row.created;
-				feedData[entry.index].checkin_id = row.checkin_id
-
+				feedData[entry.index] = newEntry;
 			}else{
 				//bid doesn't exist for this venue.
 				row.index = feedData.length;
