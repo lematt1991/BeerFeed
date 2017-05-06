@@ -17,6 +17,7 @@ class BeerMap extends React.Component{
 		)
 	}
 
+	//TODO: add button to get directions
 	renderDescription = venue => {
 		return(
 			Object.keys(venue.beers).map(k => {
@@ -46,38 +47,38 @@ class BeerMap extends React.Component{
 
 	render(){
 		return(
-				<MapView
-					style={{flex : 1}}
-					showsUserLocation={true}
-					ref={map => {this.map = map;}}
-					provider='google'
-					initialRegion={this.props.location}
-				>
-					<View style={styles.button}>
-						<Button
-							buttonStyle={{borderRadius : 10, backgroundColor : '#fff'}}
-	            onPress={this.moveToLocation}
-	            title="My Location"
-	            textStyle={{textAlign : 'center', color : 'black'}}
-	          />
-          </View>
+			<MapView
+				style={{flex : 1}}
+				showsUserLocation={true}
+				ref={map => {this.map = map;}}
+				initialRegion={this.props.location}
+				provider='google'
+			>
+				<View style={styles.button}>
+					<Button
+						buttonStyle={{borderRadius : 10, backgroundColor : '#fff'}}
+            onPress={this.moveToLocation}
+            title="My Location"
+            textStyle={{textAlign : 'center', color : 'black'}}
+          />
+        </View>
 
-				{
-					/*TODO: determinate color based on quality of venue*/
-					Object.keys(this.props.mapData).map(venue_id => 
-						<MapView.Marker
-							key={venue_id}
-							pinColor='red' 
-							title={this.props.mapData[venue_id].venue || 'Missing Title!'}
-							description={this.renderDescription(this.props.mapData[venue_id]) || 'Missing description'}
-							coordinate = {{
-								latitude : this.props.mapData[venue_id].lat, 
-								longitude : this.props.mapData[venue_id].lon
-							}}
-						/>
-					)
-				}
-				</MapView>
+			{
+				/*TODO: determinate color based on quality of venue*/
+				Object.keys(this.props.mapData).map(venue_id => 
+					<MapView.Marker
+						key={venue_id}
+						pinColor='red' 
+						title={this.props.mapData[venue_id].venue || 'Missing Title!'}
+						description={this.renderDescription(this.props.mapData[venue_id]) || 'Missing description'}
+						coordinate = {{
+							latitude : this.props.mapData[venue_id].lat, 
+							longitude : this.props.mapData[venue_id].lon
+						}}
+					/>
+				)
+			}
+			</MapView>
 		)
 	}
 }
@@ -97,8 +98,7 @@ const styles = StyleSheet.create({
 	button : {
 		width : 150,
 		marginLeft : 10,
-		marginTop : 25,
-		flex : 1
+		marginTop : 25
 	},
   container: {
     flex: 1,
