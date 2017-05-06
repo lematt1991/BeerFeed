@@ -14,7 +14,9 @@ import {connect} from 'react-redux'
 import FeedRow from '../components/FeedRow'
 import { List, ListItem, SearchBar } from "react-native-elements";
 import * as DataActions from '../actions/DataActions'
+import * as SettingsActions from '../actions/SettingsActions'
 import SearchInput, {createFilter} from 'react-search-input'
+import store from '../Store'
 
 const KEYS_TO_FILTER = ['brewery', 'name', 'venue']
 
@@ -33,8 +35,7 @@ class ListView extends React.Component{
 		super(props);
 		this.state = {
 			numRows : 20,
-			refreshing : false,
-			searchTerm : '',
+			refreshing : false
 		}
 	}
 
@@ -82,7 +83,7 @@ class ListView extends React.Component{
 
 	render(){
 		const threshold = this.props.settings.checkin_count_threshold;
-		var filter = createFilter(this.state.searchTerm, KEYS_TO_FILTER)
+		var filter = createFilter(this.props.settings.searchTerm, KEYS_TO_FILTER)
 		var rows = this.props.data.feedData.filter(r => r.checkin_count >= threshold && filter(r))
 
 		if(this.props.settings.ordering === 'date'){
@@ -96,40 +97,39 @@ class ListView extends React.Component{
 		const feed = this.props.settings.feeds[this.props.settings.currentFeed] || {};
 
 		const ds = new RListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-		console.log('Rendering list')
 		return(
-				<View style={styles.container}>
-					<View style={styles.textContainer}>
-						<Text style={styles.titleText}>
-		          The Beer Feed {feed.city}
-		        </Text>
-	        </View>
-	        <View style={{marginBottom : 10, backgroundColor : '#e1e8ee'}}>
-		        <TextInput
-		        	onChangeText={term => this.setState({searchTerm : term})}
-		        	style={styles.input}
-		        	clearButtonMode='always'
-		        	placeholder='Beers, breweries, or venues'
-		        />
-	        </View>
-	        <View style={styles.listContainer}>
-		        <RListView
-		        	onRefresh={this.fetchData}
-		        	refreshing={this.state.refreshing}
-		        	style={styles.flatList}
-		        	onEndReached={() => this.setState({numRows : this.state.numRows + 10})}
-		        	dataSource={ds.cloneWithRows(rows)}
-		        	renderRow={this.renderItem}
-		        	renderSeparator={this.renderSeparator}
-		        	refreshControl={
-			          <RefreshControl
-			            refreshing={this.state.refreshing}
-			            onRefresh={this.fetchData}
-			          />
-			        }
-		        />
-	        </View>
-	      </View>
+			<View style={styles.container}>
+				<View style={styles.textContainer}>
+					<Text style={styles.titleText}>
+	          The Beer Feed {feed.city}
+	        </Text>
+        </View>
+        <View style={{marginBottom : 10, backgroundColor : '#e1e8ee'}}>
+	        <TextInput
+	        	onChangeText={term => store.dispatch(SettingsActions.changeSearchTerm(term))}
+	        	style={styles.input}
+	        	clearButtonMode='always'
+	        	placeholder='Beers, breweries, or venues'
+	        />
+        </View>
+        <View style={styles.listContainer}>
+	        <RListView
+	        	onRefresh={this.fetchData}
+	        	refreshing={this.state.refreshing}
+	        	style={styles.flatList}
+	        	onEndReached={() => this.setState({numRows : this.state.numRows + 10})}
+	        	dataSource={ds.cloneWithRows(rows)}
+	        	renderRow={this.renderItem}
+	        	renderSeparator={this.renderSeparator}
+	        	refreshControl={
+		          <RefreshControl
+		            refreshing={this.state.refreshing}
+		            onRefresh={this.fetchData}
+		          />
+		        }
+	        />
+        </View>
+      </View>
 		)
 	}
 }

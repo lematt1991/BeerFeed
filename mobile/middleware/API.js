@@ -3,7 +3,7 @@ import axios from 'axios'
 const BACKEND='http://beerfeed-ml9951.rhcloud.com'
 
 export default store => next => action => {
-  if(action.meta === 'API'){
+  if(action.meta && action.meta.api){
     next({
       type : `${action.type}_PENDING`,
       payload : {

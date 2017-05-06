@@ -6,7 +6,9 @@ export const fetchData = (feed) => ({
 		method : 'GET',
 		url : `/Feed/${feed}`
 	},
-	meta : 'API'
+	meta : {
+		api : true
+	}
 })
 
 export const updateData = (feed, lastID) => ({
@@ -15,5 +17,7 @@ export const updateData = (feed, lastID) => ({
 		method : 'GET',
 		url : `/FEED/${feed}/${lastID}`
 	},
-	meta : 'API'
+	meta : {
+		api : true
+	}
 })

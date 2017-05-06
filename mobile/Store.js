@@ -8,6 +8,7 @@ import {persistStore, autoRehydrate, getStoredState, createPersistor} from 'redu
 import {createStore, combineReducers, applyMiddleware, compose} from 'redux'
 import API from './middleware/API'
 import ChangeFeed from './middleware/ChangeFeed'
+import Debounce from './middleware/Debounce'
 import {createLogger} from 'redux-logger'
 
 const reducer = combineReducers({
@@ -20,7 +21,8 @@ const reducer = combineReducers({
 
 const middleware = applyMiddleware(
 	API, 
-	ChangeFeed 
+	ChangeFeed,
+	Debounce
 //	,createLogger()
 )
 export default createStore(reducer, undefined, compose(middleware, autoRehydrate()))
