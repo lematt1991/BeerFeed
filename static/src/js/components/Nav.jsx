@@ -36,6 +36,7 @@ class Nav extends React.Component {
   }
 
   render() {   
+    const { currentFeed } = this.props;
     return (
       <BS.Navbar 
         style={{zIndex : 3}} 
@@ -53,8 +54,8 @@ class Nav extends React.Component {
                   <BS.MenuItem 
                     id={feed} 
                     key={feed} 
+                    class={currentFeed === feed ? 'active' : null}
                     onClick={this._changeLoc} 
-                    active={feed === this.props.currentFeed}
                   >
                     {this.props.feeds[feed].city}
                   </BS.MenuItem>
@@ -76,11 +77,6 @@ class Nav extends React.Component {
                 About
               </BS.NavItem>
             </LinkContainer>
-            {/*<LinkContainer to="stats">
-              <BS.NavItem eventKey={4} onClick={this.expandToggle}>
-                Stats
-              </BS.NavItem>
-            </LinkContainer>*/}
           </BS.Nav>
           {
             this.props.location.pathname === '/the_feed' ? 
