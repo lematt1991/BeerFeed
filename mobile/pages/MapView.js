@@ -24,8 +24,8 @@ const Callout = ({venue, beers, lat, lon}) => {
 
 	const alertDirections = () => {
 		Alert.alert(
-			'Directions',
 			'Would you like directions?',
+			null,
 			[
 				{text : 'Yes', onPress: getDirections},
 				{text : 'No'}
