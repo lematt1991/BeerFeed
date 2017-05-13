@@ -1,10 +1,47 @@
 import React from 'react'
-import {View, Text, StyleSheet, Image} from 'react-native'
+import {View, Text, StyleSheet, Image, Linking, Alert} from 'react-native'
 import { MapView } from 'expo';
 import { connect } from 'react-redux'
 import * as LocationActions from '../actions/LocationActions'
 import {getLocation} from '../Init'
 import {Button} from 'react-native-elements'
+
+const Callout = ({venue, beers, lat, lon}) => {
+	const text = Object.keys(beers).map(k => 
+		`${beers[k].brewery}: ${beers[k].name} (${beers[k].rating})`
+	).join('\n')
+
+	const getDirections = () => {
+		const url = `http://maps.google.com/maps?daddr=${lat},${lon}`
+		Linking.canOpenURL(url).then(supported => {
+			if(supported){
+				Linking.openURL(url)
+			}else{
+				alert('Linking not suppored!')
+			}
+		})
+	}
+
+	const alertDirections = () => {
+		Alert.alert(
+			'Directions',
+			'Would you like directions?',
+			[
+				{text : 'Yes', onPress: getDirections},
+				{text : 'No'}
+			]
+		)
+	}
+
+	return(
+		<MapView.Callout onPress={alertDirections}>
+			<View>
+				<Text style={styles.calloutTitle}>{venue}</Text>
+				<Text style={styles.calloutText}>{text}</Text>
+			</View>
+		</MapView.Callout>
+	)
+}
 
 class BeerMap extends React.Component{
 	static navigationOptions = {
@@ -75,7 +112,9 @@ class BeerMap extends React.Component{
 							latitude : this.props.mapData[venue_id].lat, 
 							longitude : this.props.mapData[venue_id].lon
 						}}
-					/>
+					>
+						<Callout {...this.props.mapData[venue_id]} />
+					</MapView.Marker>
 				)
 			}
 			</MapView>
@@ -95,10 +134,22 @@ const mapDispatchToProps = dispatch => ({
 export default connect(mapStateToProps, mapDispatchToProps)(BeerMap);
 
 const styles = StyleSheet.create({
+	directions : {
+		marginTop : 10,
+		width : 100,
+		borderRadius : 10
+	},
 	button : {
 		width : 150,
 		marginLeft : 10,
 		marginTop : 25
+	},
+	calloutTitle : {
+		fontSize : 16,
+		fontWeight : 'bold',
+	},
+	calloutText : {
+		fontSize : 12
 	},
   container: {
     flex: 1,
