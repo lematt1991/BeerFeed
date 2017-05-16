@@ -35,5 +35,7 @@
       "iosExpoViewUrl": "https://s3.amazonaws.com/exp-exponent-view-code/ios-v1.15.2-sdk16.0.0-d4906e90-8f62-4e0e-ba43-3362b987c24c.tar.gz",
       "androidExpoViewUrl": "https://s3.amazonaws.com/exp-exponent-view-code/android-v1.15.1-sdk16.0.0-2448b7f4-9b6a-4fd0-906d-8bd7da336bd7.tar.gz"
     }
-  }
+  },
+  "name": "beerfeed",
+  "displayName": "beerfeed"
 }
