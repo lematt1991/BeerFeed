@@ -1,6 +1,6 @@
 import React from 'react'
 import {View, Text, StyleSheet, Image, Linking, Alert} from 'react-native'
-import { MapView } from 'expo';
+import MapView from 'react-native-maps';
 import { connect } from 'react-redux'
 import * as LocationActions from '../actions/LocationActions'
 import {getLocation} from '../Init'
@@ -89,7 +89,7 @@ class BeerMap extends React.Component{
 				showsUserLocation={true}
 				ref={map => {this.map = map;}}
 				initialRegion={this.props.location}
-				provider='google'
+				provider={MapView.PROVIDER_GOOGLE}
 			>
 				<View style={styles.button}>
 					<Button
