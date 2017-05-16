@@ -2,14 +2,38 @@
   "expo": {
     "sdkVersion": "16.0.0",
     "icon": "https://raw.githubusercontent.com/ml9951/BeerFeed/mobile/mobile/assets/Beer.png",
-   	"version": "0.0.1",
-   	"slug": "beerfeed",
-    "privacy" : "public",
-   	"ios": {
-     	"bundleIdentifier": "com.beerfeed.exp",
-   	},
-   	"android": {
-     	"package": "com.beerfeed.exp",
-   	}
+    "slug": "beerfeed",
+    "loading": {
+      "hideExponentText": true,
+      "icon": "https://raw.githubusercontent.com/ml9951/BeerFeed/mobile/mobile/assets/Beer.png",
+      "backgroundImage": "https://raw.githubusercontent.com/ml9951/BeerFeed/mobile/mobile/assets/Beer.png"
+    },
+    "orientation": "portrait",
+    "primaryColor": "#cccccc",
+    "packagerOpts": {
+      "assetExts": [
+        "ttf"
+      ]
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.beerfeed.test"
+    },
+    "android": {
+      "package": "com.beerfeed.test"
+    },
+    "androidStatusBarColor": "#EEE",
+    "androidStatusBar": {
+      "barStyle": "dark-content",
+      "backgroundColor": "#EEE"
+    },
+    "name": "beerfeed",
+    "version": "0.1.0",
+    "isDetached": true,
+    "detach": {
+      "scheme": "expaff85955741b4616b5a0b81da333f22e",
+      "iosExpoViewUrl": "https://s3.amazonaws.com/exp-exponent-view-code/ios-v1.15.2-sdk16.0.0-d4906e90-8f62-4e0e-ba43-3362b987c24c.tar.gz",
+      "androidExpoViewUrl": "https://s3.amazonaws.com/exp-exponent-view-code/android-v1.15.1-sdk16.0.0-2448b7f4-9b6a-4fd0-906d-8bd7da336bd7.tar.gz"
+    }
   }
 }
