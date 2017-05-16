@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const BACKEND='http://beerfeed-ml9951.rhcloud.com'
+const BACKEND='https://beerfeed-ml9951.rhcloud.com'
 
 export default store => next => action => {
   if(action.meta && action.meta.api){
@@ -16,7 +16,7 @@ export default store => next => action => {
     const {method, body, url, json} = action.payload
 
     return axios.request({
-      url : `${BACKEND}/${url}`,
+      url : `${BACKEND}${url}`,
       method : method,
       data : body
     })
