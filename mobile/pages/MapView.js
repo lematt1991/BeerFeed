@@ -141,8 +141,9 @@ const styles = StyleSheet.create({
 	},
 	button : {
 		width : 150,
-		marginLeft : 10,
-		marginTop : 25
+		position : 'absolute',
+		left : 10,
+		top : 25
 	},
 	calloutTitle : {
 		fontSize : 16,
