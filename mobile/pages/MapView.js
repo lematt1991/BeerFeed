@@ -83,14 +83,9 @@ class BeerMap extends React.Component{
 	}
 
 	render(){
+		console.log(this.props.location)
 		return(
-			<MapView
-				style={{flex : 1}}
-				showsUserLocation={true}
-				ref={map => {this.map = map;}}
-				initialRegion={this.props.location}
-				provider={MapView.PROVIDER_GOOGLE}
-			>
+			<View style={{position : 'absolute', top : 0, bottom : 0, left : 0, right : 0}}>
 				<View style={styles.button}>
 					<Button
 						buttonStyle={{borderRadius : 10, backgroundColor : '#fff'}}
@@ -99,25 +94,34 @@ class BeerMap extends React.Component{
             textStyle={{textAlign : 'center', color : 'black'}}
           />
         </View>
+				<MapView
+					style={{position : 'absolute', top : 0, bottom : 0, left : 0, right : 0}}
+					showsUserLocation={true}
+					ref={map => {this.map = map;}}
+					initialRegion={this.props.location}
+					provider={MapView.PROVIDER_GOOGLE}
+				>
+					
 
-			{
-				/*TODO: determinate color based on quality of venue*/
-				Object.keys(this.props.mapData).map(venue_id => 
-					<MapView.Marker
-						key={venue_id}
-						pinColor='red' 
-						title={this.props.mapData[venue_id].venue || 'Missing Title!'}
-						description={this.renderDescription(this.props.mapData[venue_id]) || 'Missing description'}
-						coordinate = {{
-							latitude : this.props.mapData[venue_id].lat, 
-							longitude : this.props.mapData[venue_id].lon
-						}}
-					>
-						<Callout {...this.props.mapData[venue_id]} />
-					</MapView.Marker>
-				)
-			}
-			</MapView>
+				{
+					/*TODO: determinate color based on quality of venue*/
+					Object.keys(this.props.mapData).map(venue_id => 
+						<MapView.Marker
+							key={venue_id}
+							pinColor='red' 
+							title={this.props.mapData[venue_id].venue || 'Missing Title!'}
+							description={this.renderDescription(this.props.mapData[venue_id]) || 'Missing description'}
+							coordinate = {{
+								latitude : this.props.mapData[venue_id].lat, 
+								longitude : this.props.mapData[venue_id].lon
+							}}
+						>
+							<Callout {...this.props.mapData[venue_id]} />
+						</MapView.Marker>
+					)
+				}
+				</MapView>
+			</View>
 		)
 	}
 }
@@ -143,7 +147,8 @@ const styles = StyleSheet.create({
 		width : 150,
 		position : 'absolute',
 		left : 10,
-		top : 25
+		top : 25,
+		zIndex : 5000
 	},
 	calloutTitle : {
 		fontSize : 16,
