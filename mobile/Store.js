@@ -1,6 +1,6 @@
 
 import search from './reducers/SearchReducer'
-import data from './reducers/DataReducer'
+import data from '../static/src/js/reducers/DataReducer'
 import settings from './reducers/SettingsReducer'
 import location from './reducers/LocationReducer'
 import user from './reducers/UserReduer'

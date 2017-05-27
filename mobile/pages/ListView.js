@@ -115,6 +115,7 @@ class ListView extends React.Component{
         <View style={styles.listContainer}>
 	        <RListView
 	        	onRefresh={this.fetchData}
+	        	removeClippedSubviews={false}
 	        	refreshing={this.state.refreshing}
 	        	style={styles.flatList}
 	        	onEndReached={() => this.setState({numRows : this.state.numRows + 10})}

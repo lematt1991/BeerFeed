@@ -66,8 +66,11 @@ class BeerMap extends React.Component{
 
 	moveToLocation = () => {
 		var that = this;
-		const {latitude, longitude} = this.props.location;
-		this.map.animateToRegion(this.props.location)
+		this.map.animateToRegion({
+			...this.props.homeLocation,
+			latitudeDelta : this.props.location.latitudeDelta,
+			longitudeDelta : this.props.location.longitudeDelta
+		})
 	}
 
 	componentWillReceiveProps(nextProps){
@@ -82,8 +85,12 @@ class BeerMap extends React.Component{
 		}
 	}
 
+	onRegionChange = (region) => {
+		console.log(region)
+		this.props.dispatch(LocationActions.setLocation(region))
+	}
+
 	render(){
-		console.log(this.props.location)
 		return(
 			<View style={{position : 'absolute', top : 0, bottom : 0, left : 0, right : 0}}>
 				<View style={styles.button}>
@@ -100,6 +107,7 @@ class BeerMap extends React.Component{
 					ref={map => {this.map = map;}}
 					initialRegion={this.props.location}
 					provider={MapView.PROVIDER_GOOGLE}
+					onRegionChangeComplete={this.onRegionChange}
 				>
 					
 
@@ -127,13 +135,12 @@ class BeerMap extends React.Component{
 }
 
 const mapStateToProps = state => ({
-	location : state.location,
+	location : state.location.currentLocation,
+	homeLocation : state.location.homeLocation,
 	mapData : state.data.mapData
 })
 
-const mapDispatchToProps = dispatch => ({
-	setLocation : location => dispatch(LocationActions.setLocation(location))
-})
+const mapDispatchToProps = dispatch => ({dispatch})
 
 export default connect(mapStateToProps, mapDispatchToProps)(BeerMap);
 

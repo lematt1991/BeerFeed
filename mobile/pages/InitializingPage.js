@@ -69,7 +69,7 @@ class InitializingPage extends React.Component{
             nextPage()
           }
       	})
-    })
+    }).purge()
   }
 
 	render(){
