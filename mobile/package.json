@@ -19,6 +19,7 @@
   "dependencies": {
     "@expo/vector-icons": "^5.0.0",
     "axios": "^0.16.1",
+    "babel-preset-expo": "^2.0.0",
     "babel-preset-react-native-stage-0": "^1.0.1",
     "immutability-helper": "^2.2.0",
     "react": "16.0.0-alpha.6",
