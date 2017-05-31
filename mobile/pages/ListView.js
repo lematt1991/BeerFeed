@@ -12,10 +12,9 @@ import {
 } from 'react-native'
 import {connect} from 'react-redux'
 import FeedRow from '../components/FeedRow'
-import { List, ListItem, SearchBar } from "react-native-elements";
 import * as DataActions from '../actions/DataActions'
 import * as SettingsActions from '../actions/SettingsActions'
-import SearchInput, {createFilter} from 'react-search-input'
+// import {createFilter} from 'react-search-input'
 import store from '../Store'
 
 const KEYS_TO_FILTER = ['brewery', 'name', 'venue']
@@ -83,7 +82,8 @@ class ListView extends React.Component{
 
 	render(){
 		const threshold = this.props.settings.checkin_count_threshold;
-		var filter = createFilter(this.props.settings.searchTerm, KEYS_TO_FILTER)
+		// var filter = createFilter(this.props.settings.searchTerm, KEYS_TO_FILTER)
+		filter = x => true
 		var rows = this.props.data.feedData.filter(r => r.checkin_count >= threshold && filter(r))
 
 		if(this.props.settings.ordering === 'date'){

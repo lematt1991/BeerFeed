@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "private": false,
   "devDependencies": {
-    "jest-expo": "^0.4.0",
+    "babel-preset-react-native": "^1.9.2",
+    "jest-expo": "^1.0.1",
     "react-test-renderer": "16.0.0-alpha.6",
-    "redux-logger": "^3.0.1"
+    "redux-logger": "^3.0.6"
   },
   "scripts": {
     "start": "react-native start",
@@ -17,23 +18,22 @@
     "preset": "jest-expo"
   },
   "dependencies": {
-    "@expo/vector-icons": "^5.0.0",
     "axios": "^0.16.1",
     "babel-preset-expo": "^2.0.0",
     "babel-preset-react-native-stage-0": "^1.0.1",
-    "immutability-helper": "^2.2.0",
+    "immutability-helper": "^2.2.2",
     "react": "16.0.0-alpha.6",
-    "react-native": "^0.43.4",
-    "react-native-elements": "^0.11.2",
-    "react-native-maps": "^0.15.0",
+    "react-native": "^0.44.2",
+    "react-native-elements": "^0.12.2",
+    "react-native-maps": "^0.15.2",
     "react-native-permissions": "^0.2.7",
-    "react-native-swipeout": "^2.0.13",
-    "react-native-vector-icons": "^4.0.1",
-    "react-navigation": "^1.0.0-beta.9",
-    "react-redux": "^5.0.4",
-    "react-search-input": "^0.10.4",
+    "react-native-swipeout": "^2.1.1",
+    "react-native-vector-icons": "~4.1.1",
+    "react-navigation": "^1.0.0-beta.11",
+    "react-redux": "^5.0.5",
+    "react-search-input": "^0.11.2",
     "redux": "^3.6.0",
-    "redux-persist": "^4.7.1",
-    "tcomb-form-native": "^0.6.7"
+    "redux-persist": "^4.8.0",
+    "tcomb-form-native": "^0.6.8"
   }
 }

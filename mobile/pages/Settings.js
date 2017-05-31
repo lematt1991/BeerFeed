@@ -8,13 +8,13 @@ import {
 	Dimensions,
 	Keyboard,
 	TouchableWithoutFeedback,
-	ActivityIndicator
+	ActivityIndicator,
+	TouchableHighlight
 } from 'react-native'
 import {connect} from 'react-redux'
 import t from 'tcomb-form-native'
 import * as SettingsActions from '../actions/SettingsActions'
 import * as DataActions from '../actions/DataActions'
-import {Button} from 'react-native-elements'
 
 class Settings extends React.Component{
 	static navigationOptions = {
@@ -77,19 +77,21 @@ class Settings extends React.Component{
 							type={Settings_t}
 							value={this.props.formValues}
 						/>
+						<View style={{width : '100%', alignItems : 'center'}}>
+							<TouchableHighlight
+								style={{marginTop : 50, marginBottom : 20, backgroundColor : 'red', height : 35, width : '80%', justifyContent : 'center'}}
+							  onPress={this.resetCache}
+							 >	
+							 	<Text style={{color : 'white', textAlign : 'center'}}>
+							 		Reset Cache
+							 	</Text>
+							 </TouchableHighlight>
+							 <ActivityIndicator
+							 	animating={this.state.fetching}
+							 	size="large"
+							 />
+						 </View>
 
-						<Button
-							style={{marginTop : 50, marginBottom : 20}}
-						  icon={{name: 'warning'}}
-						  title='Reset Cache' 
-						  backgroundColor='red'
-						  onPress={this.resetCache}
-						 />
-
-						 <ActivityIndicator
-						 	animating={this.state.fetching}
-						 	size="large"
-						 />
 		      </View>
 	      </TouchableWithoutFeedback>
 		)

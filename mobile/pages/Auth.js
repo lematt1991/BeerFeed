@@ -8,13 +8,13 @@ import {
 	Dimensions,
 	Keyboard,
 	TouchableWithoutFeedback,
-	ActivityIndicator
+	ActivityIndicator,
+	Button
 } from 'react-native'
 import {connect} from 'react-redux'
 import t from 'tcomb-form-native'
 import * as SettingsActions from '../actions/SettingsActions'
 import * as DataActions from '../actions/DataActions'
-import {Button} from 'react-native-elements'
 
 class Auth extends React.Component{
 	static navigationOptions = {
