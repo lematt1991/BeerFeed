@@ -90,7 +90,7 @@ class BeerMap extends React.Component{
 
 	render(){
 		return(
-			<View style={{position : 'absolute', top : 0, bottom : 0, left : 0, right : 0}}>
+			<View style={StyleSheet.absoluteFillObject}>
 					<TouchableHighlight
 						style={styles.button}
             onPress={this.moveToLocation}
@@ -106,6 +106,7 @@ class BeerMap extends React.Component{
 					initialRegion={this.props.location}
 					provider={MapView.PROVIDER_GOOGLE}
 					onRegionChangeComplete={this.onRegionChange}
+					style={StyleSheet.absoluteFillObject}
 				>
 					
 
@@ -151,9 +152,9 @@ const styles = StyleSheet.create({
 	button : {
 		borderRadius : 10, 
 		backgroundColor : '#fff', 
-		height : 30,
+		height : 40,
 		justifyContent : 'center',
-		width : 125,
+		width : 115,
 		position : 'absolute',
 		left : 10,
 		top : 25,
