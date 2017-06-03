@@ -10,6 +10,7 @@ import API from './middleware/API'
 import ChangeFeed from './middleware/ChangeFeed'
 import Debounce from './middleware/Debounce'
 import {createLogger} from 'redux-logger'
+import {AsyncStorage} from 'react-native'
 
 const reducer = combineReducers({
   search,
@@ -23,6 +24,15 @@ const middleware = applyMiddleware(
 	API, 
 	ChangeFeed,
 	Debounce
-//	,createLogger()
+	,createLogger()
 )
-export default createStore(reducer, undefined, compose(middleware, autoRehydrate()))
+
+const store = createStore(reducer, undefined, compose(middleware, autoRehydrate({
+	// log : true,
+	// stateReconciler(state, inboundState, reducedState, config_log){
+	// 	return reducedState;
+	// }
+})))
+
+export default store;
+persistStore(store, {storage : AsyncStorage})

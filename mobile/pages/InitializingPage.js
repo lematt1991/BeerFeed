@@ -33,43 +33,35 @@ class InitializingPage extends React.Component{
   }
 
 	componentWillMount(){
-    persistStore(store, {storage: AsyncStorage}, () => {
-      console.log('Done rehydrating')
-      Promise.all([getLocation(), this.fetchData(), this.props.fetchFeeds()])
-      	.then(() => {
-      		const {username} = store.getState().user;
-      		const routeName = 'MainNavigator';
+    Promise.all([getLocation(), this.fetchData(), this.props.fetchFeeds()])
+    	.then(() => {
+        const {feeds, currentFeed} = store.getState().settings;
+        const {latitude, longitude} = store.getState().location;
+        const myPosition = {lat : latitude, lon : longitude};
 
-          const {feeds, currentFeed} = store.getState().settings;
-          const {latitude, longitude} = store.getState().location;
-          const myPosition = {lat : latitude, lon : longitude};
-
-          var nearestDistance = Number.MAX_SAFE_INTEGER;
-          var nearestFeed;
-          for(const key in feeds){
-            var feed = feeds[key]
-            const distance = getDistance(feed, myPosition);
-            if(distance < nearestDistance){
-              nearestDistance = distance;
-              nearestFeed = feed
-            }
+        var nearestDistance = Number.MAX_SAFE_INTEGER;
+        var nearestFeed;
+        for(const key in feeds){
+          var feed = feeds[key]
+          const distance = getDistance(feed, myPosition);
+          if(distance < nearestDistance){
+            nearestDistance = distance;
+            nearestFeed = feed
           }
+        }
 
-          const nextPage = () => {
-            this.props.navigation.dispatch(NavigationActions.reset({
-              index : 0,
-              actions: [NavigationActions.navigate({routeName})]
-            }))
-          }
-
-          if(nearestFeed && nearestFeed.distance !== currentFeed){
-            store.dispatch(SettingsActions.changeFeed(nearestFeed.id));
-            store.dispatch(DataActions.fetchData(nearestFeed.id)).then(nextPage)
-          }else{
-            nextPage()
-          }
-      	})
-    }).purge()
+        if(nearestFeed && nearestFeed.distance !== currentFeed){
+          store.dispatch(SettingsActions.changeFeed(nearestFeed.id));
+          store.dispatch(DataActions.fetchData(nearestFeed.id)).then(nextPage)
+        }else{
+          this.props.navigation.dispatch(NavigationActions.reset({
+            index : 0,
+            actions: [NavigationActions.navigate({routeName : 'MainNavigator'})]
+          }))
+        }
+    	}).catch(e => {
+        console.log(e)
+      })
   }
 
 	render(){
