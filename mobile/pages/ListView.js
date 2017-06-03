@@ -14,8 +14,9 @@ import {connect} from 'react-redux'
 import FeedRow from '../components/FeedRow'
 import * as DataActions from '../actions/DataActions'
 import * as SettingsActions from '../actions/SettingsActions'
-// import {createFilter} from 'react-search-input'
 import store from '../Store'
+import fuzzysearch from 'fuzzysearch'
+
 
 const KEYS_TO_FILTER = ['brewery', 'name', 'venue']
 
@@ -82,9 +83,15 @@ class ListView extends React.Component{
 
 	render(){
 		const threshold = this.props.settings.checkin_count_threshold;
-		// var filter = createFilter(this.props.settings.searchTerm, KEYS_TO_FILTER)
-		filter = x => true
-		var rows = this.props.data.feedData.filter(r => r.checkin_count >= threshold && filter(r))
+		const searchTerm = this.props.settings.searchTerm.toLowerCase().trim()
+
+		var rows = this.props.data.feedData.filter(r => 
+			r.checkin_count >= threshold  && (
+				fuzzysearch(searchTerm, r.brewery) ||
+				fuzzysearch(searchTerm, r.name) ||
+				fuzzysearch(searchTerm, r.venue)	
+			)
+		)
 
 		if(this.props.settings.ordering === 'date'){
 			rows.sort(this.orderByDate);
@@ -144,7 +151,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(ListView);
 
 const styles = StyleSheet.create({
 	input : {
-		height : 30, 
+		height : 35, 
 		backgroundColor : 'white', 
 		marginLeft : 10, 
 		marginRight : 10, 
@@ -162,7 +169,7 @@ const styles = StyleSheet.create({
 		marginRight : 20
 	},
 	textContainer : {
-		flex : 1,
+		width : '100%',
 		backgroundColor : '#e1e8ee',
 		alignItems : 'center',
 	},
