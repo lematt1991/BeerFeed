@@ -1,9 +1,20 @@
 import React from 'react'
-import {View, Text, StyleSheet, Image, Linking, Alert, TouchableHighlight} from 'react-native'
+import {
+	View, 
+	Text, 
+	StyleSheet, 
+	Image, 
+	Linking, 
+	Platform,
+	TouchableNativeFeedback,
+	Alert, 
+	TouchableHighlight
+} from 'react-native'
 import MapView from 'react-native-maps';
 import { connect } from 'react-redux'
 import * as LocationActions from '../actions/LocationActions'
 import {getLocation} from '../Init'
+import {Button} from 'react-native-elements'
 
 const Callout = ({venue, beers, lat, lon}) => {
 	const text = Object.keys(beers).map(k => 
@@ -89,16 +100,24 @@ class BeerMap extends React.Component{
 	}
 
 	render(){
+		var Touchable;
+		if (Platform.OS === 'ios') {
+	    Touchable = TouchableHighlight;
+	  }else{
+	    Touchable = TouchableNativeFeedback;
+	  }
+
 		return(
 			<View style={StyleSheet.absoluteFillObject}>
-					<TouchableHighlight
-						style={styles.button}
-            onPress={this.moveToLocation}
-          >
-          	<Text style={{textAlign : 'center', color : 'black'}}>
-          		My Location
-          	</Text>
-          </TouchableHighlight>
+				<View style={styles.button}>
+        	<Button
+						buttonStyle={{borderRadius : 10, height : 40,justifyContent : 'center',width : 115, backgroundColor : '#fff'}}
+	          onPress={this.moveToLocation}
+	          title="My Location"
+	          textStyle={{textAlign : 'center', color : 'black'}}
+	        />
+        </View>
+
 				<MapView
 					style={{position : 'absolute', top : 0, bottom : 0, left : 0, right : 0}}
 					showsUserLocation={true}
@@ -151,10 +170,8 @@ const styles = StyleSheet.create({
 	},
 	button : {
 		borderRadius : 10, 
-		backgroundColor : '#fff', 
 		height : 40,
 		justifyContent : 'center',
-		width : 115,
 		position : 'absolute',
 		left : 10,
 		top : 25,
