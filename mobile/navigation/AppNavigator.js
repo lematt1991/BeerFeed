@@ -16,6 +16,8 @@ const tabNavigator = TabNavigator({
 	Settings : {
 		screen : Settings
 	}
+}, {
+	swipeEnabled : false
 })
 
 export default StackNavigator({
