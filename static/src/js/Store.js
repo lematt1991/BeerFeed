@@ -5,11 +5,13 @@ import {createStore, combineReducers, applyMiddleware} from 'redux'
 import {createLogger} from 'redux-logger'
 import API from './middleware/API'
 import ChangeFeed from './middleware/ChangeFeed'
+import spinner from './reducers/SpinnerReducer';
 
 const reducer = combineReducers({
   search,
   settings,
-  data
+  data,
+  spinner
 })
 
 var store;
