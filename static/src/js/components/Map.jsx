@@ -1,23 +1,44 @@
 import React, {Component} from 'react';
-import LocationStore from '../stores/LocationStore'
-import {GoogleMapLoader, GoogleMap, Marker, InfoWindow} from "react-google-maps";
 import {connect} from 'react-redux'
+import { withGoogleMap, GoogleMap, Marker, InfoWindow } from "react-google-maps";
+
+function genInfoWindow(venue){
+	return(
+		Object.keys(venue.beers).map(k => {
+			var beer = venue.beers[k]
+			var beerLink = `https://untappd.com/b/${beer.beer_slug}/${beer.bid}`
+			return(
+				<p style={{margin : 0}} key={k}>
+					{beer.brewery}: <a target="_blank" href={beerLink}>{beer.name}</a> ({beer.rating})
+				</p>
+			)
+		})
+	);
+}
+
+const GMap = withGoogleMap(props => (
+	<GoogleMap
+    ref={props.onMapLoad}
+    defaultZoom={props.defaultZoom}
+    defaultCenter={props.defaultCenter}
+  >
+    {props.markers.map((marker, index) => (
+      <Marker {...marker}>
+      {
+      	marker.key === props.activeMarker ? 
+      	<InfoWindow>
+					<span>
+						<b>{marker.marker.venue}</b>
+						{genInfoWindow(marker.marker)}
+					</span>
+      	</InfoWindow> : null
+      }
+      </Marker>
+    ))}
+  </GoogleMap>
+))
 
 class BeerMap extends Component{
-	_genInfoWindow(venue){
-		return(
-			Object.keys(venue.beers).map(k => {
-				var beer = venue.beers[k]
-				var beerLink = `https://untappd.com/b/${beer.beer_slug}/${beer.bid}`
-				return(
-					<p style={{margin : 0}} key={k}>
-						{beer.brewery}: <a target="_blank" href={beerLink}>{beer.name}</a> ({beer.rating})
-					</p>
-				)
-			})
-		);
-	}
-
 	constructor(props){
 		super(props);
 		var state = this.props.location.state;
@@ -45,14 +66,14 @@ class BeerMap extends Component{
 		};
 	}
 
-	_handleClick(popup){
+	handleClick = (popup) => () => {
 		if(this.state.currentPopup !== popup){
 			if(this.props.data[popup]){
 				var pos = {
 					lat : this.props.data[popup].lat,
 					lng : this.props.data[popup].lon
 				}
-				this.refs.map.panTo(pos)
+				this.map.panTo(pos)
 				this.setState({...this.state, position : pos, currentPopup : popup})
 			}
 		}else{
@@ -60,58 +81,32 @@ class BeerMap extends Component{
 		}
 	}
 
-	_onClose(){	
-		this.setState({...this.state, currentPopup : null})
-	}
-
 	render(){
+		const markers = Object.keys(this.props.data).map(k => ({
+			key : k,
+			visible : true,
+			position : {
+				lat : this.props.data[k].lat, 
+				lng : this.props.data[k].lon
+			},
+			onClick : this.handleClick(k),
+			marker : this.props.data[k]
+		}))
+
 		const mapProps = {
 			defaultZoom : 15,
-			defaultCenter : this.state.position
+			defaultCenter : this.state.position,
+			markers : markers,
+			onMapLoad : map => {this.map = map; },
+			containerElement : <div style={{ height: '100%', width : '100%' }} />,
+	    mapElement: <div style={{ height: '100%', width : '100%' }} />,
+	    onMapClick: () => {},
+	    activeMarker : this.state.currentPopup
 		}
 		return(
-			<div>
-			<GoogleMapLoader
-		        containerElement={
-		          <div
-		            style={{position: 'absolute', left: 0, right: 0, top: 50, bottom: 0}}
-		          />
-		        }
-		        key={'AIzaSyAYlCzVosumU9Eo_SdRwfZ-bkjSmJzghpA'}
-		        query={{key : 'AIzaSyAYlCzVosumU9Eo_SdRwfZ-bkjSmJzghpA'}}
-		        googleMapElement={
-			        <GoogleMap 
-			        	ref="map"
-			        	{...mapProps}
-			        >
-			        {
-			        	Object.keys(this.props.data).map(k => 
-			        		<Marker
-			        			key={k}
-			        			visible={true}
-			        			position={{
-			        				lat : this.props.data[k].lat,
-			        				lng : this.props.data[k].lon
-			        			}}
-			        			onClick={() => this._handleClick(k)}
-			        		>
-			        		{this.state.currentPopup === k ?
-			        			<InfoWindow onCloseclick={this._onClose.bind(this)}>
-			        				<div>
-			        				<b>{this.props.data[k].venue}</b>
-			        				{
-			        					this._genInfoWindow(this.props.data[k])
-			        				}
-			        				</div>
-			        			</InfoWindow> : 
-			        			null
-			        		}
-			        		</Marker>
-			        	)
-			        }
-		          	</GoogleMap>
-		        }/>
-		      </div>
+			<div style={{position : 'absolute', top : 0, right : 0, bottom : 0, left : 0}}>
+				<GMap {...mapProps}/>
+      </div>
 		);
 	}
 }
