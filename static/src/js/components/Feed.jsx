@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {Button, Alert, SafeAnchor, FormGroup, FormControl, ControlLabel, Form} from 'react-bootstrap';
 import SearchInput, {createFilter} from 'react-search-input'
 import Select from 'react-select';
-import LocationStore from '../stores/LocationStore';
 import FeedRow from '../components/FeedRow'
 import * as SettingsActions from '../actions/SettingsActions'
 import {connect} from 'react-redux'
@@ -10,24 +9,15 @@ import {connect} from 'react-redux'
 const KEYS_TO_FILTER = ['brewery', 'name', 'venue', 'style']
 
 class Feed extends Component{
-	componentWillMount() {
-	    LocationStore.on('got-location', this.getUserLocation);
-	}
-
 	getUserLocation = () => {
 		var options = this.state.options.slice()
 		options.push({value : 'distance', label : 'Order by Distance', f : this.orderByDistance})
 		this.setState({
 			...this.state, 
-			options : options,
-			location : LocationStore.getLocation()
+			options : options
 		})
 	}
-
-	componentWillUnmount () {
-	    LocationStore.removeListener('got-location', this.getUserLocation)
-	}
-
+	
 	orderByDate = (x, y) => {
 		return x.checkin_id > y.checkin_id ? -1 : 1
 	}
@@ -44,17 +34,15 @@ class Feed extends Component{
 
 	constructor(props){
 		super(props)
+
+		const search = props.location.search;
+		const params = new URLSearchParams(search);
+
 		this.state = {
-			showAlert : props.location.query.thanks === 'true',
+			showAlert : params.get('thanks') === 'true',
 			numRows : 40,
 			ordering : {value : 'date', label : 'Order by Date', f : this.orderByDate},
-			location : LocationStore.getLocation(),
-			options : LocationStore.haveUserLocation() ? 
-			[
-				{value : 'date', label : 'Order by Date', f : this.orderByDate},
-				{value : 'rating', label : 'Order by Rating', f : this.orderByRating},
-				{value : 'distance', label : 'Order by Distance', f : this.orderByDistance}
-			] : [
+			options : [
 				{value : 'date', label : 'Order by Date', f : this.orderByDate},
 				{value : 'rating', label : 'Order by Rating', f : this.orderByRating}
 			]

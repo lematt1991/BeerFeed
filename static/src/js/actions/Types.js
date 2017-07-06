@@ -3,7 +3,7 @@
  * @flow
  */
 
-import type {FeedName} from '../stores/SettingsStore'
+import type {FeedName} from '../Types'
 
 export type Action = {
 	type : 'CHANGE_SEARCH_TERM',
