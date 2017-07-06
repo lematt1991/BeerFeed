@@ -62,17 +62,17 @@ class Nav extends React.Component {
                 )
               }
             </BS.NavDropdown>
-            <LinkContainer to="/">
+            <LinkContainer to="/" exact>
               <BS.NavItem eventKey={2} onClick={this.expandToggle}>
                 List View
               </BS.NavItem>
             </LinkContainer>
-            <LinkContainer to="map">
+            <LinkContainer to="/map">
               <BS.NavItem eventKey={3} onClick={this.expandToggle}>
                 Map View
               </BS.NavItem>
             </LinkContainer>
-            <LinkContainer to="about">
+            <LinkContainer to="/about">
               <BS.NavItem eventKey={4} onClick={this.expandToggle}>
                 About
               </BS.NavItem>
