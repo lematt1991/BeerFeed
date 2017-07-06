@@ -12,7 +12,7 @@ export default class FeedRow extends Component{
 	}
 
 	toMap = (venueID) => {
-		this.context.router.push({
+		this.context.router.history.push({
 			pathname : '/map',
 			query : {venue : venueID}
 		})

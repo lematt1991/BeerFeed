@@ -91,7 +91,7 @@ app.get('/AuthRedirect', function(req, res){
 
         `
     	  db.query(q, function(err, result){
-          res.redirect('http://beerfeed-ml9951.rhcloud.com/#/feed?thanks=true')
+          res.redirect('http://beerfeed-ml9951.rhcloud.com?thanks=true')
     		});
   	  });
     }else{
