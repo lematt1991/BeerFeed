@@ -8,7 +8,7 @@
     "start": "node start.js",
     "dev": "NODE_ENV=debug node server.js",
     "local": "NODE_ENV=debug node server.js",
-    "build": "NODE_ENV=production ./node_modules/.bin/webpack",
+    "build": "NODE_ENV=production ./node_modules/.bin/webpack --progress",
     "testDbg": "node debug --harmony ./node_modules/jest-cli/bin/jest.js --runInBand"
   },
   "repository": {
