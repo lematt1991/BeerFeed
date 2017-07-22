@@ -236,7 +236,7 @@ function startProc(args){
                         console.log('waitTime = ' + waitTime)
                         if(checkins.length > 12 && lastID != 0){
                             waitTime = Math.max(waitTime / 2, 4000);
-                        }else if(checkins.length == 0 && waitTime < 1800000){// don't wait longer than 30 minutes
+                        }else if(checkins.length <= 2 && waitTime < 1800000){// don't wait longer than 30 minutes
                             waitTime = waitTime * 2;
                         }
                         lastID = checkins.length > 0 ? checkins[0].checkin_id : lastID;
