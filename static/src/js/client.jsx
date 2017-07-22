@@ -1,30 +1,30 @@
 import 'react-select/dist/react-select.css';
 import React from "react";
 import ReactDOM from "react-dom";
-import Store from './Store';
+import Store, {history} from './Store';
 import './Init'
-import {BrowserRouter as Router, Route, Switch, Redirect} from 'react-router-dom'
+import { Route, Switch } from 'react-router-dom'
 import Layout from "./components/Layout";
 import BeerMap from "./components/Map";
 import Feed from "./components/Feed";
 import LinkAccount from './components/LinkAccount';
 import About from './components/About';
-// import Stats from './components/Stats';
 import {Provider} from 'react-redux';
+import { ConnectedRouter, push } from 'react-router-redux'
 
 const app = document.getElementById('app');
 
 ReactDOM.render(
 	<Provider store={Store}>
-		<Router>
+		<ConnectedRouter history={history}>
 			<Switch>
 				<Layout>
 					<Route path='/' exact component={Feed}/>
-					<Route path='/map' component={BeerMap}/>
+					<Route path='/map/:venue_id?' exact component={BeerMap}/>
 					<Route path='/about' component={About}/>
 				</Layout>
 			</Switch>
-		</Router>
+		</ConnectedRouter>
 	</Provider>,
 	app
 )

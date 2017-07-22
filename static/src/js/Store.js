@@ -6,19 +6,24 @@ import {createLogger} from 'redux-logger'
 import API from './middleware/API'
 import ChangeFeed from './middleware/ChangeFeed'
 import spinner from './reducers/SpinnerReducer';
+import createHistory from 'history/createBrowserHistory'
+import { routerReducer, routerMiddleware } from 'react-router-redux'
+
+export const history = createHistory()
 
 const reducer = combineReducers({
   search,
   settings,
   data,
-  spinner
+  spinner,
+  router : routerReducer
 })
 
-var store;
+var middleware;
 if(process.env.NODE_ENV === 'production'){
-  store = createStore(reducer, {}, applyMiddleware(API, ChangeFeed))
+	middleware = applyMiddleware(API, ChangeFeed, routerMiddleware(history));
 }else{
-  store = createStore(reducer, {}, applyMiddleware(API, ChangeFeed, createLogger()))
+	middleware = applyMiddleware(API, ChangeFeed, routerMiddleware(history), createLogger());
 }
 
-export default store;
+export default createStore(reducer, {}, middleware);

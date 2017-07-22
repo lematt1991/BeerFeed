@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import * as _ from 'lodash'
-import {SafeAnchor} from 'react-bootstrap';
+import { SafeAnchor } from 'react-bootstrap';
+import { push } from 'react-router-redux'
 
 export default class FeedRow extends Component{
 	constructor(props){
@@ -12,10 +13,9 @@ export default class FeedRow extends Component{
 	}
 
 	toMap = (venueID) => {
-		this.context.router.history.push({
-			pathname : '/map',
-			query : {venue : venueID}
-		})
+		this.props.dispatch(push({
+			pathname : `/map/${venueID}`,
+		}))
 	}
 
 	handleError = () => {
@@ -76,8 +76,4 @@ export default class FeedRow extends Component{
 			</div>
 		);
 	}
-}
-
-FeedRow.contextTypes = {
-	router: React.PropTypes.object.isRequired
 }

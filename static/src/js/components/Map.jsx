@@ -41,29 +41,25 @@ const GMap = withGoogleMap(props => (
 class BeerMap extends Component{
 	constructor(props){
 		super(props);
-		var state = this.props.location.state;
-		const dflt = {lat : 40.789, lon : -73.9479}
-		const feed = this.props.feeds[this.props.currentFeed] || dflt
 
-		var initPos = state ? state.pos : 
-					  {lat : feed.lat,	
-					   lng : feed.lon};
+		const search = props.location.search;
+		const params = new URLSearchParams(search);
 
-		var popup = null
+		const dfltPos = {lat : 40.789, lon : -73.9479}
+		const feed = this.props.feeds[this.props.currentFeed] || dfltPos
 
-		if(props.location.query && props.location.query.venue){
-			popup = props.location.query.venue
-		}else{
-			var venue = props.location.pathname.match(/map\/.*/)
-			if(venue){
-				popup = venue[0].substr(4)
-			}
+		var state = {
+			position : {lat : feed.lat, lng : feed.lon},
+			currentPopup : null
 		}
 
-		this.state = {
-			position : initPos, 
-			currentPopup : popup
-		};
+		if(this.props.match.params.venue_id){
+			const v = this.props.data[this.props.match.params.venue_id];
+			state.position = {lat : v.lat, lng : v.lon};
+			state.currentPopup = this.props.match.params.venue_id;
+		}
+		
+		this.state = state
 	}
 
 	handleClick = (popup) => () => {
@@ -114,7 +110,8 @@ class BeerMap extends Component{
 const mapStateToProps = state => ({
 	feeds : state.settings.feeds,
 	currentFeed : state.settings.currentFeed,
-	data : state.data.mapData
+	data : state.data.mapData,
+	router : state.router
 })
 
 const mapDispatchToProps = dispatch => ({})

@@ -28,22 +28,21 @@ describe('<FeedRow/>', () => {
 	})
 
 	it('Goes to the map when a venue is clicked', () => {
-		const context = {
-			router : {
-				push : jest.fn()
-			}
-		}
+		const dispatch = jest.fn()
 
 		var checkin = Checkins1.checkins[0]
-		var wrapper = shallow(<FeedRow {...checkin}/>, {context})
+		var wrapper = shallow(<FeedRow {...checkin} dispatch={dispatch}/>)
 		wrapper.find('#goto-map').simulate('click')
 
-		var arg = context.router.push.mock.calls[0][0]
+
+
+		var arg = dispatch.mock.calls[0][0]
 		expect(arg).toMatchObject({
-			pathname : '/map',
-			query : {
-				venue : checkin.venue_id
-			}
+		  "payload": {
+		    "args": [{"pathname": "/map/3139082"}],
+		    "method": "push"
+		  },
+		  "type": "@@router/CALL_HISTORY_METHOD"
 		})
 	})
 })

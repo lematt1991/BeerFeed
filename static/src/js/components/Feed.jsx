@@ -69,7 +69,7 @@ class Feed extends Component{
 	}
 
 	changeCheckinFilter = event => {
-		this.props.changeCheckinCountThreshold(event.target.value);
+		this.props.dispatch(SettingsActions.changeCheckinCountThreshold(event.target.value))
 	}
 
 	render(){
@@ -119,7 +119,7 @@ class Feed extends Component{
 													items.slice(0, this.state.numRows).map(row => 
 														<tr data-status="pagado" key={row.checkin_id}><td>
 														<FeedRow
-															
+															dispatch={this.props.dispatch}
 															{...row}
 														/>
 														</td></tr>
@@ -156,9 +156,7 @@ const mapStateToProps = state => ({
 	rows : state.data.feedData
 });
 
-const mapDispatchToProps = dispatch => ({
-	changeCheckinCountThreshold : thresh => dispatch(SettingsActions.changeCheckinCountThreshold(thresh))
-});
+const mapDispatchToProps = dispatch => ({dispatch})
 
 export default connect(mapStateToProps, mapDispatchToProps)(Feed);
 
