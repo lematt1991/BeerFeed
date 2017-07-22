@@ -224,6 +224,8 @@ function startProc(args){
                         console.log('Access %s token exhausted, recycling...', tokens[0])
                         tokens.push(untappd.getAccessToken())
                         untappd.setAccessToken(tokens.shift())
+                        if(waitTime < 1800000)
+                            waitTime = waitTime * 2;
                         setTimeoutObj(setTimeout(iter, waitTime))//try again
                     }else{
                         var checkins = feedData.response.checkins.items;
