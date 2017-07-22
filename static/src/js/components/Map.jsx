@@ -54,9 +54,9 @@ class BeerMap extends Component{
 		}
 
 		if(this.props.match.params.venue_id){
-			const v = this.props.data[this.props.match.params.venue_id];
-			state.position = {lat : v.lat, lng : v.lon};
 			state.currentPopup = this.props.match.params.venue_id;
+		}else if(params.get('venue')){
+			state.currentPopup = params.get('venue');
 		}
 		
 		this.state = state
