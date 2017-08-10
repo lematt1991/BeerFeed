@@ -4,7 +4,6 @@ var UntappdClient = require('node-untappd');
 var request = require('request');
 var feedProc = require('./feed_proc');
 var sched = require('node-schedule');
-var cluster = require('cluster')
 require('dotenv').config({silent : true})
 
 const DEBUG = process.env.NODE_ENV === 'debug'
@@ -59,7 +58,6 @@ app.get('/Auth', function(req, res){
 app.get('/AuthRedirect', function(req, res){
   var base = 'https://untappd.com/oauth/authorize'
   var url = `${base}?client_id=${clientID}&client_secret=${clientSecret}&response_type=code&redirect_url=${redirectURL}&code=${req.query.code}`
-  console.log('requesting ' + url)
   request(url, function(err, response, body){
     if(!err){
       token = JSON.parse(body).response.access_token;
@@ -67,28 +65,21 @@ app.get('/AuthRedirect', function(req, res){
         console.log(body);
         return;
       }
-      console.log('token = ' + token)
   	  untappd.setAccessToken(token);
   	  untappd.userInfo(function(err, data){
         if(err){
           console.log(err);
         }
         
-        console.log(data)
-
         if(data.meta.error_type === 'invalid_limit'){
           res.send('Access limit exceeded for API key')
           return
         }
-        
-    	  var username = data.response.user.user_name;
-        
-        console.log('inserting ' + username)
+    	  var username = data.response.user.user_name;        
         var q = `
           INSERT INTO users(id, access_token, lat, lon, general_purpose, last_id)
           SELECT $$${username}$$, $$${token}$$, 0.0, 0.0, true, 0 
           WHERE NOT EXISTS (SELECT 1 FROM users WHERE id=$$${username}$$)
-
         `
     	  db.query(q, function(err, result){
           res.redirect('http://beerfeed-ml9951.rhcloud.com?thanks=true')
