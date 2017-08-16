@@ -3,7 +3,6 @@
  * @flow
  */
 
-import dispatcher from '../Dispatcher';
 import type {FeedName} from '../Types'
 import {FETCH_FEEDS, CHANGE_FEED, CHANGE_CHECKIN_COUNT_THRESHOLD} from './Types'
 
