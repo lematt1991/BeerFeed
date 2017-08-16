@@ -77,7 +77,8 @@ class Feed extends Component{
 		var count_filter = this.props.checkin_count_threshold || 1
 		var items = this.props.rows.filter(r => r.checkin_count >= count_filter && filter(r))
 
-		if(items.length < 10 && count_filter > 1){
+		// Check that some rows exist, this way we don't mess with this prior to data loading
+		if(this.props.rows.length > 0 && items.length < 10 && count_filter > 1){
 			this.props.dispatch(SettingsActions.changeCheckinCountThreshold(count_filter - 1))
 		}
 	}
