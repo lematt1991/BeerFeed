@@ -72,6 +72,16 @@ class Feed extends Component{
 		this.props.dispatch(SettingsActions.changeCheckinCountThreshold(event.target.value))
 	}
 
+	componentDidUpdate(){
+		var filter = createFilter(this.props.searchTerm, KEYS_TO_FILTER)
+		var count_filter = this.props.checkin_count_threshold || 1
+		var items = this.props.rows.filter(r => r.checkin_count >= count_filter && filter(r))
+
+		if(items.length < 10 && count_filter > 1){
+			this.props.dispatch(SettingsActions.changeCheckinCountThreshold(count_filter - 1))
+		}
+	}
+
 	render(){
 		const feed = this.props.feeds[this.props.currentFeed] || {}
 		var locName = feed.city
