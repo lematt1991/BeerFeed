@@ -1,0 +1,88 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<LinkAccount/> mounts 1`] = `
+<div>
+  <Row
+    bsClass="row"
+    componentClass="div"
+  >
+    <div
+      className="text-center"
+    >
+      <h1>
+        <u>
+          Link your Untappd account with Beer Feed
+        </u>
+      </h1>
+    </div>
+  </Row>
+  <br />
+  <br />
+  <Row
+    bsClass="row"
+    className="show-grid"
+    componentClass="div"
+  >
+    <h1>
+      How does this help?
+    </h1>
+  </Row>
+  <Row
+    bsClass="row"
+    componentClass="div"
+  >
+    <Col
+      bsClass="col"
+      componentClass="div"
+      md={8}
+    >
+      <h4>
+        The Untappd API limits the number of requests that can be made to their server on an hourly basis.  The limit is applied on a per user basis, so the more users that link their accounts, the more requests can be made to the server. This will reduce the likelihood of the site going down and allow for us to expand the feed to additional areas in the future.
+      </h4>
+    </Col>
+  </Row>
+  <Row
+    bsClass="row"
+    className="show-grid"
+    componentClass="div"
+  >
+    <h1>
+      How will my account be used?
+    </h1>
+  </Row>
+  <Row
+    bsClass="row"
+    componentClass="div"
+  >
+    <Col
+      bsClass="col"
+      componentClass="div"
+      md={8}
+    >
+      <h4>
+        Your account will not be used by Beer Feed in any way.  The purpose of linking is solely to allow for more API requests to the Untappd server.
+      </h4>
+    </Col>
+  </Row>
+  <br />
+  <Row
+    bsClass="row"
+    componentClass="div"
+  >
+    <div
+      className="col-md-12 text-center"
+    >
+      <a
+        className="btn btn-primary"
+        href="/Auth"
+        id="link-account"
+        onClick={[Function]}
+      >
+        Click Here To Link Account
+      </a>
+    </div>
+  </Row>
+  <br />
+  <br />
+</div>
+`;
