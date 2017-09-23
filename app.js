@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 const routes = require('./backend/routes');
 const UntappdClient = require('node-untappd');
+const { Checkin } = require('./backend/models');
 
 mongoose.Promise = require('bluebird');
 
@@ -27,6 +28,13 @@ const server = app.listen(PORT, function () {
   const { address, port } = server.address();
   console.log(`Beer feed listening at http://${address}:${port}`);
 });
+
+function removeOld(){
+	const twoDays = new Date(new Date() - 1000 * 60 * 60 * 24 * 2);
+	Checkin.find({ checkin_created : { $lt : twoDays } })
+		.remove()
+}
+setInterval(removeOld, 1000*60*60*24) // Filter old checkins every day.
 
 app.get('*', function (req, res) {
   res.sendFile(path.join(__dirname, 'public/index.html'));
