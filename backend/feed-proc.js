@@ -154,7 +154,7 @@ class FeedProc{
 				min_id : this.lastID
 			}))
 			.then(({meta, response}) => {
-				this.lastID = response.pagination.max_id;
+				this.lastID = response.pagination.max_id || this.lastID;
 				// return this.seq(response.checkins.items.map(c => () => this.processCheckin(c)), 0);
 				return Promise.all(response.checkins.items.map(this.processCheckin.bind(this)))
 			})
