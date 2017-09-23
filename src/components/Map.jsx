@@ -6,10 +6,10 @@ function genInfoWindow(venue){
 	return(
 		Object.keys(venue.beers).map(k => {
 			var beer = venue.beers[k]
-			var beerLink = `https://untappd.com/b/${beer.beer_slug}/${beer.bid}`
+			var beerLink = `https://untappd.com/b/${beer.beer.slug}/${beer.bid}`
 			return(
 				<p style={{margin : 0}} key={k}>
-					{beer.brewery}: <a target="_blank" href={beerLink}>{beer.name}</a> ({beer.rating})
+					{beer.brewery}: <a target="_blank" href={beerLink}>{beer.beer.name}</a> ({beer.beer.rating})
 				</p>
 			)
 		})
