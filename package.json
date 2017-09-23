@@ -7,7 +7,7 @@
     "test": "./node_modules/.bin/jest --coverage",
     "start": "node app.js",
     "dev": "react-scripts start",
-    "server" : "nodemon app.js",
+    "server": "nodemon app.js",
     "build": "react-scripts build",
     "testDbg": "node debug --harmony ./node_modules/jest-cli/bin/jest.js --runInBand"
   },
@@ -50,6 +50,7 @@
     "request": "^2.81.0",
     "twit": "^2.2.9",
     "universal-cookie": "^2.0.8",
+    "untappd-js": "git+https://github.com/ml9951/untappd-js.git",
     "url": "^0.11.0"
   },
   "devDependencies": {
@@ -64,7 +65,7 @@
     "redux-logger": "^3.0.6",
     "sinon": "^3.2.0"
   },
-  "proxy" : "http://localhost:3001",
+  "proxy": "http://localhost:3001",
   "jest": {
     "moduleNameMapper": {
       "^.*[.](jpg|JPG|gif|GIF|png|PNG|less|LESS|css|CSS)$": "EmptyModule"
