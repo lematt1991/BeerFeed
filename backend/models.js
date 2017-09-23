@@ -15,7 +15,8 @@ const Beer = new mongoose.Schema({
 	facebook : String,
 	abv : Number,
 	brewery_slug : String,
-	slug : String
+	slug : String,
+	num_checkins : Number,
 });
 
 const Checkin = new mongoose.Schema({
