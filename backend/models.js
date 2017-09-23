@@ -20,11 +20,24 @@ const Beer = new mongoose.Schema({
 
 const Checkin = new mongoose.Schema({
 	brewery_id : Number,
-	username : String,
+	venue_category : String,
 	venue_id : Number,
-	created : Date,
+	brewery_name : String,
+	brewery_facebook : String,
+	venue_verified : Boolean,
+	brewery_url : String,
+	lon : Number,
 	bid : Number,
-	checkin_id : Number
+	checkin_created : Date,
+	venue : String,
+	checkin_id : Number,
+	venue_url : String,
+	checkin_username : String,
+	lat : Number,
+	brewery_twitter : String,
+	brewery_slug : String,
+	venue_twitter : String,
+	venue_slug : String
 });
 
 const TopBeer = new mongoose.Schema({
@@ -48,21 +61,9 @@ const User = new mongoose.Schema({
 	last_id : Number
 });
 
-const Venue = new mongoose.Schema({
-	category : String,
-	venue_id : Number,
-	verified : Boolean,
-	url : String,
-	twitter : String,
-	venue : String,
-	geom : String,
-	venue_slug : String
-});
-
 module.exports = {
 	Beer : mongoose.model('beers', Beer),
 	Checkin : mongoose.model('checkins', Checkin),
 	TopBeer : mongoose.model('top_beers', TopBeer),
 	User : mongoose.model('users', User),
-	Venue : mongoose.model('venues', Venue)
 }
