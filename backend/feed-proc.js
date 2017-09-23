@@ -50,6 +50,7 @@ class FeedProc{
 		return this.untappd.beerInfo({ BID : bid })
 			.then(({ response }) => {
 				const newData = {
+					num_checkins : response.beer.stats.total_count,
 					brewery_id : response.beer.brewery.brewery_id,
 					rating : response.beer.rating_score,
 					style : response.beer.beer_style,
@@ -98,7 +99,7 @@ class FeedProc{
     	.then(beer => {
     		if(beer){
     			const sevenDaysAgo = new Date().getTime() - (7 * 24 * 60 * 60 * 1000);
-    			if(beer.last_updated < sevenDaysAgo)
+    			if(beer.last_updated < sevenDaysAgo && ((beer.num_checkins || 0) < 2500))
     				return this.fetchBeer(bid); // Too old, refresh this beer's info...
     			else
     				return Promise.resolve(beer); // Less than a week old, use this data...
@@ -110,6 +111,7 @@ class FeedProc{
     			return //Fetching the beer failed, this will queue up another iter...
     		}
     		const checkinData = {
+    			checkin_id : checkin.checkin_id,
     			brewery_id : beerDoc.brewery_id,
     			venue_category : checkin.venue.primary_category,
     			venue_id : checkin.venue.venue_id,
@@ -121,6 +123,7 @@ class FeedProc{
     			bid : beerDoc.bid,
     			checkin_created : new Date(checkin.created_at),
     			venue : checkin.venue.venue_name,
+    			venue_url : checkin.venue.contact.venue_url,
     			checkin_username : this.username,
     			lat : checkin.venue.location.lat,
     			brewery_twitter : beerDoc.twitter,
