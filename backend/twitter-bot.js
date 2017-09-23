@@ -1,8 +1,6 @@
 require('dotenv').config({silent : true})
 var Twit = require('twit')
 var pg = require('pg')
-var _ = require('lodash')
-var request = require('request').defaults({ encoding: null });
 
 var db = new pg.Client(process.env.OPENSHIFT_POSTGRESQL_DB_URL);
 db.connect();
