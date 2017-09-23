@@ -31,7 +31,7 @@ export default class About extends Component{
 
 	render(){
 		return(
-			<div class="container">
+			<div className="container">
 				<Row>
 				<Jumbotron>
 				    <h1>Find better beer.</h1>
@@ -39,7 +39,7 @@ export default class About extends Component{
 				    	Get a realtime feed of <i>only</i> the good beers that get 
 				    	checked in to Untappd
 				    </p>
-				    <Button class="btn btn-primary" onClick={this._handleClick.bind(this)}>
+				    <Button className="btn btn-primary" onClick={this._handleClick.bind(this)}>
 				    	{this.state.buttonMsg}
 				    </Button>	
 				</Jumbotron>

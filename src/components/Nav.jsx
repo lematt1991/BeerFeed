@@ -54,7 +54,7 @@ class Nav extends React.Component {
                   <BS.MenuItem 
                     id={feed} 
                     key={feed} 
-                    class={currentFeed === feed ? 'active' : null}
+                    className={currentFeed === feed ? 'active' : null}
                     onClick={this._changeLoc} 
                   >
                     {this.props.feeds[feed].city}

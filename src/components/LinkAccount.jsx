@@ -11,7 +11,7 @@ export default class LinkAccount extends Component{
 		return(
 			<div>
 				<Row>
-					<div class="text-center">
+					<div className="text-center">
 					<h1><u>Link your Untappd account with Beer Feed</u></h1>
 					</div>
 				</Row>
@@ -50,8 +50,8 @@ export default class LinkAccount extends Component{
 				<br/>
 
 				<Row>
-					<div class="col-md-12 text-center">
-						<a id='link-account' class="btn btn-primary" href={'/Auth'} onClick={this._handleClick.bind(this)}>
+					<div className="col-md-12 text-center">
+						<a id='link-account' className="btn btn-primary" href={'/Auth'} onClick={this._handleClick.bind(this)}>
 							Click Here To Link Account
 						</a>
 					</div>

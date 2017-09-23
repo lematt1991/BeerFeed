@@ -1,35 +1,36 @@
 {
-  "name": "untappd-feed-filter",
+  "name": "the-beer-feed",
   "version": "1.0.0",
-  "description": "",
-  "main": "start.js",
+  "description": "The Beer Feed",
+  "main": "app.js",
   "scripts": {
     "test": "./node_modules/.bin/jest --coverage",
-    "start": "node start.js",
-    "dev": "NODE_ENV=debug node server.js",
-    "local": "NODE_ENV=debug node server.js",
-    "build": "NODE_ENV=production ./node_modules/.bin/webpack --progress",
+    "start": "node app.js",
+    "dev": "react-scripts start",
+    "server" : "nodemon app.js",
+    "build": "react-scripts build",
     "testDbg": "node debug --harmony ./node_modules/jest-cli/bin/jest.js --runInBand"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ml9951/BeerFeed.git"
   },
-  "author": "",
+  "author": "Matt Le",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/ml9951/BeerFeed/issues"
   },
-  "homepage": "https://github.com/ml9951/UntappdFeedFilter#readme",
+  "homepage": "https://github.com/ml9951/BeerFeed#readme",
   "dependencies": {
     "axios": "^0.16.2",
+    "bluebird": "^3.5.0",
     "body-parser": "^1.17.2",
     "dotenv": "^4.0.0",
     "express": "^4.15.4",
     "history": "^4.6.3",
     "immutability-helper": "^2.3.1",
-    "jquery": "^3.2.1",
     "lodash": "^4.17.4",
+    "mongoose": "^4.11.11",
     "node-schedule": "^1.2.4",
     "node-untappd": "git+https://github.com/ml9951/node-untappd.git",
     "pg": "^7.1.2",
@@ -49,38 +50,21 @@
     "request": "^2.81.0",
     "twit": "^2.2.9",
     "universal-cookie": "^2.0.8",
-    "url": "^0.11.0",
-    "webpack": "^3.5.4"
+    "url": "^0.11.0"
   },
   "devDependencies": {
-    "babel": "^6.23.0",
-    "babel-jest": "^20.0.3",
-    "babel-loader": "^7.1.1",
-    "babel-plugin-add-module-exports": "^0.2.1",
-    "babel-plugin-react-html-attrs": "^2.0.0",
-    "babel-plugin-transform-class-properties": "^6.24.1",
-    "babel-plugin-transform-decorators-legacy": "^1.3.4",
-    "babel-plugin-transform-flow-strip-types": "^6.22.0",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-react": "^6.24.1",
-    "babel-preset-stage-0": "^6.24.1",
-    "css-loader": "^0.28.4",
     "enzyme": "^2.9.1",
     "enzyme-to-json": "^1.5.1",
     "flow-bin": "^0.52.0",
     "jest": "^20.0.4",
     "jest-cli": "^20.0.4",
-    "json-loader": "^0.5.7",
     "react": "^15.6.1",
     "react-addons-test-utils": "^15.6.0",
     "react-dom": "^15.6.1",
     "redux-logger": "^3.0.6",
-    "sinon": "^3.2.0",
-    "style-loader": "^0.18.2",
-    "webpack-dev-middleware": "^1.12.0",
-    "webpack-dev-server": "^2.7.1",
-    "webpack-hot-middleware": "^2.18.2"
+    "sinon": "^3.2.0"
   },
+  "proxy" : "http://localhost:3001",
   "jest": {
     "moduleNameMapper": {
       "^.*[.](jpg|JPG|gif|GIF|png|PNG|less|LESS|css|CSS)$": "EmptyModule"

@@ -7,7 +7,7 @@ export default class FeedRow extends Component{
 	constructor(props){
 		super(props);
 		this.state = {
-			picSrc : props.pic,
+			picSrc : props.beer.pic,
 			error : false
 		}
 	}
@@ -38,10 +38,10 @@ export default class FeedRow extends Component{
 		var date = new Date(this.props.created)
 		date.setMinutes(date.getMinutes() - date.getTimezoneOffset()) //convert from UTC to local timezone
 		date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-		var beerLink = `https://untappd.com/b/${this.props.beer_slug}/${this.props.bid}`
+		var beerLink = `https://untappd.com/b/${this.props.beer.slug}/${this.props.bid}`
 		return(	
-			<div class="media">
-				<div class="media-left media-middle">
+			<div className="media">
+				<div className="media-left media-middle">
 					<img
 						alt='' 
 						onError={this.handleError}
@@ -49,19 +49,19 @@ export default class FeedRow extends Component{
 						src={this.state.picSrc} 
 						width="100" 
 						height="100" 
-						class="media-photo"
+						className="media-photo"
 					/>
 				</div>
-				<div class="media-body">
-					<span class="media-meta pull-right">{date.toLocaleString([], dateFormat)}</span>
-					<h4 class="title">
+				<div className="media-body">
+					<span className="media-meta pull-right">{date.toLocaleString([], dateFormat)}</span>
+					<h4 className="title">
 						Brewery: {this.props.brewery}
 					</h4>
 					<h4>
-						Beer: <a target="_blank" href={beerLink}>{this.props.name}</a>
+						Beer: <a target="_blank" href={beerLink}>{this.props.beer.name}</a>
 					</h4>
 					<h4>
-						Score: {this.props.rating}
+						Score: {this.props.beer.rating}
 					</h4>
 					<h4>	
 						Found at: <SafeAnchor id='goto-map'
@@ -71,7 +71,7 @@ export default class FeedRow extends Component{
 						Number of checkins: {this.props.checkin_count}
 					</h4>
 					<h4>
-						Style: {this.props.style}
+						Style: {this.props.beer.style}
 					</h4>
 				</div>
 			</div>

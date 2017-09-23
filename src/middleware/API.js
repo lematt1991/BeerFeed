@@ -18,10 +18,10 @@ export default store => next => action => {
       method : method,
       data : body
     })
-      .then(response => {
+      .then(({data}) => {
         next({
           type : `${action.type}_SUCCESS`,
-          payload : response.data,
+          payload : data,
           meta : {hideLoader : true}
         })
       })

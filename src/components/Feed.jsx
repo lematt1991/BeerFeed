@@ -6,7 +6,7 @@ import FeedRow from '../components/FeedRow'
 import * as SettingsActions from '../actions/SettingsActions'
 import {connect} from 'react-redux'
 
-const KEYS_TO_FILTER = ['brewery', 'name', 'venue', 'style']
+const KEYS_TO_FILTER = ['brewery', 'beer.name', 'venue', 'beer.style']
 
 class Feed extends Component{
 	getUserLocation = () => {
@@ -91,12 +91,12 @@ class Feed extends Component{
 		var items = this.props.rows.filter(r => r.checkin_count >= count_filter && filter(r))
 		items.sort(this.state.ordering.f)
 		return(
-			<div class="container-fluid">
-				<div class="row">
-					<section class="content">
-						<div class="col-md-8 col-md-offset-2">
+			<div className="container-fluid">
+				<div className="row">
+					<section className="content">
+						<div className="col-md-8 col-md-offset-2">
 							{this._mkAlert()}
-							<div class="row" style={{display : 'flex', justifyContent : 'center', alignItems : 'center'}}>
+							<div className="row" style={{display : 'flex', justifyContent : 'center', alignItems : 'center'}}>
 								<Select
 									style={{width : 150}}
 									options={this.state.options}
@@ -120,11 +120,11 @@ class Feed extends Component{
 					        </FormGroup>
 				        </Form>
 							</div>
-							<h1 class="text-center">Beer Feed for {locName}</h1>
-							<div class="panel panel-default">
-								<div class="panel-body">
-									<div class="table-container">
-										<table class="table table-filter">
+							<h1 className="text-center">Beer Feed for {locName}</h1>
+							<div className="panel panel-default">
+								<div className="panel-body">
+									<div className="table-container">
+										<table className="table table-filter">
 											<tbody>
 												{
 													items.slice(0, this.state.numRows).map(row => 
@@ -141,9 +141,9 @@ class Feed extends Component{
 										</table>
 										{
 											this.state.numRows < items.length ? 
-											<div class="col-md-12 center-block">
+											<div className="col-md-12 center-block">
 											    <Button onClick={this.showMore} 
-											    		class="btn btn-primary center-block">
+											    		className="btn btn-primary center-block">
 											       	Show More
 											    </Button>
 											</div> : null

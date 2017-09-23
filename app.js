@@ -1,43 +1,33 @@
-const http         = require('http'),
-      fs           = require('fs'),
-      path         = require('path'),
-      contentTypes = require('./utils/content-types'),
-      sysInfo      = require('./utils/sys-info'),
-      env          = process.env;
+require('dotenv').config()
+const express = require('express');
+const mongoose = require('mongoose');
+const path = require('path');
+const routes = require('./backend/routes');
+const UntappdClient = require('node-untappd');
 
-let server = http.createServer(function (req, res) {
-  let url = req.url;
-  if (url == '/') {
-    url += 'index.html';
-  }
+mongoose.Promise = require('bluebird');
 
-  // IMPORTANT: Your application HAS to respond to GET /health with status 200
-  //            for OpenShift health monitoring
+var untappd = new UntappdClient();
 
-  if (url == '/health') {
-    res.writeHead(200);
-    res.end();
-  } else if (url == '/info/gen' || url == '/info/poll') {
-    res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Cache-Control', 'no-cache, no-store');
-    res.end(JSON.stringify(sysInfo[url.slice(6)]()));
-  } else {
-    fs.readFile('./static' + url, function (err, data) {
-      if (err) {
-        res.writeHead(404);
-        res.end('Not found');
-      } else {
-        let ext = path.extname(url).slice(1);
-        res.setHeader('Content-Type', contentTypes[ext]);
-        if (ext === 'html') {
-          res.setHeader('Cache-Control', 'no-cache, no-store');
-        }
-        res.end(data);
-      }
-    });
-  }
+const CLIENT_SECRET = process.env.UNTAPPD_CLIENT_SECRET;
+const CLIENT_ID = process.env.UNTAPPD_CLIENT_ID;
+
+untappd.setClientId(CLIENT_ID);
+untappd.setClientSecret(CLIENT_SECRET);
+
+const PORT = process.env.PORT || '3001';
+const MONGO_URL = process.env.MONGO_URL || 'mongodb://localhost/beerfeed';
+
+mongoose.connect(MONGO_URL, { useMongoClient : true })
+
+const app = express();
+app.use('/', routes(untappd));
+
+const server = app.listen(PORT, function () {
+  const { address, port } = server.address();
+  console.log(`Beer feed listening at http://${address}:${port}`);
 });
 
-server.listen(env.NODE_PORT || 3000, env.NODE_IP || 'localhost', function () {
-  console.log(`Application worker ${process.pid} started...`);
+app.get('*', function (req, res) {
+  res.sendFile(path.join(__dirname, 'public/index.html'));
 });
