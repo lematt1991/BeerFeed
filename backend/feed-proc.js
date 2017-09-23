@@ -209,6 +209,10 @@ class FeedProc{
 	}
 }
 
+/**
+ * Start all feed processes
+ * @return {void}
+ */
 function startAll(){
 	User.findOne({general_purpose : false})
 		.then(users => {
@@ -228,9 +232,4 @@ if(require.main === module){
 		useMongoClient : true 
 	})
 	startAll()
-	// const username = 'nyc_feed';
-	// User.findOne({id : username})
-	// 	.then(user => {
-	// 		new FeedProc(username, user.access_token).start()
-	// 	})
 }
