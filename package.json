@@ -9,6 +9,7 @@
     "dev": "react-scripts start",
     "server": "nodemon app.js",
     "build": "react-scripts build",
+    "postinstall" : "npm run build",
     "testDbg": "node debug --harmony ./node_modules/jest-cli/bin/jest.js --runInBand"
   },
   "repository": {
@@ -20,7 +21,7 @@
   "bugs": {
     "url": "https://github.com/ml9951/BeerFeed/issues"
   },
-  "homepage": "https://github.com/ml9951/BeerFeed#readme",
+  "homepage": "/",
   "dependencies": {
     "axios": "^0.16.2",
     "bluebird": "^3.5.0",
@@ -69,7 +70,6 @@
     "sinon": "^3.3.0"
   },
   "proxy": "http://localhost:3001",
-  "homepage" : "/",
   "jest": {
     "moduleNameMapper": {
       "^.*[.](jpg|JPG|gif|GIF|png|PNG|less|LESS|css|CSS)$": "EmptyModule"
