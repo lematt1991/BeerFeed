@@ -69,6 +69,7 @@
     "sinon": "^3.3.0"
   },
   "proxy": "http://localhost:3001",
+  "homepage" : "/",
   "jest": {
     "moduleNameMapper": {
       "^.*[.](jpg|JPG|gif|GIF|png|PNG|less|LESS|css|CSS)$": "EmptyModule"
