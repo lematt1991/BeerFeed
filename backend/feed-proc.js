@@ -131,7 +131,13 @@ class FeedProc{
     			venue_twitter : checkin.venue.contact.twitter,
     			venue_slug : checkin.venue.venue_slug
     		}
-    		return new Checkin(checkinData).save()
+    		// Ensure that we don't get any duplicates somehow...
+    		return Checkin.findOneAndUpdate(
+    			{ checkin_id : checkin.checkin_id }, 
+    			checkinData, 
+    			{ upsert : true }
+    		)
+    		// return new Checkin(checkinData).save()
     	})
 	}
 
@@ -161,7 +167,7 @@ class FeedProc{
 			.then(checkins => {
 				if(checkins.length > 12){
 					this.waitTime = Math.max(this.waitTime / 2, 4000);
-				}else if(checkins.length <= 2 && this.waitTime < 1800000){
+				}else if(checkins.length <= 5 && this.waitTime < 1800000){
 					this.waitTime *= 2;
 				}
 				console.log(`Stats for ${this.username}:
@@ -192,10 +198,11 @@ class FeedProc{
 	 */
 	setLastID(){
 		return Checkin
-			.findOne({ checkin_username : this.username })
+			.find({ checkin_username : this.username })
 			.sort({ checkin_id : -1 })
+			.limit(1)
 			.then(result => {
-				this.lastID = (result || { checkin_id : 0 }).checkin_id;
+				this.lastID = (result[0] || { checkin_id : 0 }).checkin_id;
 			})
 	}
 
@@ -214,9 +221,10 @@ class FeedProc{
  * @return {void}
  */
 function startAll(){
-	User.findOne({general_purpose : false})
+	User.find({general_purpose : false})
+		// .limit(1)
 		.then(users => {
-			[users].forEach(user => {
+			users.forEach(user => {
 				new FeedProc(user.id, user.access_token).start()
 			})
 		})
