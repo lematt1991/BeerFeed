@@ -1,7 +1,10 @@
 const express = require('express');
 const { Beer, Checkin, User, Venue } = require('./models');
+const axios = require('axios');
 
 const router = express.Router();
+
+const REDIRECT_URL = 'http://localhost:3001/AuthRedirect';
 
 module.exports = function(untappd){
 	/**
@@ -86,7 +89,6 @@ module.exports = function(untappd){
 			.catch(err => err.status(500).send(err))
 	})
 
-
 	/**
 	 * Authenticate a user
 	 * This will redirect the user to Untappd and have them login.
@@ -95,7 +97,13 @@ module.exports = function(untappd){
 	 */
 	router.get('/Auth', function(req, res){
 	  const base = 'https://untappd.com/oauth/authenticate'
-	  const url = `${base}?client_id=${clientID}&client_secret=${clientSecret}&response_type=code&redirect_url=${redirectURL}`
+	  const params = {
+			client_id : process.env.UNTAPPD_CLIENT_ID,
+			client_secret : process.env.UNTAPPD_CLIENT_SECRET,
+			response_type : 'code',
+			redirect_url : REDIRECT_URL
+		}
+	  const url = `${base}?${Object.keys(params).map(k => `${k}=${params[k]}`).join('&')}`;
 	  res.redirect(url);
 	});
 
@@ -104,35 +112,31 @@ module.exports = function(untappd){
 	 * Add the user to the database.
 	 */
 	router.get('/AuthRedirect', function(req, res){
-	  var base = 'https://untappd.com/oauth/authorize'
-	  var url = `${base}?client_id=${clientID}&client_secret=${clientSecret}&response_type=code&redirect_url=${redirectURL}&code=${req.query.code}`
-	  request(url, function(err, response, body){
-	    if(!err){
-	      token = JSON.parse(body).response.access_token;
-	      if(token == null){
-	      	res.status(500).send('Access token is null!')
-	      }
-	  	  untappd.setAccessToken(token);
-	  	  untappd.userInfo(function(err, data){
-	        if(err){
-	        	res.status(500).send(err)
-	        }else if (data.meta.error_type === 'invalid_limit'){
-	        	res.status(500).send('Access limit exceeded for API key');
-	        }else{
-	        	const user = new User({
-	        		id : data.response.user.user_name,
-	        		access_token : token,
-	        		general_purpose : true
-	        	})
-	        	user.save()
-	        		.then(() => res.send('Success!'))
-	        		.catch(err => res.status(500).send(err))
-	        }
-	  	  });
-	    }else{
-	    	res.status(500).send(err)
-	    }
-	  });
+		axios.request({
+			url : 'https://untappd.com/oauth/authorize',
+			params : {
+				client_id : process.env.UNTAPPD_CLIENT_ID,
+				client_secret : process.env.UNTAPPD_CLIENT_SECRET,
+				response_type : 'code',
+				redirect_url : REDIRECT_URL,
+				code : req.query.code
+			}
+		}).then(({data}) => {
+			untappd.setAccessToken(data.response.access_token);
+			untappd.userInfo()
+				.then(data => {
+					const query = { id : data.response.user.user_name };
+					const userData = {
+						id : data.response.user.user_name,
+						access_token : data.response.access_token,
+						general_purpose : true
+					};
+					User.findOneAndUpdate(query, userData, { upsert : true })
+						.then(() => res.send())
+						.catch(err => res.status(500).send(err))
+				})
+				.catch(err => res.status(500).send(err))
+		}).catch(err => res.status(500).send(err))
 	});
 
 	return router;	
