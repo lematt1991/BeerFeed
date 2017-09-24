@@ -14,7 +14,8 @@ export default ({dispatch}) => next => action => {
   ){
     fetchPending = false;
   }else if(action.type === CHANGE_FEED){
-    dispatch(DataActions.fetchData(action.payload))
+    if(true || fetchPending)
+      dispatch(DataActions.fetchData(action.payload))
   }
   next(action)
 }
