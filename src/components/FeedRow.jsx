@@ -36,7 +36,6 @@ export default class FeedRow extends Component{
 			minute : '2-digit'
 		}
 		var date = new Date(this.props.created)
-		date.setMinutes(date.getMinutes() - date.getTimezoneOffset()) //convert from UTC to local timezone
 		date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 		var beerLink = `https://untappd.com/b/${this.props.beer.slug}/${this.props.bid}`
 		return(	
