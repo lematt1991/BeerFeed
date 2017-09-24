@@ -5,6 +5,7 @@ const path = require('path');
 const routes = require('./backend/routes');
 const UntappdClient = require('node-untappd');
 const { Checkin } = require('./backend/models');
+const { startAll } = require('./backend/feed-proc');
 
 mongoose.Promise = require('bluebird');
 
@@ -37,3 +38,7 @@ function removeOld(){
 setInterval(removeOld, 1000*60*60*24) // Filter old checkins every day.
 
 app.use(express.static(path.join(__dirname, 'build')));
+
+if(process.env.NODE_ENV === 'production'){
+	startAll();
+}
