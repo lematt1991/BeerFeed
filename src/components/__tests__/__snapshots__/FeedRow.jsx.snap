@@ -8,10 +8,11 @@ exports[`<FeedRow/> Mounts 1`] = `
     className="media-left media-middle"
   >
     <img
+      alt=""
       className="media-photo"
       height="100"
       onError={[Function]}
-      src="https://untappd.akamaized.net/site/beer_logos/beer-1374487_e2108_sm.jpeg"
+      src="https://untappd.akamaized.net/site/beer_logos/beer-1501561_e5172_sm.jpeg"
       style={
         Object {
           "marginTop": "12px",
@@ -32,20 +33,20 @@ exports[`<FeedRow/> Mounts 1`] = `
       className="title"
     >
       Brewery: 
-      Jack's Abby
+      Half Acre Beer Company
     </h4>
     <h4>
       Beer: 
       <a
-        href="https://untappd.com/b/jack-s-abby-barrel-aged-framinghammer-mole/1374487"
+        href="https://untappd.com/b/half-acre-beer-company-deep-space/1501561"
         target="_blank"
       >
-        Barrel-Aged Framinghammer Mole
+        Deep Space
       </a>
     </h4>
     <h4>
       Score: 
-      4.23383
+      4.17661
     </h4>
     <h4>
       Found at: 
@@ -54,7 +55,7 @@ exports[`<FeedRow/> Mounts 1`] = `
         id="goto-map"
         onClick={[Function]}
       >
-        Beer Noggin
+        Maple St
       </SafeAnchor>
     </h4>
     <h4>
@@ -63,7 +64,7 @@ exports[`<FeedRow/> Mounts 1`] = `
     </h4>
     <h4>
       Style: 
-      Stout - American Imperial / Double
+      IPA - Imperial / Double
     </h4>
   </div>
 </div>

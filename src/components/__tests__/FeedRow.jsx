@@ -10,7 +10,7 @@ describe('<FeedRow/>', () => {
 	var toLocaleString;
 
 	beforeAll(() => {
-		toLocaleString = sinon.stub(Date.prototype, 'toLocaleString', () => 'fake time')
+		toLocaleString = sinon.stub(Date.prototype, 'toLocaleString').callsFake(() => 'fake time')
 	})
 
 	afterAll(() => {
@@ -34,12 +34,10 @@ describe('<FeedRow/>', () => {
 		var wrapper = shallow(<FeedRow {...checkin} dispatch={dispatch}/>)
 		wrapper.find('#goto-map').simulate('click')
 
-
-
 		var arg = dispatch.mock.calls[0][0]
 		expect(arg).toMatchObject({
 		  "payload": {
-		    "args": [{"pathname": "/map/3139082"}],
+		    "args": [{"pathname": "/map/5030814"}],
 		    "method": "push"
 		  },
 		  "type": "@@router/CALL_HISTORY_METHOD"

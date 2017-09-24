@@ -10,12 +10,12 @@ describe('twitter-bot', () => {
 
 	beforeAll(() => {
 		connectStub = sinon.stub(Client.prototype, 'connect')
-		TwitterBot = require('../twitter-bot').TwitterBot
+		TwitterBot = require('../backend/twitter-bot').TwitterBot
 		TWITTER_KEY = process.env.TWITTER_KEY
 		process.env.TWITTER_KEY = 'twitter_key'
 		TWITTER_SECRET = process.env.TWITTER_SECRET
 		process.env.TWITTER_SECRET = 'twitter_secret'
-		toISOStub = sinon.stub(Date.prototype, 'toISOString', () => 'fake-time')
+		toISOStub = sinon.stub(Date.prototype, 'toISOString').callsFake(() => 'fake-time');
 	})
 
 	afterAll(() => {
@@ -28,7 +28,7 @@ describe('twitter-bot', () => {
 	it('Tweets about good beers', done => {
 		var bot = new TwitterBot('username', 'token', 'token_secret')
 
-		var queryStub = sinon.stub(Client.prototype, 'query', query => new Promise((resolve, reject) => {
+		var queryStub = sinon.stub(Client.prototype, 'query').callsFake(query => new Promise((resolve, reject) => {
 			resolve({
 				rows : [{
 					beer : 'Abraxas',
@@ -63,7 +63,7 @@ describe('twitter-bot', () => {
 	it('Is 140 character aware', done => {
 		var bot = new TwitterBot('username', 'token', 'token_secret')
 
-		var queryStub = sinon.stub(Client.prototype, 'query', query => new Promise((resolve, reject) => {
+		var queryStub = sinon.stub(Client.prototype, 'query').callsFake(query => new Promise((resolve, reject) => {
 			resolve({
 				rows : [{
 					beer : 'Abraxas',

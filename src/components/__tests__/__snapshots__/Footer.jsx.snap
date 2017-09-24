@@ -2,10 +2,10 @@
 
 exports[`<Footer/> mounts 1`] = `
 <footer
-  className="site-footer"
+  class="site-footer"
 >
   <div
-    className="container"
+    class="container"
   >
     <Row
       bsClass="row"
@@ -13,7 +13,7 @@ exports[`<Footer/> mounts 1`] = `
       md={8}
     >
       <p
-        className="text-muted"
+        class="text-muted"
       >
         Powered by Untappd
       </p>
