@@ -22,6 +22,9 @@
     "url": "https://github.com/ml9951/BeerFeed/issues"
   },
   "homepage": "/",
+  "optionalDependencies": {
+    "fsevents": "*"
+  },
   "dependencies": {
     "axios": "^0.16.2",
     "bluebird": "^3.5.0",
