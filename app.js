@@ -33,8 +33,15 @@ const server = app.listen(PORT, function () {
 function removeOld(){
 	const twoDays = new Date(new Date() - 1000 * 60 * 60 * 24 * 2);
 	Checkin.find({ checkin_created : { $lt : twoDays } })
-		.remove()
+		.remove((err, result) => {
+			if(err){
+				console.log(err)
+			}else{
+				console.log(result)
+			}
+		})
 }
+
 setInterval(removeOld, 1000*60*60*24) // Filter old checkins every day.
 
 app.use(express.static(path.join(__dirname, 'build')));
