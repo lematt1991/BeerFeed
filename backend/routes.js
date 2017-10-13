@@ -69,7 +69,7 @@ module.exports = function(untappd){
 		])
 		.then(result => {
 			const twoDays = new Date(new Date() - 1000 * 60 * 60 * 24 * 2);
-			cache = cache.filter(c => (new Date(c.created)) < twoDays);
+			cache = (cache || []).filter(c => (new Date(c.created)) < twoDays);
 
 			const allCheckins = result.concat(cache || []);
 			feedCache[req.params.user] = allCheckins;
@@ -93,7 +93,10 @@ module.exports = function(untappd){
 				}
 			}
 		})
-		.catch(err => res.status(500).send(err))
+		.catch(err => {
+			console.log(err);
+			res.status(500).send(err)
+		})
 	});
 
 	/**
