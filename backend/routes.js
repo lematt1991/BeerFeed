@@ -17,7 +17,7 @@ module.exports = function(untappd){
 	 */
 	router.get('/Feed/:user/:last_id?', (req, res) => {
 		var cache = feedCache[req.params.user];
-		const min_id = cache ? cache[0].checkin_id : 0;
+		const min_id = (cache && cache.length > 0) ? cache[0].checkin_id : 0;
 		Checkin.aggregate([
 			{ 
 				$match : {
@@ -69,7 +69,7 @@ module.exports = function(untappd){
 		])
 		.then(result => {
 			const twoDays = new Date(new Date() - 1000 * 60 * 60 * 24 * 2);
-			cache = (cache || []).filter(c => (new Date(c.created)) < twoDays);
+			cache = (cache || []).filter(c => (new Date(c.created)) > twoDays);
 
 			const allCheckins = result.concat(cache || []);
 			feedCache[req.params.user] = allCheckins;
