@@ -6,6 +6,8 @@ const router = express.Router();
 
 const REDIRECT_URL = 'http://localhost:3001/AuthRedirect';
 
+var feedCache = {};
+
 module.exports = function(untappd){
 	/**
 	 * Get the feed for a particular location
@@ -14,12 +16,14 @@ module.exports = function(untappd){
 	 * @return { Array<Object> } - The feed
 	 */
 	router.get('/Feed/:user/:last_id?', (req, res) => {
+		var cache = feedCache[req.params.user];
+		const min_id = cache ? cache[0].checkin_id : 0;
 		Checkin.aggregate([
 			{ 
 				$match : {
 					$and : [
 						{ checkin_username : req.params.user },
-						{ checkin_id : { $gt : +req.params.last_id || 0 } }
+						{ checkin_id : { $gt : min_id } }
 					]
 				}
 			},
@@ -64,16 +68,29 @@ module.exports = function(untappd){
 			{ $sort : { checkin_id : -1 } }
 		])
 		.then(result => {
-			if(result.length > 0){
-				res.json({
-					lastID : result[0].checkin_id,
-					checkins : result
-				})
-			}else{
+			const twoDays = new Date(new Date() - 1000 * 60 * 60 * 24 * 2);
+			cache = cache.filter(c => (new Date(c.created)) < twoDays);
+
+			const allCheckins = result.concat(cache || []);
+			feedCache[req.params.user] = allCheckins;
+			if(allCheckins.length == 0){
 				res.json({
 					lastID : req.params.last_id || 0,
 					checkins : []
 				})
+			}else{
+				if(req.params.last_id){
+					const last_id = +req.params.last_id;
+					res.json({
+						lastID : allCheckins[0].checkin_id,
+						checkins : allCheckins.filter(c => c.checkin_id > last_id)
+					});
+				}else{
+					res.send({
+						lastID : allCheckins[0].checkin_id,
+						checkins : allCheckins
+					})
+				}
 			}
 		})
 		.catch(err => res.status(500).send(err))
