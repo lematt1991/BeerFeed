@@ -23,7 +23,9 @@ module.exports = function(untappd){
 				$match : {
 					$and : [
 						{ checkin_username : req.params.user },
-						{ checkin_id : { $gt : min_id } }
+						{ checkin_id : { $gt : min_id } },
+						{ venue_category : { $ne : 'Travel & Transport'} },
+						{ venue_category : { $ne : 'Outdoors & Recreation' } }
 					]
 				}
 			},
