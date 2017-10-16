@@ -25,7 +25,8 @@ module.exports = function(untappd){
 						{ checkin_username : req.params.user },
 						{ checkin_id : { $gt : min_id } },
 						{ venue_category : { $ne : 'Travel & Transport'} },
-						{ venue_category : { $ne : 'Outdoors & Recreation' } }
+						{ venue_category : { $ne : 'Outdoors & Recreation' } },
+						{ venue_url : { $ne : null } }
 					]
 				}
 			},
