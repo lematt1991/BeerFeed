@@ -1,10 +1,13 @@
 import React from 'react'
-import {shallow} from 'enzyme'
+import Enzyme, {shallow} from 'enzyme'
 import toJson from 'enzyme-to-json'
 import sinon from 'sinon'
+import Adapter from 'enzyme-adapter-react-16'
 
 import FeedRow from '../FeedRow'
 import {Checkins1} from '../../test_data/Checkins'
+
+Enzyme.configure({ adapter: new Adapter() });
 
 describe('<FeedRow/>', () => {
 	var toLocaleString;

@@ -1,9 +1,12 @@
 import React from 'react'
-import {shallow, mount} from 'enzyme'
+import Enzyme, {shallow, mount} from 'enzyme'
 import toJson from 'enzyme-to-json'
 import sinon from 'sinon'
+import Adapter from 'enzyme-adapter-react-16'
 
 import LinkAccount from '../LinkAccount'
+
+Enzyme.configure({ adapter: new Adapter() });
 
 describe('<LinkAccount/>', () => {
 	it('mounts', () => {
