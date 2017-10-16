@@ -8,7 +8,7 @@ import {Button} from 'react-native-elements'
 
 const Callout = ({venue, beers, lat, lon}) => {
 	const text = Object.keys(beers).map(k => 
-		`${beers[k].brewery}: ${beers[k].name} (${beers[k].rating})`
+		`${beers[k].brewery}: ${beers[k].beer.name} (${beers[k].beer.rating})`
 	).join('\n')
 
 	const getDirections = () => {
@@ -54,20 +54,28 @@ class BeerMap extends React.Component{
 		)
 	}
 
+	constructor(props){
+		super();
+		this.state = {
+			location : props.location,
+		}
+	}
+
 	//TODO: add button to get directions
 	renderDescription = venue => {
 		return(
 			Object.keys(venue.beers).map(k => {
-				var beer = venue.beers[k]
-				return `${beer.brewery}: ${beer.name} (${beer.rating})`
+				var beer = venue.beers[k];
+				return `${beer.brewery}: ${beer.beer.name} (${beer.beer.rating})`
 			}).join('\n')
 		)
 	}
 
 	moveToLocation = () => {
-		var that = this;
-		const {latitude, longitude} = this.props.location;
-		this.map.animateToRegion(this.props.location)
+		var loc = {...this.props.location};
+		loc.latitudeDelta = this.state.location.latitudeDelta;
+		loc.longitudeDelta = this.state.location.longitudeDelta;
+		this.map.animateToRegion(loc);
 	}
 
 	componentWillReceiveProps(nextProps){
@@ -82,6 +90,10 @@ class BeerMap extends React.Component{
 		}
 	}
 
+	onPan = location => {
+		this.setState({location})
+	}
+
 	render(){
 		return(
 			<MapView
@@ -90,6 +102,7 @@ class BeerMap extends React.Component{
 				ref={map => {this.map = map;}}
 				initialRegion={this.props.location}
 				provider='google'
+				onRegionChangeComplete={this.onPan}
 			>
 				<View style={styles.button}>
 					<Button
@@ -106,8 +119,6 @@ class BeerMap extends React.Component{
 					<MapView.Marker
 						key={venue_id}
 						pinColor='red' 
-						title={this.props.mapData[venue_id].venue || 'Missing Title!'}
-						description={this.renderDescription(this.props.mapData[venue_id]) || 'Missing description'}
 						coordinate = {{
 							latitude : this.props.mapData[venue_id].lat, 
 							longitude : this.props.mapData[venue_id].lon

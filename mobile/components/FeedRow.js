@@ -60,21 +60,20 @@ export default class FeedRow extends React.PureComponent{
 			minute : '2-digit'
 		}
 		var date = new Date(this.props.created)
-		date.setMinutes(date.getMinutes() - date.getTimezoneOffset()) //convert from UTC to local timezone
 		date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 		return(
 			<Swipeout backgroundColor='#fff' right={[{text : 'Go To Map', onPress : this.gotoMap}]}>
 				<View style={styles.container}>
 					<View style={styles.imageContainer}>	
 						<Image 
-							source={{uri : this.props.pic}}
+							source={{uri : this.props.beer.pic}}
 							style={styles.image}
 							defaultSource={require('../assets/badge-beer-default.png')}
 						/>
 					</View>
 					<View>
 						<Text>
-							Beer: {this.props.name}
+							Beer: {this.props.beer.name}
 						</Text>
 						<Text>
 							Brewery: {this.props.brewery}
@@ -83,7 +82,7 @@ export default class FeedRow extends React.PureComponent{
 							Found at: {this.props.venue}
 						</Text>
 						<Text>
-							Rating: {this.props.rating}
+							Rating: {this.props.beer.rating}
 						</Text>
 						<Text>
 							Number of checkins: {this.props.checkin_count}
