@@ -42,7 +42,7 @@ function removeOld(){
 		})
 }
 
-setInterval(removeOld, 1000*60*60*24) // Filter old checkins every day.
+setInterval(removeOld, 1000*60*10) // Filter old checkins every 10 minutes
 
 app.use(express.static(path.join(__dirname, 'build')));
 
