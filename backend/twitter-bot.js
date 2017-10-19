@@ -1,13 +1,18 @@
 require('dotenv').config({silent : true})
 var Twit = require('twit')
-var pg = require('pg')
-
-var db = new pg.Client(process.env.OPENSHIFT_POSTGRESQL_DB_URL);
-db.connect();
+const { Checkin, User, TopBeer } = require('./models');
 
 class TwitterBot{
 	dropOldEntries(){
-	  db.query('DELETE FROM top_beers WHERE date < NOW() - INTERVAL \'7 days\';')
+		const twoDays = new Date(new Date() - 1000 * 60 * 60 * 24 * 2);
+		TopBeer.find({ date : { $lt : twoDays } })
+			.remove((err, result) => {
+				if(err){
+					console.log(err)
+				}else{
+					console.log('Success!')
+				}
+			})
 	}
 
 	constructor(username, token, token_secret){
@@ -23,34 +28,26 @@ class TwitterBot{
 
 	tweet(beer){
 		var url = `http://www.thebeerfeed.com/map?feed=${this.username}&venue=${beer.venue_id}`;
-		var loc = beer.twitter || `at ${beer.venue}`
-		var status = `${beer.count} people checked in ${beer.brewery}'s ${beer.beer} ${loc}: ${url}`
+		var loc = beer.beer.twitter || `at ${beer.venue}`
+		var status = `${beer.checkin_count} people checked in ${beer.brewery}'s ${beer.beer.name} ${loc}: ${url}`
 		status += status.length <= 125 ? ' #beer #untappd' : ''
 
 		if(status.length > 140){
-			status = `${beer.count} people checked in ${beer.beer} ${loc}: ${url}`
+			status = `${beer.checkin_count} people checked in ${beer.beer.name} ${loc}: ${url}`
 			if(status.length > 140){
-				status = `${beer.count} people checked in ${beer.beer}: ${url}`
+				status = `${beer.checkin_count} people checked in ${beer.beer.name}: ${url}`
 			}
 		}
 
-		console.log(status)
-
 		return this.T.post('statuses/update', {status : status})
-			.then(data => {
-				console.log(data)
-				var date = new Date(beer.date)
-				var q = `
-					INSERT INTO top_beers(bid, venue_id, count, rating, date) 
-					VALUES (${beer.bid}, ${beer.venue_id}, ${beer.count}, ${beer.rating}, '${date.toISOString()}');
-				`
-				console.log(q)
-				return db.query(q)
-					.then(() => console.log('inserted!'))
-					.catch(err => {
-						console.log(err)
-					})
-			})
+			.then(data => new TopBeer({
+					count : beer.checkin_count,
+					rating : beer.beer.rating,
+					venue_id : beer.venue_id,
+					bid : beer.bid,
+					date : new Date()
+				}).save()
+			)
 			.catch(err => {
 				console.log(err)
   		})
@@ -59,44 +56,106 @@ class TwitterBot{
 	check(){
 		var d = new Date()
 		console.log(`Checking top beers at ${d.toLocaleString()}`)
-
-		return db.query(`
-			SELECT q.* FROM(
-				SELECT 
-					beers.name as beer, 
-					bid, 
-					venue_id, 
-					count(*), 
-					avg(rating) as rating, 
-					max(created) as date, 
-					username,
-					breweries.name as brewery,
-					venues.venue,
-					venues.twitter
-				FROM checkins NATURAL JOIN beers NATURAL JOIN venues
-				LEFT JOIN breweries ON checkins.brewery_id=breweries.brewery_id
-				GROUP BY 
-					bid, 
-					venue_id, 
-					username, 
-					beers.name,
-					breweries.name,
-					venues.venue,
-					venues.twitter
-				HAVING count(*) > 5
-			)q LEFT JOIN top_beers ON q.bid=top_beers.bid AND q.venue_id=top_beers.venue_id
-			WHERE q.rating > 4.4 AND username='${this.username}' AND top_beers.bid IS NULL;
-		`)
+		const twoDays = new Date(new Date() - 1000 * 60 * 60 * 24 * 2);
+		Checkin.aggregate([
+			{ 
+				$match : {
+					$and : [
+						{ checkin_username : this.username },
+						{ venue_category : { $ne : 'Travel & Transport'} },
+						{ venue_category : { $ne : 'Outdoors & Recreation' } },
+						{ venue_url : { $ne : null } },
+						{ checkin_created : { $gte : twoDays } }
+					]
+				}
+			},
+			{
+				$group : {
+					_id : { venue_id : "$venue_id", bid : "$bid" },
+					venue : { $first : '$venue' },
+					brewery : { $first : '$brewery_name' },
+					venue_id : { $first : '$venue_id' },
+					bid : { $first : '$bid' },
+					checkin_count : { $sum : 1 }
+				}
+			},
+			{ $match : { checkin_count : { $gte : 5 } } },
+			{
+				$lookup : {
+					from : 'beers',
+					localField : 'bid',
+					foreignField : 'bid',
+					as : 'beer'
+				}
+			},
+			{ $unwind : '$beer' },
+			{
+				$project : {
+					"beer._id" : 0,
+					"beer.brewery_id" : 0,
+					"beer.last_updated" : 0,
+					"beer.brewery_url" : 0,
+					"beer.bid" : 0,
+					"beer.brewery" : 0,
+					"beer.facebook" : 0,
+					"beer.brewery_slug" : 0,
+					"beer.style" : 0,
+					"beer.pic" : 0,
+					"beer.ibus" : 0
+				}
+			},
+			{ $match : { "beer.rating" : { $gte : 4.0 } } }
+		])
 		.then(result => {
-			var promises = result.rows.map(this.tweet)
-			console.log('Setting timeout for next check')
-			setTimeout(this.check.bind(this), 1000 * 60 * 15) //15 minutes
+			result.forEach(tb => {
+				if(this.topBeers[tb.venue_id] == null || this.topBeers[tb.venue_id][tb.bid] == null){
+					var venue = this.topBeers[tb.venue_id] || {};
+					venue[tb.bid] = true;
+					this.topBeers[tb.venue_id] = venue;
+					return this.tweet(tb);
+				}
+			});
+			setTimeout(this.check.bind(this), 1000 * 60 * 15);
 			this.dropOldEntries()
-			return Promise.all(promises)
 		}).catch(err => {
 			console.log(err)
 		})
 	}
+
+	start(){
+		TopBeer.find({})
+			.then(topBeers => {
+				this.topBeers = {};
+				topBeers.forEach(tb => {
+					var venue = this.topBeers[tb.venue_id] || {};
+					venue[tb.bid] = true
+					this.topBeers[tb.venue_id] = venue;
+				})
+			})
+			.then(this.check.bind(this))
+			.catch(err => {
+				console.log(err)
+			})
+	}
+
 }
 
-exports.TwitterBot = TwitterBot
+// const mongoose = require('mongoose');
+// mongoose.Promise = require('bluebird');
+// const MONGO_URL = process.env.MONGO_URL || 'mongodb://localhost/beerfeed';
+// mongoose.connect(MONGO_URL, { useMongoClient : true })
+
+function startAll(){
+	User.find({twitter_handle : { $ne : null } })
+		.then(users => {
+			users.forEach(user => {
+				new TwitterBot(user.id, user.twitter_token, user.twitter_secret).start()				
+			})
+		})
+		.catch(err => console.log(err))
+}
+
+module.exports = {
+	TwitterBot : TwitterBot,
+	startAll : startAll
+};

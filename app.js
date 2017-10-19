@@ -6,6 +6,7 @@ const routes = require('./backend/routes');
 const UntappdClient = require('node-untappd');
 const { Checkin } = require('./backend/models');
 const { startAll } = require('./backend/feed-proc');
+const twitterBot = require('./backend/twitter-bot');
 
 mongoose.Promise = require('bluebird');
 
@@ -48,4 +49,5 @@ app.use(express.static(path.join(__dirname, 'build')));
 
 if(process.env.NODE_ENV === 'production'){
 	startAll();
+	twitterBot.startAll();
 }
