@@ -162,8 +162,8 @@ module.exports = function(untappd){
 		}).catch(err => res.status(500).send(err))
 	});
 
-	router.get('*', function(req, res) => {
-		// Serve the client if no route matches
+	router.get('*', function(req, res){
+		// Serve the client if no route
 		res.sendFile(path.join(__dirname, '../build/index.html'))
 	})
 
