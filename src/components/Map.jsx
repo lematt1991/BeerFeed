@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux'
 import { withGoogleMap, GoogleMap, Marker, InfoWindow } from "react-google-maps";
+import { push } from 'react-router-redux';
 
 function genInfoWindow(venue){
 	return(
@@ -70,6 +71,9 @@ class BeerMap extends Component{
 					lng : this.props.data[popup].lon
 				}
 				this.map.panTo(pos)
+
+				this.props.dispatch(push(`/map/${this.props.data[popup].venue_id}`))
+
 				this.setState({...this.state, position : pos, currentPopup : popup})
 			}
 		}else{
@@ -114,6 +118,6 @@ const mapStateToProps = state => ({
 	router : state.router
 })
 
-const mapDispatchToProps = dispatch => ({})
+const mapDispatchToProps = dispatch => ({dispatch})
 
 export default connect(mapStateToProps, mapDispatchToProps)(BeerMap)

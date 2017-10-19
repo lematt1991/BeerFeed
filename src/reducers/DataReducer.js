@@ -34,7 +34,8 @@ const setData = (state, data) => {
 				},
 				lat : row.lat,
 				lon : row.lon,
-				venue : row.venue
+				venue : row.venue,
+				venue_id : row.venue_id
 			}
 		}
 	}
