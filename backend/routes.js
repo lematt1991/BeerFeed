@@ -1,6 +1,7 @@
 const express = require('express');
 const { Beer, Checkin, User, Venue } = require('./models');
 const axios = require('axios');
+const path = require('path')
 
 const router = express.Router();
 
