@@ -24,6 +24,9 @@ const MONGO_URL = process.env.MONGO_URL || 'mongodb://localhost/beerfeed';
 mongoose.connect(MONGO_URL, { useMongoClient : true })
 
 const app = express();
+
+app.use(express.static(path.join(__dirname, 'build')));
+
 app.use('/', routes(untappd));
 
 const server = app.listen(PORT, function () {
@@ -44,8 +47,6 @@ function removeOld(){
 }
 
 setInterval(removeOld, 1000*60*10) // Filter old checkins every 10 minutes
-
-app.use(express.static(path.join(__dirname, 'build')));
 
 if(process.env.NODE_ENV === 'production'){
 	startAll();
