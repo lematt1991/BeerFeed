@@ -1,7 +1,7 @@
 {
   "expo": {
-    "sdkVersion": "16.0.0",
-    "icon": "https://raw.githubusercontent.com/ml9951/BeerFeed/mobile/mobile/assets/Beer.png",
+    "sdkVersion": "21.0.0",
+    "icon": "https://github.com/ml9951/BeerFeed/raw/master/mobile/assets/Beer.png",
    	"version": "0.0.1",
    	"slug": "beerfeed",
     "privacy" : "public",
