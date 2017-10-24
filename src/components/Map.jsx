@@ -27,7 +27,7 @@ const GMap = withGoogleMap(props => (
       <Marker {...marker}>
       {
       	marker.key === props.activeMarker ? 
-      	<InfoWindow>
+      	<InfoWindow {...marker.infoWindow} >
 					<span>
 						<b>{marker.marker.venue}</b>
 						{genInfoWindow(marker.marker)}
@@ -81,6 +81,10 @@ class BeerMap extends Component{
 		}
 	}
 
+	handleClose = () => {
+		this.setState({...this.state, currentPopup : null})
+	}
+
 	render(){
 		const markers = Object.keys(this.props.data).map(k => ({
 			key : k,
@@ -90,7 +94,10 @@ class BeerMap extends Component{
 				lng : this.props.data[k].lon
 			},
 			onClick : this.handleClick(k),
-			marker : this.props.data[k]
+			marker : this.props.data[k],
+			infoWindow : {
+				onCloseClick : this.handleClose
+			}
 		}))
 
 		const mapProps = {
