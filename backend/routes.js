@@ -5,7 +5,8 @@ const path = require('path')
 
 const router = express.Router();
 
-const REDIRECT_URL = 'https://www.thebeerfeed.com/AuthRedirect';
+// const REDIRECT_URL = 'https://www.thebeerfeed.com/AuthRedirect';
+const REDIRECT_URL = 'http://localhost:3001/AuthRedirect';
 
 var feedCache = {};
 
@@ -146,13 +147,14 @@ module.exports = function(untappd){
 				code : req.query.code
 			}
 		}).then(({data}) => {
-			untappd.setAccessToken(data.response.access_token);
+			const access_token = data.response.access_token;
+			untappd.setAccessToken(access_token);
 			untappd.userInfo()
 				.then(data => {
 					const query = { id : data.response.user.user_name };
 					const userData = {
 						id : data.response.user.user_name,
-						access_token : data.response.access_token,
+						access_token,
 						general_purpose : true
 					};
 					User.findOneAndUpdate(query, userData, { upsert : true })
