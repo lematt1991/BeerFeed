@@ -54,7 +54,7 @@
     "request": "^2.83.0",
     "twit": "^2.2.9",
     "universal-cookie": "^2.1.0",
-    "untappd-js": "git+https://github.com/ml9951/untappd-js.git",
+    "untappd-js": "^1.0.3",
     "url": "^0.11.0"
   },
   "devDependencies": {
