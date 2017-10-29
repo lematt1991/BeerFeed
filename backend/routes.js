@@ -5,8 +5,7 @@ const path = require('path')
 
 const router = express.Router();
 
-// const REDIRECT_URL = 'https://www.thebeerfeed.com/AuthRedirect';
-const REDIRECT_URL = 'http://localhost:3001/AuthRedirect';
+const REDIRECT_URL = 'https://www.thebeerfeed.com/AuthRedirect';
 
 var feedCache = {};
 
