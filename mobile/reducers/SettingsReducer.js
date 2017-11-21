@@ -7,7 +7,17 @@ import {
 } from '../actions/Types'
 
 const initialState = {
-	feeds : {},
+	feeds : {
+		nyc_feed : {
+	    "_id": "59c7ce870f66e286120792dd",
+	    "city": "New York, NY",
+	    "general_purpose": false,
+	    "lon": -73.9479,
+	    "lat": 40.789,
+	    "twitter_handle": "thebeerfeed",
+	    "id": "nyc_feed"
+	  }
+	},
 	currentFeed : 'nyc_feed',
 	checkin_count_threshold : 3,
 	ordering : 'date',
