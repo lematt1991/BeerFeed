@@ -86,7 +86,7 @@ function refresh(){
 	})
 }
 
-setInterval(1000 * 60 * 20, refresh)
+setInterval(refresh, 1000 * 60 * 20)
 
 module.exports = function(untappd){
 	/**
