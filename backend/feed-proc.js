@@ -38,6 +38,7 @@ class FeedProc{
 		this.tokens.push(this.untappd.getAccessToken());
     this.untappd.setAccessToken(this.tokens.shift());
     console.log(`${this.username} will try again in ${this.waitTime} milliseconds`);
+    this.waitTime = this.waitTime * 2;
     setTimeout(this.iter.bind(this), this.waitTime);
 	}
 
