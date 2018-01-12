@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 const routes = require('./backend/routes');
 const UntappdClient = require('untappd-js');
-const { Checkin } = require('./backend/models');
+const { Checkin, Beer } = require('./backend/models');
 const { startAll } = require('./backend/feed-proc');
 const twitterBot = require('./backend/twitter-bot');
 
@@ -40,12 +40,16 @@ function removeOld(){
 		.remove((err, result) => {
 			if(err){
 				console.log(err)
-			}else{
-				console.log(result)
+			}
+		})
+	Beer.find({last_updated : { $lt : twoDays } })
+		.remove((err) => {
+			if(err){
+				console.log(err)
 			}
 		})
 }
-
+removeOld()
 setInterval(removeOld, 1000*60*10) // Filter old checkins every 10 minutes
 
 if(process.env.NODE_ENV === 'production'){
