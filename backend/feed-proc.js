@@ -144,8 +144,12 @@ class FeedProc{
 
 	seq(ps, i){
 		if(i == ps.length)
-			return Promise.resolve();
-		return ps[i]().then(() => this.seq(ps, i+1));
+			return Promise.resolve([]);
+		return ps[i]().then(res => {
+			var result = this.seq(ps, i+1)
+			result.push(res);
+			return result;
+		});
 	}
 
 
