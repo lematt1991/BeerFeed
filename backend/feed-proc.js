@@ -138,17 +138,15 @@ class FeedProc{
     			checkinData, 
     			{ upsert : true }
     		)
-    		// return new Checkin(checkinData).save()
     	})
 	}
 
-	seq(ps, i){
+	seq(ps, i, accum){
 		if(i == ps.length)
 			return Promise.resolve([]);
 		return ps[i]().then(res => {
-			var result = this.seq(ps, i+1)
-			result.push(res);
-			return result;
+			accum.push(res);
+			return this.seq(ps, i+1, accum)
 		});
 	}
 
@@ -168,7 +166,7 @@ class FeedProc{
 			}))
 			.then(({meta, response}) => {
 				this.lastID = response.pagination.max_id || this.lastID;
-				return this.seq(response.checkins.items.map(c => () => this.processCheckin(c)), 0);
+				return this.seq(response.checkins.items.map(c => () => this.processCheckin(c)), 0, []);
 			})
 			.then(checkins => {
 				if(checkins.length > 12){
