@@ -148,6 +148,8 @@ class FeedProc{
 		return ps[i]().then(() => this.seq(ps, i+1));
 	}
 
+
+
 	/**
 	 * Perform a single iteration of fetching data from the API
 	 * @return {void} - data is inserted in the DB
@@ -162,8 +164,7 @@ class FeedProc{
 			}))
 			.then(({meta, response}) => {
 				this.lastID = response.pagination.max_id || this.lastID;
-				// return this.seq(response.checkins.items.map(c => () => this.processCheckin(c)), 0);
-				return Promise.all(response.checkins.items.map(this.processCheckin.bind(this)))
+				return this.seq(response.checkins.items.map(c => () => this.processCheckin(c)), 0);
 			})
 			.then(checkins => {
 				if(checkins.length > 12){
