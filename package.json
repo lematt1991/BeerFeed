@@ -14,12 +14,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ml9951/BeerFeed.git"
+    "url": "git+https://github.com/lematt1991/BeerFeed.git"
   },
   "author": "Matt Le",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ml9951/BeerFeed/issues"
+    "url": "https://github.com/lematt1991/BeerFeed/issues"
   },
   "homepage": "/",
   "optionalDependencies": {
@@ -35,7 +35,7 @@
     "immutability-helper": "^2.6.6",
     "lodash": "^4.17.5",
     "mongoose": "^5.0.15",
-    "node-untappd": "git+https://github.com/ml9951/node-untappd.git",
+    "node-untappd": "git+https://github.com/lematt1991/node-untappd.git",
     "pg": "^7.4.1",
     "react": "^16.3.2",
     "react-bootstrap": "^0.32.1",
