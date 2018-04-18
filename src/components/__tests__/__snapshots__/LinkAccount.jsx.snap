@@ -76,7 +76,6 @@ exports[`<LinkAccount/> mounts 1`] = `
         className="btn btn-primary"
         href="/Auth"
         id="link-account"
-        onClick={[Function]}
       >
         Click Here To Link Account
       </a>

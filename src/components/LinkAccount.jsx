@@ -2,11 +2,6 @@ import React, {Component} from 'react';
 import {Col, Row} from 'react-bootstrap';
 
 export default class LinkAccount extends Component{
-
-	_handleClick(event){
-		console.log('clicked')
-	}
-
 	render(){
 		return(
 			<div>
@@ -51,7 +46,7 @@ export default class LinkAccount extends Component{
 
 				<Row>
 					<div className="col-md-12 text-center">
-						<a id='link-account' className="btn btn-primary" href={'/Auth'} onClick={this._handleClick.bind(this)}>
+						<a id='link-account' className="btn btn-primary" href={'/Auth'}>
 							Click Here To Link Account
 						</a>
 					</div>
