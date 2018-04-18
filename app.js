@@ -21,7 +21,7 @@ untappd.setClientSecret(CLIENT_SECRET);
 const PORT = process.env.PORT || '3001';
 const MONGO_URL = process.env.MONGO_URL || 'mongodb://localhost/beerfeed';
 
-mongoose.connect(MONGO_URL, { useMongoClient : true })
+mongoose.connect(MONGO_URL)
 
 const app = express();
 

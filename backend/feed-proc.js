@@ -242,8 +242,6 @@ module.exports = {
 }
 
 if(require.main === module){
-	mongoose.connect(MONGO_URL || 'mongodb://localhost/beerfeed', { 
-		useMongoClient : true 
-	})
+	mongoose.connect(MONGO_URL || 'mongodb://localhost/beerfeed')
 	startAll()
 }
