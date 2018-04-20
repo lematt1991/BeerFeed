@@ -58,6 +58,7 @@ class BeerMap extends React.Component{
 		super();
 		this.state = {
 			location : props.location,
+			activeCallout : null
 		}
 	}
 
@@ -79,14 +80,13 @@ class BeerMap extends React.Component{
 	}
 
 	componentWillReceiveProps(nextProps){
-		const {location} = nextProps.navigation.state.params || {};
-		if(location){
-			nextProps.navigation.setParams({location : null})
-			const action = {
+		const { params } = nextProps.navigation.state;
+		if(params){
+			this.map.animateToRegion({
 				...nextProps.location,
-				...location
-			};
-			this.map.animateToRegion(action)
+				...params.location
+			});
+			this.setState({...this.state, activeCallout : `${params.venue_id}`})
 		}
 	}
 
@@ -96,46 +96,57 @@ class BeerMap extends React.Component{
 
 	render(){
 		return(
-			<MapView
-				style={{flex : 1}}
-				showsUserLocation={true}
-				ref={map => {this.map = map;}}
-				initialRegion={this.props.location}
-				provider='google'
-				onRegionChangeComplete={this.onPan}
-			>
-				<View style={styles.button}>
-					<Button
+			<View style={{flex : 1}}>
+				<Button
 						buttonStyle={{borderRadius : 10, backgroundColor : '#fff'}}
-            onPress={this.moveToLocation}
-            title="My Location"
-            textStyle={{textAlign : 'center', color : 'black'}}
-          />
-        </View>
+						containerViewStyle={{position : 'absolute', top : 35, left : 5, height : 50, zIndex : 1000000, width : 125}}
+	          onPress={this.moveToLocation}
+	          title="My Location"
+	          textStyle={{textAlign : 'center', color : 'black'}}
+	        />
+				<MapView
+					style={{position : 'absolute', top : 0, left : 0, right : 0, bottom : 0}}
+					showsUserLocation={true}
+					ref={map => {this.map = map;}}
+					initialRegion={this.props.location}
+					provider='google'
+					onRegionChangeComplete={this.onPan}
+				>
+					
 
-			{
-				/*TODO: determinate color based on quality of venue*/
-				Object.keys(this.props.mapData).map(venue_id => 
-					<MapView.Marker
-						key={venue_id}
-						pinColor='red' 
-						coordinate = {{
-							latitude : this.props.mapData[venue_id].lat, 
-							longitude : this.props.mapData[venue_id].lon
-						}}
-					>
-						<Callout {...this.props.mapData[venue_id]} />
-					</MapView.Marker>
-				)
-			}
-			</MapView>
+				{
+					/*TODO: determinate color based on quality of venue*/
+					Object.keys(this.props.mapData).map(venue_id => {
+						// var marker = this.props.mapData[venue_id];
+						// const { minScore, maxScore } = this.props;
+						// const ratio = (marker.score - minScore) / (maxScore - minScore);
+						// const color = `rgb(${Math.round(255 * ratio)},0,${Math.round(255 * (1-ratio))})`
+						return(
+							<MapView.Marker
+								showCallout={venue_id === this.state.activeCallout}
+								key={venue_id}
+								pinColor='red' 
+								coordinate = {{
+									latitude : this.props.mapData[venue_id].lat, 
+									longitude : this.props.mapData[venue_id].lon
+								}}
+							>
+								<Callout {...this.props.mapData[venue_id]} />
+							</MapView.Marker>
+						)
+					})
+				}
+				</MapView>
+			</View>
 		)
 	}
 }
 
 const mapStateToProps = state => ({
 	location : state.location,
-	mapData : state.data.mapData
+	mapData : state.data.mapData,
+	minScore : state.data.minScore,
+	maxScore : state.data.maxScore,
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -152,7 +163,7 @@ const styles = StyleSheet.create({
 	},
 	button : {
 		width : 150,
-		marginLeft : 10,
+		marginLeft : 5,
 		marginTop : 25
 	},
 	calloutTitle : {

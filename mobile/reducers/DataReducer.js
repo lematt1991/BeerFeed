@@ -6,8 +6,12 @@ const initialState = {
 	feedData : [],
 	mapData : {},
 	topBeers : [],
-	checkin_count_threshold : 3
+	checkin_count_threshold : 3,
+	minScore : Number.MAX_SAFE_INTEGER,
+	maxScore : 0,
 }
+
+const SCORE_THRESH = 3;
 
 /**
  * Add fresh batch of data to the `state`.  This should
@@ -19,6 +23,7 @@ const initialState = {
  */
 const setData = (state, data) => {
 	var mapData = {};
+	var { maxScore, minScore } = state;
 	for(var i = 0; i < data.checkins.length; i++){
 		var row = data.checkins[i];
 
@@ -27,6 +32,7 @@ const setData = (state, data) => {
 
 		if(mapData[row.venue_id]){
 			mapData[row.venue_id].beers[row.bid] = row;
+			mapData[row.venue_id].score += (row.checkin_count > SCORE_THRESH ? row.beer.rating : 0);
 		}else{
 			mapData[row.venue_id] = {
 				beers : {
@@ -34,30 +40,21 @@ const setData = (state, data) => {
 				},
 				lat : row.lat,
 				lon : row.lon,
-				venue : row.venue
+				venue : row.venue,
+				score : row.checkin_count > SCORE_THRESH ? row.beer.rating : 0
 			}
 		}
+		minScore = Math.min(minScore, mapData[row.venue_id].score);
+		maxScore = Math.max(maxScore, mapData[row.venue_id].score);
 	}
 	return {
 		...state, 
 		feedData : data.checkins, 
 		mapData : mapData, 
-		lastID : data.lastID
+		lastID : data.lastID,
+		maxScore,
+		minScore,
 	};
-}
-
-function validate(feedData, mapData){
-	for(let row of feedData){
-		const venue = mapData[row.venue_id];
-		if(venue == null){
-			console.log(`Venue ${row.venue_id} is NULL in mapData`)
-		}
-		const beer = venue.beers[row.bid]
-		if(beer == null){
-			console.log(venue)
-			console.log(`Beer ${row.bid} is NULL in mapData`)
-		}
-	}
 }
 
 /**
@@ -74,6 +71,7 @@ const updateData = (state, data) => {
 	}
 	var feedData = state.feedData.slice();
 	var mapData = state.mapData;
+	var { minScore, maxScore } = state;
 
 	for(let row of data.checkins){
 		if(mapData[row.venue_id]){
@@ -88,6 +86,10 @@ const updateData = (state, data) => {
 					checkin_id : row.checkin_id
 				}
 
+				//Now we have enough checkins to count this for its score.
+				if(entry.checkin_count <= SCORE_THRESH && entry.checkin_count + row.checkin_count > SCORE_THRESH){
+					mapData[row.venue_id].score += row.beer.rating;
+				}
 
 				mapData = update(mapData, {
 					[row.venue_id] : {
@@ -103,6 +105,8 @@ const updateData = (state, data) => {
 				row.index = feedData.length;
 				row.key = `${row.venue_id}-${row.bid}`;
 				
+				mapData[row.venue_id].score += (row.checkin_count > SCORE_THRESH ? row.beer.rating : 0);
+
 				feedData.push(row)
 				mapData = update(mapData, {
 					[row.venue_id] : {
@@ -124,7 +128,8 @@ const updateData = (state, data) => {
 						},
 						lat : row.lat,
 						lon : row.lon,
-						venue_id : row.venue
+						venue_id : row.venue,
+						score : row.checkin_count > SCORE_THRESH ? row.beer.rating : 0
 					}
 				}
 			})
@@ -132,12 +137,17 @@ const updateData = (state, data) => {
 			row.key = `${row.venue_id}-${row.bid}`;
 			feedData.push(row);
 		}
+		const score = mapData[row.venue_id].score;
+		maxScore = Math.max(maxScore, score);
+		minScore = Math.min(minScore, score);
 	}
 	return {
 		...state, 
 		feedData : feedData,
 		mapData : mapData,
-		lastID : data.lastID
+		lastID : data.lastID,
+		minScore,
+		maxScore,
 	}
 }
 

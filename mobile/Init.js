@@ -1,12 +1,14 @@
 import { Location, Constants, Permissions } from 'expo';
-import store from './Store'
+import { store } from './Store'
 import * as LocationActions from './actions/LocationActions'
 import {AppState} from 'react-native'
 
 export function getLocation(){
 	//Get the users location
+	console.log('Getting location')
 	Permissions.askAsync(Permissions.LOCATION)
 	.then(({status}) => {
+		console.log(status)
 		if(status === 'granted'){
 			return Location.getCurrentPositionAsync({})
 		}else{

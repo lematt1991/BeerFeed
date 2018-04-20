@@ -17,6 +17,7 @@ import * as DataActions from '../actions/DataActions'
 import * as SettingsActions from '../actions/SettingsActions'
 import SearchInput, {createFilter} from 'react-search-input'
 import store from '../Store'
+import NoRows from '../components/NoRows';
 
 const KEYS_TO_FILTER = ['brewery', 'name', 'venue']
 
@@ -84,7 +85,7 @@ class ListView extends React.Component{
 	render(){
 		const threshold = this.props.settings.checkin_count_threshold;
 		var filter = createFilter(this.props.settings.searchTerm, KEYS_TO_FILTER)
-		var rows = this.props.data.feedData.filter(r => r.checkin_count >= threshold && filter(r))
+		var rows = this.props.data.feedData.filter(r => r.beer.num_checkins >= threshold && filter(r))
 
 		if(this.props.settings.ordering === 'date'){
 			rows.sort(this.orderByDate);
@@ -95,8 +96,14 @@ class ListView extends React.Component{
 		rows = rows.slice(0, this.state.numRows)
 
 		const feed = this.props.settings.feeds[this.props.settings.currentFeed] || {};
+		const ds = new RListView.DataSource({rowHasChanged: (r1, r2) => false});
 
-		const ds = new RListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+		if(rows.length == 0){
+			return(
+				<NoRows/>
+			)
+		}
+
 		return(
 			<View style={styles.container}>
 				<View style={styles.textContainer}>

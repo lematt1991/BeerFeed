@@ -1,15 +1,15 @@
 {
   "expo": {
-    "sdkVersion": "21.0.0",
-    "icon": "https://github.com/ml9951/BeerFeed/raw/master/mobile/assets/Beer.png",
-   	"version": "0.0.1",
-   	"slug": "beerfeed",
+    "sdkVersion": "26.0.0",
+    "icon": "https://github.com/lematt1991/BeerFeed/raw/master/mobile/assets/Beer.png",
+   	"version": "0.0.2",
+   	"slug": "thebeerfeed",
     "privacy" : "public",
    	"ios": {
-     	"bundleIdentifier": "com.beerfeed.exp",
+     	"bundleIdentifier": "com.thebeerfeed.exp",
    	},
    	"android": {
-     	"package": "com.beerfeed.exp",
+     	"package": "com.thebeerfeed.exp",
    	}
   }
 }

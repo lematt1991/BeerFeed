@@ -1,20 +1,20 @@
 import React from 'react'
 import {
-	View, 
-	Text, 
-	StyleSheet, 
-	Image,
-	FlatList,
-	ScrollView,
-	AsyncStorage
+  View, 
+  Text, 
+  StyleSheet, 
+  Image,
+  FlatList,
+  ScrollView,
+  AsyncStorage
 } from 'react-native'
-import store from '../Store'
+import { store } from '../Store'
 import { persistStore } from 'redux-persist'
 import {connect} from 'react-redux'
 import * as DataActions from '../actions/DataActions'
 import * as SettingsActions from '../actions/SettingsActions'
-import { NavigationActions } from 'react-navigation'
 import {getLocation} from '../Init'
+import { NavigationActions } from 'react-navigation'
 
 function getDistance(c1, c2){
   return (c1.lat - c2.lat) * (c1.lat - c2.lat) + 
@@ -22,7 +22,7 @@ function getDistance(c1, c2){
 }
 
 class InitializingPage extends React.Component{
-	fetchData = () => {
+  fetchData = () => {
     const lastID = store.getState().data.lastID;
     const feed = store.getState().settings.currentFeed;
     if(store.getState().data.feedData.length === 0){
@@ -32,80 +32,89 @@ class InitializingPage extends React.Component{
     }
   }
 
-	componentWillMount(){
-    persistStore(store, {storage: AsyncStorage}, () => {
-      console.log('Done rehydrating')
-      Promise.all([getLocation(), this.fetchData(), this.props.fetchFeeds()])
-      	.then(() => {
-      		const {username} = store.getState().user;
-      		const routeName = 'MainNavigator';
-
-          const {feeds, currentFeed} = store.getState().settings;
-          const {latitude, longitude} = store.getState().location;
-          const myPosition = {lat : latitude, lon : longitude};
-
-          var nearestDistance = Number.MAX_SAFE_INTEGER;
-          var nearestFeed;
-          for(const key in feeds){
-            var feed = feeds[key]
-            const distance = getDistance(feed, myPosition);
-            if(distance < nearestDistance){
-              nearestDistance = distance;
-              nearestFeed = feed
-            }
-          }
-
-          const nextPage = () => {
-            this.props.navigation.dispatch(NavigationActions.reset({
-              index : 0,
-              actions: [NavigationActions.navigate({routeName})]
-            }))
-          }
-
-          if(nearestFeed && nearestFeed.distance !== currentFeed){
-            store.dispatch(SettingsActions.changeFeed(nearestFeed.id));
-            store.dispatch(DataActions.fetchData(nearestFeed.id)).then(nextPage)
-          }else{
-            nextPage()
-          }
-      	})
-    })
+  getNearestFeed = (feeds, myPosition) => {
+    var nearestDistance = Number.MAX_SAFE_INTEGER;
+    var nearestFeed;
+    for(const key in feeds){
+      var feed = feeds[key]
+      const distance = getDistance(feed, myPosition);
+      if(distance < nearestDistance){
+        nearestDistance = distance;
+        nearestFeed = feed
+      }
+    }
+    return nearestFeed;
   }
 
-	render(){
-		return(
-			<View style={styles.container}>
-				<Text style={styles.text}>
-					The Beer Feed
-				</Text>
-				<Image
-					style={styles.image}
-					source={require('../assets/Beer.png')}
-				/>
+  componentWillMount(){
+    Promise.all([getLocation(), this.fetchData(), this.props.fetchFeeds()])
+      .then(() => {
+        const routeName = 'MainNavigator';
+
+        const {feeds, currentFeed} = store.getState().settings;
+        const {latitude, longitude} = store.getState().location;
+        const myPosition = {lat : latitude, lon : longitude};
+
+        var nearestFeed = this.getNearestFeed(feeds, myPosition);
+
+        const nextPage = () => {
+          this.props.navigation.dispatch(NavigationActions.reset({
+            index : 0,
+            actions : [NavigationActions.navigate({routeName})]
+          }))
+        }
+
+        if(nearestFeed == null){
+          store.dispatch(SettingsActions.fetchFeeds)
+            .then(() => {
+              const {feeds} = store.getState().settings;
+              nearestFeed = this.getNearestFeed(feeds, myPosition);
+            })
+        }else if(nearestFeed && nearestFeed.id !== currentFeed){
+          store.dispatch(SettingsActions.changeFeed(nearestFeed.id));
+          store.dispatch(DataActions.fetchData(nearestFeed.id)).then(nextPage)
+        }else{
+          nextPage()
+        }
+      })
+      .catch(err => console.log(err))
+  }
+
+  render(){
+    return(
+      <View style={styles.container}>
+        <Text style={styles.text}>
+          The Beer Feed
+        </Text>
+        <Image
+          style={styles.image}
+          source={require('../assets/Beer.png')}
+        />
       </View>
-		)
-	}
+    )
+  }
 }
 
 const mapStateToProps = state => ({})
 const mapDispatchToProps = dispatch => ({
   updateData : (feed, lastID) => dispatch(DataActions.updateData(feed, lastID)),
   fetchData : feed => dispatch(DataActions.fetchData(feed)),
-  fetchFeeds : () => dispatch(SettingsActions.fetchFeeds)
+  fetchFeeds : () => dispatch(SettingsActions.fetchFeeds),
+  dispatch
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(InitializingPage);
 
 const styles = StyleSheet.create({
-	text : {
-		fontSize : 32,
-		fontWeight : 'bold',
+  text : {
+    fontSize : 32,
+    fontWeight : 'bold',
 
-	},
-	image : {
-		width : 300,
-		height : 300,
-	},
+  },
+  image : {
+    width : 300,
+    height : 300,
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',

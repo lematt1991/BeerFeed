@@ -31,7 +31,7 @@ export default class FeedRow extends React.PureComponent{
 		this.props.navigation.dispatch(NavigationActions.navigate({	
 			routeName : 'Map',
 			params : {
-				test : '!!!!!',
+				venue_id : this.props.venue_id,
 				location : {
 					latitude : this.props.lat,
 					longitude : this.props.lon
@@ -62,7 +62,7 @@ export default class FeedRow extends React.PureComponent{
 		var date = new Date(this.props.created)
 		date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 		return(
-			<Swipeout backgroundColor='#fff' right={[{text : 'Go To Map', onPress : this.gotoMap}]}>
+			<Swipeout backgroundColor='#fff' right={[{text : 'Map', onPress : this.gotoMap}]}>
 				<View style={styles.container}>
 					<View style={styles.imageContainer}>	
 						<Image 
