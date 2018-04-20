@@ -167,7 +167,9 @@ class FeedProc{
 				min_id : this.lastID
 			}))
 			.then(({meta, response}) => {
-				this.lastID = response.pagination.max_id || this.lastID;
+				if(response.checkins.count > 0){
+					this.lastID = response.checkins.items[0].checkin_id;
+				}
 				return this.seq(response.checkins.items.map(c => () => this.processCheckin(c)), 0, []);
 			})
 			.then(checkins => {
