@@ -121,11 +121,17 @@ class BeerMap extends React.Component{
 						// const { minScore, maxScore } = this.props;
 						// const ratio = (marker.score - minScore) / (maxScore - minScore);
 						// const color = `rgb(${Math.round(255 * ratio)},0,${Math.round(255 * (1-ratio))})`
+						
+						const { beers } = this.props.mapData[venue_id];
+						const count = Object.keys(beers).filter(k => beers[k].checkin_count >= 2).length;
+						const ratio = Math.min(count / 5.0, 1.0)
+						const color = `rgb(${Math.round(255 * ratio)},0,${Math.round(255 * (1-ratio))})`
+
 						return(
 							<MapView.Marker
 								showCallout={venue_id === this.state.activeCallout}
 								key={venue_id}
-								pinColor='red' 
+								pinColor={color}
 								coordinate = {{
 									latitude : this.props.mapData[venue_id].lat, 
 									longitude : this.props.mapData[venue_id].lon
