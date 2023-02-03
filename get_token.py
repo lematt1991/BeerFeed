@@ -3,6 +3,9 @@ import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import re
 import sys
+import psycopg2
+
+
 
 creds = json.load(open('.credentials.json'))
 
@@ -14,6 +17,7 @@ client = untappd.Untappd(
 )
 
 
+conn = psycopg2.connect("postgres:///beer_feed")
 
 hostName = "localhost"
 serverPort = 8083
@@ -22,9 +26,11 @@ class MyServer(BaseHTTPRequestHandler):
     def do_GET(self):
         code = re.search('code=(.*)', self.path).group(1)
         res = client.oauth.get_access_token(code)
-        creds["user_token"] = res
-        with open(".credentials.json", "w") as fout:
-            print(json.dumps(creds), file=fout)
+
+        with conn.cursor() as cur:
+            cur.execute("INSERT INTO tokens (token) VALUES(%s)", (res,))
+        conn.commit()
+
         sys.exit(0)
 
 webServer = HTTPServer((hostName, serverPort), MyServer)

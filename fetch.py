@@ -10,6 +10,12 @@ conn = psycopg2.connect("postgres:///beer_feed")
 
 creds = json.load(open('.credentials.json'))
 
+
+with conn.cursor() as cur:
+    cur.execute("SELECT token FROM tokens ORDER BY last_used LIMIT 1")
+    token, = cur.fetchone()
+
+
 client = untappd.Untappd(
     client_id=creds["client_id"],
     client_secret=creds["client_secret"],
@@ -18,8 +24,7 @@ client = untappd.Untappd(
 )
 
 
-client.set_access_token(creds["user_token"])
-
+client.set_access_token(token)
 
 coords=40.714404, -73.942352
 
@@ -97,3 +102,7 @@ print(f'Fetched {len(checkins["response"]["checkins"]["items"])} new checkins!')
 for checkin in checkins["response"]["checkins"]["items"][::-1]:
     process_checkin(checkin)
 
+
+with conn.cursor() as cur:
+    cur.execute("UPDATE tokens SET last_used=now() WHERE token=%s", (token,))
+conn.commit()

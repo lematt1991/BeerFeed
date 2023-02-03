@@ -51,4 +51,11 @@ with conn.cursor() as cur:
     )
     """)
 
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS tokens (
+        token TEXT PRIMARY KEY,
+        last_used TIMESTAMP NOT NULL DEFAULT NOW()
+    )
+    """)
+
 conn.commit()
