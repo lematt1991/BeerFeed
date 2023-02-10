@@ -7,10 +7,10 @@ function genInfoWindow(venue){
 	return(
 		Object.keys(venue.beers).map(k => {
 			var beer = venue.beers[k]
-			var beerLink = `https://untappd.com/b/${beer.beer.slug}/${beer.bid}`
+			var beerLink = `https://untappd.com/b/${beer.beer_slug}/${beer.bid}`
 			return(
 				<p style={{margin : 0}} key={k}>
-					{beer.brewery}: <a target="_blank" href={beerLink}>{beer.beer.name}</a> ({beer.beer.rating})
+					{beer.brewery}: <a target="_blank" href={beerLink}>{beer.beer_name}</a> ({beer.beer_rating})
 				</p>
 			)
 		})
@@ -46,7 +46,7 @@ class BeerMap extends Component{
 		const search = props.location.search;
 		const params = new URLSearchParams(search);
 
-		const dfltPos = {lat : 40.789, lon : -73.9479}
+        const dfltPos = {lat: 40.713342, lon: -73.945931}
 		const feed = this.props.feeds[this.props.currentFeed] || dfltPos
 
 		var state = {

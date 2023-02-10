@@ -7,7 +7,7 @@ export default class FeedRow extends Component{
 	constructor(props){
 		super(props);
 		this.state = {
-			picSrc : props.beer.pic,
+			picSrc : props.pic,
 			error : false
 		}
 	}
@@ -21,7 +21,7 @@ export default class FeedRow extends Component{
 	handleError = () => {
 		if(!this.state.error){
 			this.setState(_.extend({}, this.state, {
-				picSrc : 'https://untappd.akamaized.net/site/assets/images/temp/badge-beer-default.png',
+				picSrc : 'https://assets.untappd.com/site/assets/images/temp/badge-beer-default.png',
 				error : true
 			}))
 		}
@@ -37,7 +37,7 @@ export default class FeedRow extends Component{
 		}
 		var date = new Date(this.props.created)
 		date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-		var beerLink = `https://untappd.com/b/${this.props.beer.slug}/${this.props.bid}`
+		var beerLink = `https://untappd.com/b/${this.props.beer_slug}/${this.props.bid}`
 		return(	
 			<div className="media">
 				<div className="media-left media-middle">
@@ -57,10 +57,10 @@ export default class FeedRow extends Component{
 						Brewery: {this.props.brewery}
 					</h4>
 					<h4>
-						Beer: <a target="_blank" href={beerLink}>{this.props.beer.name}</a>
+						Beer: <a target="_blank" href={beerLink}>{this.props.beer_name}</a>
 					</h4>
 					<h4>
-						Score: {this.props.beer.rating}
+						Score: {this.props.beer_rating}
 					</h4>
 					<h4>	
 						Found at: <SafeAnchor id='goto-map'
@@ -70,7 +70,7 @@ export default class FeedRow extends Component{
 						Number of checkins: {this.props.checkin_count}
 					</h4>
 					<h4>
-						Style: {this.props.beer.style}
+						Style: {this.props.beer_style}
 					</h4>
 				</div>
 			</div>

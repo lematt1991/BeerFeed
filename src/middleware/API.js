@@ -26,6 +26,7 @@ export default store => next => action => {
         })
       })
       .catch(err => {
+        console.log(err)
         next({
           type : `${action.type}_ERROR`,
           payload : err.response.data,

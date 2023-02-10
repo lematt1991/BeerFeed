@@ -13,7 +13,7 @@ export const updateData = (feed, lastID) => ({
 	type : UPDATE_DATA,
 	payload : {
 		method : 'GET',
-		url : `/FEED/${feed}/${lastID}`
+		url : `/Feed/${feed}/${lastID}`
 	},
 	meta : 'API'
 })

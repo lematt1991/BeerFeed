@@ -4,6 +4,12 @@ import os
 import psycopg2
 from datetime import datetime
 import time
+import argparse
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--feed", default="nyc_feed")
+opt = parser.parse_args()
 
 
 conn = psycopg2.connect("postgres:///beer_feed")
@@ -26,7 +32,13 @@ client = untappd.Untappd(
 
 client.set_access_token(token)
 
-coords=40.714404, -73.942352
+
+
+with conn.cursor() as cur:
+    cur.execute("SELECT lat, lon FROM feeds WHERE feed=%s", (opt.feed,))
+    coords = cur.fetchone()
+    if coords is None:
+        raise ValueError(f"{opt.feed} does not exist!")
 
 
 def insert(tablename, data):
@@ -61,48 +73,86 @@ def process_checkin(checkin):
     })
 
     with conn.cursor() as cur:
-        cur.execute("SELECT * FROM beers WHERE beer_id=%s", (checkin["beer"]["bid"],))
+        cur.execute("SELECT rating_count, beer_id, pic FROM beers WHERE beer_id=%s", (checkin["beer"]["bid"],))
         res = cur.fetchall()
 
-        if len(res) == 0:
-            try:
-                time.sleep(2)
-                beer = client.beer.info(checkin["beer"]["bid"])
-            except Exception as e:
-                print(e)
-            insert("beers", {
-                "beer_id": beer["response"]["beer"]["bid"],
-                "auth_rating": beer["response"]["beer"]["auth_rating"],
-                "beer_abv": beer["response"]["beer"]["beer_abv"],
-                "beer_name": beer["response"]["beer"]["beer_name"],
-                "beer_style": beer["response"]["beer"]["beer_style"],
-                "rating_count": beer["response"]["beer"]["rating_count"],
-                "rating_score": beer["response"]["beer"]["rating_score"],
-                "last_updated": datetime.now()
-            })
+        update = False
+        if len(res) == 1:
+            rating_count, beer_id, pic = res[0]
+            if rating_count < 500:
+                update = True
+            if pic is None:
+                update = True
+
+
+
+        if len(res) == 0 or update:
+            time.sleep(2)
+            beer = client.beer.info(checkin["beer"]["bid"])
+
+            if update:
+                if pic is None:
+                    print("Updating beer because it doesn't have a picture")
+                else:
+                    print(f"Updating beer, because it only has {rating_count} ratings, now has {beer['response']['beer']['rating_count']}")
+                with conn.cursor() as cur:
+                    cur.execute("""
+                        UPDATE beers SET last_updated=now(), rating_score=%(score)s, rating_count=%(count)s
+                        WHERE beer_id=%(beer_id)s
+                    """, {
+                        "score": beer["response"]["beer"]["rating_score"],
+                        "count": beer["response"]["beer"]["rating_count"],
+                        "beer_id": beer["response"]["beer"]["bid"],
+                    })
+                conn.commit()
+            else:
+                print("Adding new beer to database")
+                insert("beers", {
+                    "beer_id": beer["response"]["beer"]["bid"],
+                    "auth_rating": beer["response"]["beer"]["auth_rating"],
+                    "beer_abv": beer["response"]["beer"]["beer_abv"],
+                    "beer_name": beer["response"]["beer"]["beer_name"],
+                    "beer_style": beer["response"]["beer"]["beer_style"],
+                    "rating_count": beer["response"]["beer"]["rating_count"],
+                    "rating_score": beer["response"]["beer"]["rating_score"],
+                    "last_updated": datetime.now(),
+                    "pic": beer["response"]["beer"]["beer_label"],
+                    "slug": beer["response"]["beer"]["beer_slug"]
+                })
+        else:
+            print("Beer cache hit!")
+
 
     insert("checkins", {
         "beer_id": checkin["beer"]["bid"],
         "brewery_id": checkin["brewery"]["brewery_id"],
         "checkin_comment": checkin["checkin_comment"],
         "checkin_id": checkin["checkin_id"],
+        "rating": checkin["rating_score"],
         "created_at": checkin["created_at"],
         "venue_id": checkin["venue"]["venue_id"],
+        "user_id": checkin["user"]["uid"],
+        "feed": opt.feed,
     })
 
 
 with conn.cursor() as cur:
-    cur.execute("SELECT MAX(checkin_id) FROM checkins")
+    cur.execute("SELECT MAX(checkin_id) FROM checkins WHERE feed=%s", (opt.feed,))
     max_id, = cur.fetchone()
 
-checkins = client.thepub.local(lat=coords[0], lng=coords[1], radius=10, dist_pref="km", min_id=max_id)
-print(f'Fetched {len(checkins["response"]["checkins"]["items"])} new checkins!')
+try:
+    checkins = client.thepub.local(lat=coords[0], lng=coords[1], radius=12, dist_pref="km", min_id=max_id)
+    print(f'Fetched {len(checkins["response"]["checkins"]["items"])} new checkins!')
 
-# iterate in reverse order to process the oldest first.  That way if we crash, we won't create gaps in the feed
-for checkin in checkins["response"]["checkins"]["items"][::-1]:
-    process_checkin(checkin)
+    # iterate in reverse order to process the oldest first.  That way if we crash, we won't create gaps in the feed
+    for checkin in checkins["response"]["checkins"]["items"][::-1]:
+        print(f"Processing {checkin['checkin_id']}")
+        process_checkin(checkin)
 
 
-with conn.cursor() as cur:
-    cur.execute("UPDATE tokens SET last_used=now() WHERE token=%s", (token,))
-conn.commit()
+except Exception as e:
+    print(e)
+    print("Rotating token")
+    with conn.cursor() as cur:
+        cur.execute("UPDATE tokens SET last_used=now() WHERE token=%s", (token,))
+    conn.commit()

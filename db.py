@@ -47,7 +47,10 @@ with conn.cursor() as cur:
         checkin_id INT PRIMARY KEY,
         created_at TIMESTAMP,
         distance REAL,
-        venue_id int references venues(venue_id)
+        venue_id int references venues(venue_id),
+        user_id int,
+        rating REAL,
+        feed TEXT references feeds(feed)
     )
     """)
 
@@ -56,6 +59,15 @@ with conn.cursor() as cur:
         token TEXT PRIMARY KEY,
         last_used TIMESTAMP NOT NULL DEFAULT NOW()
     )
+    """)
+
+    cur.execute("""
+    CREATE TABLE feeds (
+        feed TEXT PRIMARY KEY,
+        name TEXT,
+        lat REAL,
+        lon REAL
+    );
     """)
 
 conn.commit()
